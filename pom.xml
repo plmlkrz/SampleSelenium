@@ -20,10 +20,28 @@
         <selenium-java.version>4.33.0</selenium-java.version>
         <webdrivermanager.version>5.9.3</webdrivermanager.version>
         <junit.version>5.12.2</junit.version>
+        <junit-platform.version>1.12.2</junit-platform.version>
+        <cucumber.version>7.20.1</cucumber.version>
+        <h2.version>2.3.232</h2.version>
 
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
     </properties>
+
+    <!-- Pins ALL JUnit artifacts (jupiter, platform, suite) to one consistent version,
+         including the junit-platform-engine that Cucumber pulls in transitively.
+         Without this, mixed platform versions cause NoClassDefFoundError at test startup. -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <!-- Selenium WebDriver -->
@@ -47,6 +65,50 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>7.11.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Cucumber BDD: feature files run on the JUnit 5 platform via this engine -->
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <version>${cucumber.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit-platform-engine</artifactId>
+            <version>${cucumber.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-suite</artifactId>
+            <version>${junit-platform.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- H2 in-memory database: SQL validation drills without any external DB -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Lets plain TestNG test classes (like MyLoginTest) run on the JUnit 5 platform
+             during a default `mvn test`. The testng.xml SUITE runs (parallel drills) still
+             go through the real TestNG provider — see the profiles below. -->
+        <dependency>
+            <groupId>org.junit.support</groupId>
+            <artifactId>testng-engine</artifactId>
+            <version>1.0.5</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -64,9 +126,89 @@
                 <configuration>
                     <!-- Required for JUnit 5 to work correctly with Surefire -->
                     <useModulePath>false</useModulePath>
+                    <!-- Surefire's DEFAULT includes are Test*/*Test/*Tests/*TestCase — the
+                         drill classes (Source*/Practice*) would be silently skipped without
+                         these extra include patterns. A favorite real-world CI gotcha. -->
+                    <includes>
+                        <include>**/Test*.java</include>
+                        <include>**/*Test.java</include>
+                        <include>**/*Tests.java</include>
+                        <include>**/*TestCase.java</include>
+                        <include>**/*TestNg.java</include>
+                        <include>**/Source*Drills.java</include>
+                        <include>**/Practice*Drills.java</include>
+                        <include>**/RunCucumberDrills.java</include>
+                    </includes>
+                    <!-- TestNG drill classes only run through their testng.xml suites
+                         (see the testng-drills and parallel profiles below) -->
+                    <excludes>
+                        <exclude>**/*$*</exclude>
+                        <exclude>**/drills/d03_testng/**</exclude>
+                        <exclude>**/drills/d04_parallel/**</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!-- mvn test -Ptestng-drills  -> runs the TestNG drills sequentially via testng-drills.xml.
+             The surefire-testng plugin dependency FORCES the TestNG provider for this run —
+             without it, surefire auto-detects the JUnit Platform provider and silently
+             ignores suiteXmlFiles. Interview-grade gotcha. -->
+        <profile>
+            <id>testng-drills</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${maven-surefire-plugin.version}</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.maven.surefire</groupId>
+                                <artifactId>surefire-testng</artifactId>
+                                <version>${maven-surefire-plugin.version}</version>
+                            </dependency>
+                        </dependencies>
+                        <configuration>
+                            <suiteXmlFiles>
+                                <suiteXmlFile>src/test/resources/testng-drills.xml</suiteXmlFile>
+                            </suiteXmlFiles>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- mvn test -Pparallel  -> INTERVIEW ANSWER MADE RUNNABLE:
+             parallel execution is configured at the SUITE level in testng.xml
+             (parallel="methods" thread-count="3"), and works because DriverManager
+             keeps one WebDriver per thread in a ThreadLocal. -->
+        <profile>
+            <id>parallel</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${maven-surefire-plugin.version}</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.maven.surefire</groupId>
+                                <artifactId>surefire-testng</artifactId>
+                                <version>${maven-surefire-plugin.version}</version>
+                            </dependency>
+                        </dependencies>
+                        <configuration>
+                            <suiteXmlFiles>
+                                <suiteXmlFile>src/test/resources/testng-parallel.xml</suiteXmlFile>
+                            </suiteXmlFiles>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

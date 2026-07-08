@@ -1,0 +1,74 @@
+# DRILL 09 (part 1) — CI/CD WITH GITHUB ACTIONS
+#
+# "How do you run Selenium tests in CI?" — walk an interviewer through THIS file, top to bottom:
+#   trigger -> runner -> checkout -> JDK + dependency cache -> headless test run -> reports.
+# Every line below is something you can be asked about.
+#
+# It runs for real once this repo is pushed to GitHub (Actions tab), including a second
+# job that exercises the TestNG parallel suite.
+
+name: Selenium Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch: {}   # manual "Run workflow" button — handy for demos and re-runs
+
+jobs:
+  junit-and-cucumber:
+    runs-on: ubuntu-latest   # GitHub-hosted runners ship with current Chrome preinstalled
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17 (with Maven dependency cache)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven      # caches ~/.m2 keyed on pom.xml — the "why are CI builds fast" answer
+
+      # -B = batch mode (no interactive output). headless=true because CI has no display.
+      - name: Run JUnit + Cucumber suites headless
+        run: mvn -B test -Dheadless=true
+
+      # if: always() -> reports upload even when tests FAIL — that's the whole point of reports.
+      - name: Upload surefire reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports-junit
+          path: target/surefire-reports/
+
+      - name: Upload failure screenshots (if any)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-junit
+          path: target/screenshots/
+          if-no-files-found: ignore
+
+  testng-parallel-suite:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17 (with Maven dependency cache)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Run the TestNG parallel suite headless
+        run: mvn -B test -Pparallel -Dheadless=true
+
+      - name: Upload surefire reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports-testng-parallel
+          path: target/surefire-reports/

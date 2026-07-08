@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<!--
+  THE PARALLEL-EXECUTION ANSWER, AS A FILE. Memorize this opening tag:
+
+      <suite name="..." parallel="methods" thread-count="3">
+
+  - parallel="methods"    each @Test method gets its own thread (also: classes | tests | instances)
+  - thread-count="3"      at most 3 run concurrently
+  - Works only because DriverManager stores the WebDriver in a ThreadLocal —
+    each thread gets its own isolated browser.
+
+  Run:  mvn test -Pparallel -Dheadless=true
+  Compare with the same tests run serially:  mvn test -Ptestng-drills -Dheadless=true
+-->
+<suite name="Parallel Drill Suite" parallel="methods" thread-count="3" verbose="1">
+    <test name="Parallel Login Drills">
+        <classes>
+            <class name="com.sampleselenium.drills.d04_parallel.SourceD04ParallelDrills"/>
+            <class name="com.sampleselenium.drills.d04_parallel.PracticeD04ParallelDrills"/>
+        </classes>
+    </test>
+</suite>
