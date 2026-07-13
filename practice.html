@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#142228">
+    <title>SDET Field Test | Selenium interview practice</title>
+    <link rel="stylesheet" href="practice.css">
+</head>
+<body>
+    <div class="app-shell">
+        <header class="topbar">
+            <a class="brand" href="practice.html" aria-label="SDET Field Test home">
+                <span class="brand-mark" aria-hidden="true"></span>
+                <span><small>SDET</small> FIELD TEST</span>
+            </a>
+            <div class="topbar-meta">
+                <span class="date-readout" id="date-readout"></span>
+                <span class="status-chip"><i></i> LOCAL SESSION</span>
+                <button class="button button-quiet" id="new-session" type="button">New session <span aria-hidden="true">↗</span></button>
+            </div>
+        </header>
+        <div class="workspace">
+            <aside class="sidebar" aria-label="Practice controls">
+                <div class="sidebar-intro">
+                    <span class="eyebrow">YOUR LOOP</span>
+                    <h1>Build recall under pressure.</h1>
+                    <p>Short reps from the interview patterns that keep showing up across Selenium roles.</p>
+                </div>
+                <nav class="track-nav" aria-label="Question tracks">
+                    <span class="eyebrow">FOCUS TRACK</span>
+                    <button class="track-button is-active" data-track="all" type="button"><span class="track-index">00</span> Mixed signal <b>↗</b></button>
+                    <button class="track-button" data-track="selenium" type="button"><span class="track-index">01</span> Selenium core <b>↗</b></button>
+                    <button class="track-button" data-track="java" type="button"><span class="track-index">02</span> Java + coding <b>↗</b></button>
+                    <button class="track-button" data-track="framework" type="button"><span class="track-index">03</span> Framework craft <b>↗</b></button>
+                    <button class="track-button" data-track="testng-sql" type="button"><span class="track-index">04</span> TestNG + SQL <b>↗</b></button>
+                    <button class="track-button" data-track="interview" type="button"><span class="track-index">05</span> Interview voice <b>↗</b></button>
+                </nav>
+                <div class="sidebar-stats">
+                    <span class="eyebrow">SESSION SIGNAL</span>
+                    <div class="stat-line"><span>Current streak</span><strong id="streak-stat">0 days</strong></div>
+                    <div class="stat-line"><span>Best score</span><strong id="best-stat">—</strong></div>
+                    <div class="stat-line"><span>Sessions run</span><strong id="sessions-stat">0</strong></div>
+                </div>
+                <div class="source-note">
+                    <span class="source-pip" aria-hidden="true"></span>
+                    <div><strong>Built from your prep files</strong><small>Deloitte rounds + Infosys top-100 bank</small></div>
+                </div>
+            </aside>
+            <main class="main-content">
+                <section class="intro-band" aria-labelledby="page-title">
+                    <div>
+                        <span class="eyebrow">DAILY PRACTICE / <span id="track-label">MIXED SIGNAL</span></span>
+                        <h2 id="page-title">The answer is only half<br><em>the test.</em></h2>
+                    </div>
+                    <div class="intro-copy">
+                        <p>Say the answer out loud before you reveal the coach note. A strong interview response has a definition, a concrete example, and the trade-off.</p>
+                        <div class="session-spec"><span>10 questions</span><span>+ 1 coding drill</span><span>Randomized daily</span></div>
+                    </div>
+                </section>
+                <section class="practice-panel" aria-labelledby="question-heading">
+                    <div class="panel-topline">
+                        <div class="progress-copy"><span id="question-count">QUESTION 01 / 10</span><span class="progress-topic" id="question-topic">SELENIUM</span></div>
+                        <div class="progress-track" aria-label="Question progress"><span id="progress-fill"></span></div>
+                    </div>
+                    <div id="question-view"></div>
+                </section>
+                <section class="coding-panel" aria-labelledby="coding-heading">
+                    <div class="coding-heading">
+                        <div>
+                            <span class="eyebrow">WRITTEN TEST / JAVA</span>
+                            <h2 id="coding-heading">One small problem.<br><em>Show your thinking.</em></h2>
+                        </div>
+                        <button class="button button-outline" id="next-coding" type="button">Swap drill <span aria-hidden="true">⟳</span></button>
+                    </div>
+                    <div class="coding-grid">
+                        <div class="coding-prompt">
+                            <div class="drill-label"><span id="coding-category">LABCORP-STYLE</span><span id="coding-number">DRILL 01</span></div>
+                            <h3 id="coding-title"></h3>
+                            <p id="coding-prompt-text"></p>
+                            <div class="interviewer-note"><span aria-hidden="true">↳</span><p><strong>Interviewer is listening for:</strong> <span id="coding-listening"></span></p></div>
+                        </div>
+                        <div class="coding-editor-wrap">
+                            <label class="editor-label" for="code-answer">TYPE IT FROM MEMORY</label>
+                            <textarea id="code-answer" spellcheck="false" aria-label="Your Java answer"></textarea>
+                            <div class="editor-actions">
+                                <button class="text-button" id="show-hint" type="button">Show a hint <span>↓</span></button>
+                                <button class="text-button" id="show-solution" type="button">Reveal solution <span>↗</span></button>
+                            </div>
+                            <div class="reveal-box" id="hint-box" hidden></div>
+                            <div class="reveal-box solution-box" id="solution-box" hidden></div>
+                        </div>
+                    </div>
+                </section>
+                <footer class="page-footer">
+                    <span>FIELD NOTE 01</span>
+                    <p>Use this daily: cold answer → reveal → say it again with the trade-off.</p>
+                    <span>NO BACKEND / SAVES LOCALLY</span>
+                </footer>
+            </main>
+        </div>
+    </div>
+    <script src="practice.js"></script>
+</body>
+</html>

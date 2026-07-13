@@ -2,6 +2,31 @@
 
 Practice project for Selenium WebDriver tests — built for interview preparation.
 
+## Daily interview field test
+
+Open `practice.html` in a browser for a randomized daily practice session based on the Deloitte interview rounds and Infosys top-100 question bank.
+
+The field test includes:
+
+- 10 randomized questions per session
+- Focus tracks for Selenium, Java, framework design, TestNG/SQL, and interview communication
+- Multiple-choice questions with immediate explanations and source signals
+- Written-answer prompts with coach notes
+- Java and SQL coding drills, including the Labcorp-style "print every letter of my name" prompt
+- Local streak, best score, and session tracking through browser local storage
+- Responsive desktop and mobile layouts with no backend dependency
+
+To run it from a local URL:
+
+~~~powershell
+cd C:\Users\peter\IdeaProjects\SampleSelenium
+py -m http.server 8080
+~~~
+
+Then open <http://localhost:8080/practice.html>.
+
+For the best practice loop, answer out loud before revealing the coach note, then type the coding solution from memory before revealing the sample.
+
 ## Tech Stack
 
 - Java 17
