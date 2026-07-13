@@ -81,6 +81,11 @@ function renderQuestion() {
         view.innerHTML = "<div class=\"question-frame written\">" + title + "<textarea class=\"written-answer\" id=\"written-answer\" placeholder=\"Say it out loud first, then capture your answer here...\"></textarea><p class=\"coach-prompt\">" + question.coach + "</p><div class=\"question-foot\"><span></span><div class=\"question-actions\"><button class=\"text-button\" id=\"reveal-written\" type=\"button\">Reveal coach note <span>↗</span></button><button class=\"button button-primary\" id=\"next-question\" type=\"button\" disabled>Log answer <span>→</span></button></div></div><div id=\"written-feedback\"></div></div>";
         $("#written-answer").addEventListener("input", (event) => { $("#next-question").disabled = !event.target.value.trim(); });
         $("#reveal-written").addEventListener("click", () => { $("#written-feedback").innerHTML = "<div class=\"feedback\"><strong>Coach note:</strong> " + question.model + "</div>"; });
+        $("#next-question").addEventListener("click", () => {
+            if (!$("#written-answer").value.trim()) return;
+            state.index += 1;
+            renderQuestion();
+        });
     } else {
         const options = question.options.map((option, index) => "<button class=\"option\" data-option=\"" + index + "\" type=\"button\"><span class=\"option-letter\">" + String.fromCharCode(65 + index) + "</span><span>" + option + "</span></button>").join("");
         view.innerHTML = "<div class=\"question-frame\">" + title + "<div class=\"answer-options\">" + options + "</div><div class=\"question-foot\"><span class=\"anchor-note\">Source signal: " + question.anchor + "</span><div class=\"question-actions\"><button class=\"text-button\" id=\"skip-question\" type=\"button\">Skip for now</button><button class=\"button button-primary\" id=\"check-answer\" type=\"button\" disabled>Check answer <span>→</span></button></div></div><div id=\"answer-feedback\"></div></div>";
