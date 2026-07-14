@@ -42,9 +42,10 @@ runs with: `$env:MAVEN_OPTS='-Djavax.net.ssl.trustStoreType=Windows-ROOT'; mvn t
 | 6 | Java core: string/collection/OOP notepad questions | `drills/d06_java_core/SourceD06JavaCoreDrills.java` | `mvn test -Dtest=SourceD06JavaCoreDrills` |
 | 7 | SQL validation (H2 in-memory) | `drills/d07_sql/SourceD07SqlDrills.java` | `mvn test -Dtest=SourceD07SqlDrills` |
 | 8 | Cucumber BDD: feature / steps / runner / hooks / tags | `drills/d08_bdd/` + `resources/features/` | `mvn test -Dtest=RunCucumberDrills -Dheadless=true` |
-| 9 | CI/CD: GitHub Actions + Jenkins | `.github/workflows/selenium-tests.yml`, `Jenkinsfile` | read + narrate; runs on push to GitHub |
+| 9 | **API testing**: REST Assured vs local mock microservice, 200 vs 201, JSON calc validation, Spring Boot testing talk track | `drills/d09_api/SourceD09ApiDrills.java` | `mvn test -Dtest=SourceD09ApiDrills` |
+| 10 | CI/CD: GitHub Actions + Jenkins | `.github/workflows/selenium-tests.yml`, `Jenkinsfile` | read + narrate; runs on push to GitHub |
 
-Modules 6 and 7 need **no browser** — they run in about a second. Perfect for
+Modules 6, 7 and 9 need **no browser** — they run in about a second. Perfect for
 high-repetition days and for warming up the morning of the interview.
 
 Run one single test method: `mvn test -Dtest="SourceD05BrowserMechanicsDrills#alertAcceptAndReadResult" -Dheadless=true`
@@ -62,8 +63,8 @@ Run one single test method: `mvn test -Dtest="SourceD05BrowserMechanicsDrills#al
 | Selenium Q15 (dynamic elements), Q25 (captcha — say NO and explain) | Modules 2, 5 (comments) |
 | Java Q1–20 | Module 6 (runnable) + comments for the pure-definition ones |
 | TestNG Q1–10 | Module 3 (+ Module 4 for parallel) |
-| Framework Q1–15 | The repo itself — see "Explain your framework" below; Maven/Jenkins in Module 9 |
-| API Testing Q1–10 | **Not in this repo** — talk track: Railinc SOAP UI story first, then REST semantics |
+| Framework Q1–15 | The repo itself — see "Explain your framework" below; Maven/Jenkins in Module 10 |
+| API Testing Q1–10 | **Module 9** — runnable REST Assured drills + status-code semantics; open with the Railinc SOAP UI story, then the 200-vs-201 answer |
 | SQL Q1–10 | Module 7 |
 | Manual Q1–10 | Pure talk — STLC, severity vs priority, smoke vs sanity; no code needed |
 
@@ -139,7 +140,10 @@ Follow-up they always ask — **"100 pages, do you make 100 page objects?"**:
   the `<suite parallel="methods" thread-count="3">` line on paper five times.
 - **Day 3:** Module 6 + Module 7 (no browser — go for volume; 3+ reps each).
 - **Day 4:** Module 5 (biggest module — split over two sessions if needed).
-- **Day 5:** Module 8 + Module 9. Uncomment a practice scenario, let Cucumber print the
+- **Day 5:** Module 8 + Module 10. Uncomment a practice scenario, let Cucumber print the
   missing-step snippets, implement them. Narrate the GitHub Actions file top to bottom.
+- **Day 5.5 (or fold into Day 3):** Module 9 — no browser, seconds per run. Say the
+  200-vs-201 answer and the Spring Boot layers (@WebMvcTest / @SpringBootTest / black-box)
+  out loud until they're automatic.
 - **Day 6 (day before):** Cold run — practice files only, 90 minutes, no peeking. Then
   the framework talk track and honest-ramp lines out loud.
