@@ -50,6 +50,31 @@ high-repetition days and for warming up the morning of the interview.
 
 Run one single test method: `mvn test -Dtest="SourceD05BrowserMechanicsDrills#alertAcceptAndReadResult" -Dheadless=true`
 
+## Daily Field Test (practice.html)
+
+The recall side of the gym: the drills build muscle memory for WRITING the code; the
+field test checks you can PRODUCE the answers cold. Open `practice.html` via a local
+server (`py -m http.server 8080`, then <http://localhost:8080/practice.html>).
+
+- **84 questions** (75 multiple-choice + 9 written prompts) covering the full Infosys
+  top-100 bank, the Deloitte rounds, and the Luxoft high-probability 15 (Spring Boot,
+  REST Assured, financial JSON validation, JMeter, release-risk communication).
+- **20 questions per session, no repeats** — sampled without replacement.
+- **Answer positions shuffle on every render**, so "it's always B" can't be memorized.
+- **Tracks 01–06** slice by topic (Selenium, Java, Framework, TestNG+SQL, Interview
+  voice, API + Spring Boot); **Mixed Signal** pulls from everything.
+- **Track 07 "Written answers"** holds all typed prompts separately — say the answer
+  out loud, type it, then reveal the coach note. These map to the talk tracks in the
+  drill modules (e.g. the 200-vs-201 written answer uses the same wording as the
+  Module 9 javadoc — one phrasing in both places for faster recall).
+- Coding drills (reverse-preserving-whitespace, palindrome, second-highest salary,
+  Labcorp-style name letters) sit below the question panel with hint/solution reveals.
+- Streak, best score, and session count persist in browser localStorage. Best score
+  resets when it first sees a 20-question session (old /10 bests don't compare).
+
+Each question's "source signal" anchor points back to the drill module or question
+bank it came from — miss a question, run that module.
+
 ## Question-Bank Coverage Map
 
 ### Infosys Top-100 list → module

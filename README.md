@@ -8,10 +8,11 @@ Open `practice.html` in a browser for a randomized daily practice session based 
 
 The field test includes:
 
-- 10 randomized questions per session
-- Focus tracks for Selenium, Java, framework design, TestNG/SQL, and interview communication
+- 20 randomized questions per session with no repeats and shuffled answer positions
+- 84-question bank covering the Infosys top-100, Deloitte rounds, and Luxoft-style API/Spring Boot questions
+- Focus tracks for Selenium, Java, framework design, TestNG/SQL, interview communication, and API + Spring Boot
 - Multiple-choice questions with immediate explanations and source signals
-- Written-answer prompts with coach notes
+- A dedicated written-answers track with coach notes, kept separate from the multiple-choice mix
 - Java and SQL coding drills, including the Labcorp-style "print every letter of my name" prompt
 - Local streak, best score, and session tracking through browser local storage
 - Responsive desktop and mobile layouts with no backend dependency
