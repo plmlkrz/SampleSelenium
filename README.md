@@ -9,7 +9,7 @@ Open `practice.html` in a browser for a randomized daily practice session based 
 The field test includes:
 
 - 20 randomized questions per session with no repeats and shuffled answer positions
-- 84-question bank covering the Infosys top-100, Deloitte rounds, and Luxoft-style API/Spring Boot questions
+- 91-question bank covering the Infosys top-100, Deloitte rounds, Barclays QA rounds, and Luxoft-style API/Spring Boot questions
 - Focus tracks for Selenium, Java, framework design, TestNG/SQL, interview communication, and API + Spring Boot
 - Multiple-choice questions with immediate explanations and source signals
 - A dedicated written-answers track with coach notes, kept separate from the multiple-choice mix
