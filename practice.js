@@ -100,6 +100,8 @@ const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 
 function shuffle(items) { return [...items].sort(() => Math.random() - 0.5); }
+// Question data contains literal tags like <select> and Map<String,String>; escape before innerHTML.
+function esc(text) { return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 function todayKey() { return new Date().toISOString().slice(0, 10); }
 function readStats() {
     try { return JSON.parse(localStorage.getItem("sdetFieldTestStats")) || { streak: 0, best: null, sessions: 0, lastDate: null }; }
@@ -134,12 +136,12 @@ function renderQuestion() {
     $("#question-count").textContent = "QUESTION " + String(current).padStart(2, "0") + " / " + state.questions.length;
     $("#question-topic").textContent = question.topic;
     $("#progress-fill").style.width = (current / state.questions.length) * 100 + "%";
-    const title = "<h3><span class=\"q-number\">" + (question.type === "written" ? "WRITE YOUR ANSWER" : "CHOOSE THE BEST ANSWER") + "</span>" + question.question + "</h3>";
+    const title = "<h3><span class=\"q-number\">" + (question.type === "written" ? "WRITE YOUR ANSWER" : "CHOOSE THE BEST ANSWER") + "</span>" + esc(question.question) + "</h3>";
     const view = $("#question-view");
     if (question.type === "written") {
-        view.innerHTML = "<div class=\"question-frame written\">" + title + "<textarea class=\"written-answer\" id=\"written-answer\" placeholder=\"Say it out loud first, then capture your answer here...\"></textarea><p class=\"coach-prompt\">" + question.coach + "</p><div class=\"question-foot\"><span></span><div class=\"question-actions\"><button class=\"text-button\" id=\"reveal-written\" type=\"button\">Reveal coach note <span>↗</span></button><button class=\"button button-primary\" id=\"next-question\" type=\"button\" disabled>Log answer <span>→</span></button></div></div><div id=\"written-feedback\"></div></div>";
+        view.innerHTML = "<div class=\"question-frame written\">" + title + "<textarea class=\"written-answer\" id=\"written-answer\" placeholder=\"Say it out loud first, then capture your answer here...\"></textarea><p class=\"coach-prompt\">" + esc(question.coach) + "</p><div class=\"question-foot\"><span></span><div class=\"question-actions\"><button class=\"text-button\" id=\"reveal-written\" type=\"button\">Reveal coach note <span>↗</span></button><button class=\"button button-primary\" id=\"next-question\" type=\"button\" disabled>Log answer <span>→</span></button></div></div><div id=\"written-feedback\"></div></div>";
         $("#written-answer").addEventListener("input", (event) => { $("#next-question").disabled = !event.target.value.trim(); });
-        $("#reveal-written").addEventListener("click", () => { $("#written-feedback").innerHTML = "<div class=\"feedback\"><strong>Coach note:</strong> " + question.model + "</div>"; });
+        $("#reveal-written").addEventListener("click", () => { $("#written-feedback").innerHTML = "<div class=\"feedback\"><strong>Coach note:</strong> " + esc(question.model) + "</div>"; });
         $("#next-question").addEventListener("click", () => {
             if (!$("#written-answer").value.trim()) return;
             state.index += 1;
@@ -149,8 +151,8 @@ function renderQuestion() {
         // Shuffle the answer positions every time so the correct letter can't be memorized.
         const order = shuffle(question.options.map((_, index) => index));
         state.correctIndex = order.indexOf(question.answer);
-        const options = order.map((originalIndex, index) => "<button class=\"option\" data-option=\"" + index + "\" type=\"button\"><span class=\"option-letter\">" + String.fromCharCode(65 + index) + "</span><span>" + question.options[originalIndex] + "</span></button>").join("");
-        view.innerHTML = "<div class=\"question-frame\">" + title + "<div class=\"answer-options\">" + options + "</div><div class=\"question-foot\"><span class=\"anchor-note\">Source signal: " + question.anchor + "</span><div class=\"question-actions\"><button class=\"text-button\" id=\"skip-question\" type=\"button\">Skip for now</button><button class=\"button button-primary\" id=\"check-answer\" type=\"button\" disabled>Check answer <span>→</span></button></div></div><div id=\"answer-feedback\"></div></div>";
+        const options = order.map((originalIndex, index) => "<button class=\"option\" data-option=\"" + index + "\" type=\"button\"><span class=\"option-letter\">" + String.fromCharCode(65 + index) + "</span><span>" + esc(question.options[originalIndex]) + "</span></button>").join("");
+        view.innerHTML = "<div class=\"question-frame\">" + title + "<div class=\"answer-options\">" + options + "</div><div class=\"question-foot\"><span class=\"anchor-note\">Source signal: " + esc(question.anchor) + "</span><div class=\"question-actions\"><button class=\"text-button\" id=\"skip-question\" type=\"button\">Skip for now</button><button class=\"button button-primary\" id=\"check-answer\" type=\"button\" disabled>Check answer <span>→</span></button></div></div><div id=\"answer-feedback\"></div></div>";
         $$(".option").forEach((button) => button.addEventListener("click", () => {
             if (state.answered) return;
             state.selected = Number(button.dataset.option);
@@ -172,7 +174,7 @@ function checkAnswer() {
         if (index === state.correctIndex) button.classList.add("correct");
         if (index === state.selected && !correct) button.classList.add("incorrect");
     });
-    $("#answer-feedback").innerHTML = "<div class=\"feedback " + (correct ? "is-correct" : "") + "\"><strong>" + (correct ? "Correct." : "Not quite.") + "</strong> " + question.explanation + "</div><div class=\"question-actions next-action\"><button class=\"button button-primary\" id=\"next-question\" type=\"button\">" + (state.index === state.questions.length - 1 ? "See score" : "Next question") + " <span>→</span></button></div>";
+    $("#answer-feedback").innerHTML = "<div class=\"feedback " + (correct ? "is-correct" : "") + "\"><strong>" + (correct ? "Correct." : "Not quite.") + "</strong> " + esc(question.explanation) + "</div><div class=\"question-actions next-action\"><button class=\"button button-primary\" id=\"next-question\" type=\"button\">" + (state.index === state.questions.length - 1 ? "See score" : "Next question") + " <span>→</span></button></div>";
     $("#check-answer").remove(); $("#skip-question").remove();
     $("#next-question").addEventListener("click", () => { state.index += 1; renderQuestion(); });
 }
