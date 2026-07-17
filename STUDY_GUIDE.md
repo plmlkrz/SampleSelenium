@@ -56,7 +56,7 @@ The recall side of the gym: the drills build muscle memory for WRITING the code;
 field test checks you can PRODUCE the answers cold. Open `practice.html` via a local
 server (`py -m http.server 8080`, then <http://localhost:8080/practice.html>).
 
-- **91 questions** (81 multiple-choice + 10 written prompts) covering the full Infosys
+- **112 questions** (97 multiple-choice + 15 written prompts) covering the full Infosys
   top-100 bank, the Deloitte rounds, the Luxoft high-probability 15 (Spring Boot,
   REST Assured, financial JSON validation, JMeter, release-risk communication), and
   the Barclays QA automation rounds (exception handling, cross-browser, test data
