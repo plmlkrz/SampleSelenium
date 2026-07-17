@@ -56,11 +56,14 @@ The recall side of the gym: the drills build muscle memory for WRITING the code;
 field test checks you can PRODUCE the answers cold. Open `practice.html` via a local
 server (`py -m http.server 8080`, then <http://localhost:8080/practice.html>).
 
-- **138 questions** (117 multiple-choice + 21 written prompts) covering the full Infosys
+- **155 questions** (128 multiple-choice + 27 written prompts) covering the full Infosys
   top-100 bank, the Deloitte rounds, the Luxoft high-probability 15 (Spring Boot,
-  REST Assured, financial JSON validation, JMeter, release-risk communication), and
-  the Barclays QA automation rounds (exception handling, cross-browser, test data
-  and config management, maintainability, Git workflow).
+  REST Assured, financial JSON validation, JMeter, release-risk communication), the
+  Barclays QA automation rounds (exception handling, cross-browser, test data
+  and config management, maintainability, Git workflow), and a Lead Software QA
+  JD field test (test planning/estimation, defect triage and RCA, risk escalation,
+  automation strategy at program scale, AI-assisted testing, ETL/SQL reconciliation,
+  AWS fundamentals, Unix/Linux operations, and stakeholder demos/UAT/status reporting).
 - **20 questions per session, no repeats** — sampled without replacement.
 - **Answer positions shuffle on every render**, so "it's always B" can't be memorized.
 - **Tracks 01–06** slice by topic (Selenium, Java, Framework, TestNG+SQL, Interview
