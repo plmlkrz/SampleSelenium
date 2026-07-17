@@ -56,7 +56,7 @@ The recall side of the gym: the drills build muscle memory for WRITING the code;
 field test checks you can PRODUCE the answers cold. Open `practice.html` via a local
 server (`py -m http.server 8080`, then <http://localhost:8080/practice.html>).
 
-- **132 questions** (114 multiple-choice + 18 written prompts) covering the full Infosys
+- **138 questions** (117 multiple-choice + 21 written prompts) covering the full Infosys
   top-100 bank, the Deloitte rounds, the Luxoft high-probability 15 (Spring Boot,
   REST Assured, financial JSON validation, JMeter, release-risk communication), and
   the Barclays QA automation rounds (exception handling, cross-browser, test data
@@ -70,7 +70,8 @@ server (`py -m http.server 8080`, then <http://localhost:8080/practice.html>).
   drill modules (e.g. the 200-vs-201 written answer uses the same wording as the
   Module 9 javadoc — one phrasing in both places for faster recall).
 - Coding drills (reverse-preserving-whitespace, palindrome, second-highest salary,
-  Labcorp-style name letters) sit below the question panel with hint/solution reveals.
+  Labcorp-style name letters, settled-trade aggregation, and REST Assured POST/POJO
+  deserialization) sit below the question panel with hint/solution reveals.
 - Streak, best score, and session count persist in browser localStorage. Best score
   resets when it first sees a 20-question session (old /10 bests don't compare).
 
