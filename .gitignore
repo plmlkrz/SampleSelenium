@@ -21,3 +21,8 @@ target/
 # OS files
 .DS_Store
 Thumbs.db
+
+# JMeter drill output
+jmeter/results.jtl
+jmeter/report/
+jmeter/jmeter.log

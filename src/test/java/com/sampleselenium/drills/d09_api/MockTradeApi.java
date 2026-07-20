@@ -29,7 +29,12 @@ final class MockTradeApi {
 
     /** Starts on a random free port; returns the base URI, e.g. http://localhost:54321 */
     String start() throws IOException {
-        server = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
+        return start(0);
+    }
+
+    /** Starts on a fixed port (0 = random). Fixed ports are used by the JMeter drill in /jmeter. */
+    String start(int port) throws IOException {
+        server = HttpServer.create(new InetSocketAddress("localhost", port), 0);
         server.createContext("/api/trades", this::handleTrades);
         server.createContext("/api/portfolio/valuation", this::handleValuation);
         server.start();
