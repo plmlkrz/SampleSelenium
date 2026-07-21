@@ -94,6 +94,101 @@
                         </div>
                     </div>
                 </section>
+                <section class="blueprint-panel" aria-labelledby="blueprint-heading">
+                    <span class="eyebrow">FRAMEWORK BLUEPRINTS</span>
+                    <h2 id="blueprint-heading">Draw it while<br><em>you say it.</em></h2>
+                    <p>Three whiteboard-ready architectures. Trace the arrows top to bottom while saying the talk track out loud — the strongest interview move is sketching this while you explain it.</p>
+                    <details class="blueprint-card" open>
+                        <summary>Spring Boot API framework <small>REST Assured + Cucumber + Spring DI</small></summary>
+                        <div class="blueprint-body">
+                            <svg viewBox="0 0 680 524" role="img" aria-label="Spring Boot API test framework layers">
+                                <defs><marker id="bp-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+                                <g><rect class="bp-box" x="190" y="30" width="300" height="50" rx="4" fill="#e8e4d9"/><text class="bp-t" x="340" y="51" text-anchor="middle">Jenkins / GitHub Actions</text><text class="bp-ts" x="340" y="68" text-anchor="middle">PR smoke gate, nightly regression</text></g>
+                                <line x1="340" y1="80" x2="340" y2="106" stroke="#34484c" stroke-width="1.2" marker-end="url(#bp-arrow)"/>
+                                <rect x="40" y="110" width="600" height="272" rx="4" fill="none" stroke="rgba(20,34,40,.4)" stroke-width="1" stroke-dasharray="5 4"/>
+                                <text class="bp-ts" x="52" y="130">Spring test context &#8212; profiles, DI-managed beans</text>
+                                <g><rect class="bp-box" x="60" y="146" width="270" height="52" rx="4" fill="#f2d16c"/><text class="bp-t" x="195" y="168" text-anchor="middle">Cucumber features</text><text class="bp-ts" x="195" y="184" text-anchor="middle">declarative business flows</text></g>
+                                <g><rect class="bp-box" x="350" y="146" width="270" height="52" rx="4" fill="#f2d16c"/><text class="bp-t" x="485" y="168" text-anchor="middle">Scenario context</text><text class="bp-ts" x="485" y="184" text-anchor="middle">DI-injected shared state</text></g>
+                                <line x1="195" y1="198" x2="195" y2="222" stroke="#34484c" stroke-width="1.2" marker-end="url(#bp-arrow)"/>
+                                <line x1="485" y1="198" x2="485" y2="222" stroke="#34484c" stroke-width="1.2" marker-end="url(#bp-arrow)"/>
+                                <g><rect class="bp-box" x="60" y="226" width="560" height="50" rx="4" fill="#f2d16c"/><text class="bp-t" x="340" y="248" text-anchor="middle">Step definitions</text><text class="bp-ts" x="340" y="264" text-anchor="middle">call the client layer, never raw requests</text></g>
+                                <line x1="120" y1="276" x2="120" y2="302" stroke="#34484c" stroke-width="1.2" marker-end="url(#bp-arrow)"/>
+                                <line x1="268" y1="276" x2="268" y2="302" stroke="#34484c" stroke-width="1.2" marker-end="url(#bp-arrow)"/>
+                                <line x1="416" y1="276" x2="416" y2="302" stroke="#34484c" stroke-width="1.2" marker-end="url(#bp-arrow)"/>
+                                <line x1="564" y1="276" x2="564" y2="302" stroke="#34484c" stroke-width="1.2" marker-end="url(#bp-arrow)"/>
+                                <g><rect class="bp-box" x="50" y="306" width="140" height="58" rx="4" fill="#b9d9c8"/><text class="bp-t" x="120" y="330" text-anchor="middle">Client layer</text><text class="bp-ts" x="120" y="348" text-anchor="middle">request specs</text></g>
+                                <g><rect class="bp-box" x="198" y="306" width="140" height="58" rx="4" fill="#b9d9c8"/><text class="bp-t" x="268" y="330" text-anchor="middle">POJO models</text><text class="bp-ts" x="268" y="348" text-anchor="middle">typed payloads</text></g>
+                                <g><rect class="bp-box" x="346" y="306" width="140" height="58" rx="4" fill="#b9d9c8"/><text class="bp-t" x="416" y="330" text-anchor="middle">Validation</text><text class="bp-ts" x="416" y="348" text-anchor="middle">recompute math</text></g>
+                                <g><rect class="bp-box" x="494" y="306" width="140" height="58" rx="4" fill="#b9d9c8"/><text class="bp-t" x="564" y="330" text-anchor="middle">SQL helper</text><text class="bp-ts" x="564" y="348" text-anchor="middle">JdbcTemplate</text></g>
+                                <line x1="120" y1="364" x2="138" y2="416" stroke="#34484c" stroke-width="1.2" marker-end="url(#bp-arrow)"/>
+                                <line x1="562" y1="364" x2="560" y2="416" stroke="#34484c" stroke-width="1.2" marker-end="url(#bp-arrow)"/>
+                                <g><rect class="bp-box" x="50" y="420" width="190" height="52" rx="4" fill="#e8e4d9"/><text class="bp-t" x="145" y="442" text-anchor="middle">Spring Boot services</text><text class="bp-ts" x="145" y="459" text-anchor="middle">microservices under test</text></g>
+                                <g><rect class="bp-box" x="290" y="420" width="160" height="52" rx="4" fill="#e8e4d9"/><text class="bp-t" x="370" y="442" text-anchor="middle">WireMock stubs</text><text class="bp-ts" x="370" y="459" text-anchor="middle">downstream doubles</text></g>
+                                <g><rect class="bp-box" x="485" y="420" width="150" height="52" rx="4" fill="#e8e4d9"/><text class="bp-t" x="560" y="442" text-anchor="middle">Database</text><text class="bp-ts" x="560" y="459" text-anchor="middle">SQL reconciliation</text></g>
+                                <line x1="240" y1="446" x2="286" y2="446" stroke="#34484c" stroke-width="1.2" marker-end="url(#bp-arrow)"/>
+                                <rect x="50" y="496" width="10" height="10" rx="2" fill="#f2d16c"/><text class="bp-ts" x="66" y="505">BDD layer</text>
+                                <rect x="150" y="496" width="10" height="10" rx="2" fill="#b9d9c8"/><text class="bp-ts" x="166" y="505">framework core</text>
+                                <rect x="280" y="496" width="10" height="10" rx="2" fill="#e8e4d9"/><text class="bp-ts" x="296" y="505">environment / system under test</text>
+                            </svg>
+                            <p class="bp-note">Talk track: profiles pick the environment, DI owns the beans. Features state intent; step definitions delegate to the client layer &#8212; the API-side equivalent of page objects. Each core box has one reason to change: contract, payload shape, assertion logic, or schema. WireMock keeps per-service tests deterministic; the SQL helper reconciles what the API claims against what persisted.</p>
+                        </div>
+                    </details>
+                    <details class="blueprint-card">
+                        <summary>Selenium UI framework <small>this repo &#8212; POM + ThreadLocal driver</small></summary>
+                        <div class="blueprint-body">
+                            <svg viewBox="0 0 680 500" role="img" aria-label="Selenium UI test framework layers">
+                                <g><rect class="bp-box" x="190" y="30" width="300" height="50" rx="4" fill="#e8e4d9"/><text class="bp-t" x="340" y="51" text-anchor="middle">Jenkins / GitHub Actions</text><text class="bp-ts" x="340" y="68" text-anchor="middle">mvn test -Dheadless=true on push</text></g>
+                                <line x1="340" y1="80" x2="340" y2="106" stroke="#34484c" stroke-width="1.2" marker-end="url(#bp-arrow)"/>
+                                <rect x="40" y="110" width="600" height="272" rx="4" fill="none" stroke="rgba(20,34,40,.4)" stroke-width="1" stroke-dasharray="5 4"/>
+                                <text class="bp-ts" x="52" y="130">Maven project &#8212; Java 17, Selenium 4</text>
+                                <g><rect class="bp-box" x="60" y="146" width="270" height="52" rx="4" fill="#f2d16c"/><text class="bp-t" x="195" y="168" text-anchor="middle">Test classes</text><text class="bp-ts" x="195" y="184" text-anchor="middle">JUnit 5 / TestNG, extend BaseTest</text></g>
+                                <g><rect class="bp-box" x="350" y="146" width="270" height="52" rx="4" fill="#f2d16c"/><text class="bp-t" x="485" y="168" text-anchor="middle">Test data</text><text class="bp-ts" x="485" y="184" text-anchor="middle">DataProviders, CSV / Excel</text></g>
+                                <line x1="195" y1="198" x2="195" y2="222" stroke="#34484c" stroke-width="1.2" marker-end="url(#bp-arrow)"/>
+                                <line x1="485" y1="198" x2="485" y2="222" stroke="#34484c" stroke-width="1.2" marker-end="url(#bp-arrow)"/>
+                                <g><rect class="bp-box" x="60" y="226" width="560" height="50" rx="4" fill="#b9d9c8"/><text class="bp-t" x="340" y="248" text-anchor="middle">Page objects</text><text class="bp-ts" x="340" y="264" text-anchor="middle">locators + user actions, fluent returns</text></g>
+                                <line x1="145" y1="276" x2="145" y2="302" stroke="#34484c" stroke-width="1.2" marker-end="url(#bp-arrow)"/>
+                                <line x1="340" y1="276" x2="340" y2="302" stroke="#34484c" stroke-width="1.2" marker-end="url(#bp-arrow)"/>
+                                <line x1="535" y1="276" x2="535" y2="302" stroke="#34484c" stroke-width="1.2" marker-end="url(#bp-arrow)"/>
+                                <g><rect class="bp-box" x="60" y="306" width="170" height="58" rx="4" fill="#b9d9c8"/><text class="bp-t" x="145" y="330" text-anchor="middle">BasePage waits</text><text class="bp-ts" x="145" y="348" text-anchor="middle">waitAndClick, waitAndType</text></g>
+                                <g><rect class="bp-box" x="255" y="306" width="170" height="58" rx="4" fill="#b9d9c8"/><text class="bp-t" x="340" y="330" text-anchor="middle">DriverManager</text><text class="bp-ts" x="340" y="348" text-anchor="middle">ThreadLocal WebDriver</text></g>
+                                <g><rect class="bp-box" x="450" y="306" width="170" height="58" rx="4" fill="#b9d9c8"/><text class="bp-t" x="535" y="330" text-anchor="middle">Failure listener</text><text class="bp-ts" x="535" y="348" text-anchor="middle">screenshot on failure</text></g>
+                                <line x1="340" y1="364" x2="200" y2="416" stroke="#34484c" stroke-width="1.2" marker-end="url(#bp-arrow)"/>
+                                <g><rect class="bp-box" x="60" y="420" width="250" height="52" rx="4" fill="#e8e4d9"/><text class="bp-t" x="185" y="442" text-anchor="middle">Chrome / Edge / Firefox</text><text class="bp-ts" x="185" y="459" text-anchor="middle">headless in CI, Grid to scale</text></g>
+                                <line x1="310" y1="446" x2="386" y2="446" stroke="#34484c" stroke-width="1.2" marker-end="url(#bp-arrow)"/>
+                                <g><rect class="bp-box" x="390" y="420" width="230" height="52" rx="4" fill="#e8e4d9"/><text class="bp-t" x="505" y="442" text-anchor="middle">Surefire reports</text><text class="bp-ts" x="505" y="459" text-anchor="middle">results + screenshot artifacts</text></g>
+                            </svg>
+                            <p class="bp-note">Talk track: tests describe behavior and assertions; page objects hide locators behind meaningful actions and return the next page. BasePage centralizes explicit waits so no test calls Thread.sleep. The ThreadLocal DriverManager gives each parallel thread its own browser, and a listener captures screenshots automatically on failure &#8212; the same suite runs serially or with parallel="methods".</p>
+                        </div>
+                    </details>
+                    <details class="blueprint-card">
+                        <summary>Selenium BDD framework <small>Cucumber layer on top of POM</small></summary>
+                        <div class="blueprint-body">
+                            <svg viewBox="0 0 680 500" role="img" aria-label="Selenium BDD framework layers">
+                                <g><rect class="bp-box" x="190" y="30" width="300" height="50" rx="4" fill="#e8e4d9"/><text class="bp-t" x="340" y="51" text-anchor="middle">Jenkins / GitHub Actions</text><text class="bp-ts" x="340" y="68" text-anchor="middle">tags pick smoke / regression</text></g>
+                                <line x1="340" y1="80" x2="340" y2="106" stroke="#34484c" stroke-width="1.2" marker-end="url(#bp-arrow)"/>
+                                <rect x="40" y="110" width="600" height="272" rx="4" fill="none" stroke="rgba(20,34,40,.4)" stroke-width="1" stroke-dasharray="5 4"/>
+                                <text class="bp-ts" x="52" y="130">Cucumber on the JUnit platform &#8212; runner, glue, hooks</text>
+                                <g><rect class="bp-box" x="60" y="146" width="270" height="52" rx="4" fill="#f2d16c"/><text class="bp-t" x="195" y="168" text-anchor="middle">Feature files</text><text class="bp-ts" x="195" y="184" text-anchor="middle">declarative Gherkin, tags</text></g>
+                                <g><rect class="bp-box" x="350" y="146" width="270" height="52" rx="4" fill="#f2d16c"/><text class="bp-t" x="485" y="168" text-anchor="middle">Runner</text><text class="bp-ts" x="485" y="184" text-anchor="middle">glue path + tag filters</text></g>
+                                <line x1="195" y1="198" x2="195" y2="222" stroke="#34484c" stroke-width="1.2" marker-end="url(#bp-arrow)"/>
+                                <line x1="485" y1="198" x2="485" y2="222" stroke="#34484c" stroke-width="1.2" marker-end="url(#bp-arrow)"/>
+                                <g><rect class="bp-box" x="60" y="226" width="560" height="50" rx="4" fill="#f2d16c"/><text class="bp-t" x="340" y="248" text-anchor="middle">Step definitions</text><text class="bp-ts" x="340" y="264" text-anchor="middle">match steps, call page objects</text></g>
+                                <line x1="145" y1="276" x2="145" y2="302" stroke="#34484c" stroke-width="1.2" marker-end="url(#bp-arrow)"/>
+                                <line x1="340" y1="276" x2="340" y2="302" stroke="#34484c" stroke-width="1.2" marker-end="url(#bp-arrow)"/>
+                                <line x1="535" y1="276" x2="535" y2="302" stroke="#34484c" stroke-width="1.2" marker-end="url(#bp-arrow)"/>
+                                <g><rect class="bp-box" x="60" y="306" width="170" height="58" rx="4" fill="#b9d9c8"/><text class="bp-t" x="145" y="330" text-anchor="middle">Hooks</text><text class="bp-ts" x="145" y="348" text-anchor="middle">@Before / @After driver</text></g>
+                                <g><rect class="bp-box" x="255" y="306" width="170" height="58" rx="4" fill="#b9d9c8"/><text class="bp-t" x="340" y="330" text-anchor="middle">Page objects</text><text class="bp-ts" x="340" y="348" text-anchor="middle">locators + actions</text></g>
+                                <g><rect class="bp-box" x="450" y="306" width="170" height="58" rx="4" fill="#b9d9c8"/><text class="bp-t" x="535" y="330" text-anchor="middle">Scenario context</text><text class="bp-ts" x="535" y="348" text-anchor="middle">shared state via DI</text></g>
+                                <line x1="145" y1="364" x2="170" y2="416" stroke="#34484c" stroke-width="1.2" marker-end="url(#bp-arrow)"/>
+                                <line x1="340" y1="364" x2="210" y2="416" stroke="#34484c" stroke-width="1.2" marker-end="url(#bp-arrow)"/>
+                                <g><rect class="bp-box" x="60" y="420" width="250" height="52" rx="4" fill="#e8e4d9"/><text class="bp-t" x="185" y="442" text-anchor="middle">DriverManager + browser</text><text class="bp-ts" x="185" y="459" text-anchor="middle">ThreadLocal per scenario</text></g>
+                                <line x1="310" y1="446" x2="386" y2="446" stroke="#34484c" stroke-width="1.2" marker-end="url(#bp-arrow)"/>
+                                <g><rect class="bp-box" x="390" y="420" width="230" height="52" rx="4" fill="#e8e4d9"/><text class="bp-t" x="505" y="442" text-anchor="middle">Cucumber reports</text><text class="bp-ts" x="505" y="459" text-anchor="middle">html plugin + surefire</text></g>
+                            </svg>
+                            <p class="bp-note">Talk track: features are the business-readable spec &#8212; intent above the step-definition line, mechanics below. Hooks own the driver lifecycle around every scenario, so steps never touch setup. The scenario context (PicoContainer or cucumber-spring) carries state like an order ID between step classes without static variables, keeping parallel scenarios isolated. Tags slice one suite into smoke and regression runs.</p>
+                        </div>
+                    </details>
+                </section>
                 <footer class="page-footer">
                     <span>FIELD NOTE 01</span>
                     <p>Use this daily: cold answer → reveal → say it again with the trade-off.</p>

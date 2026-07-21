@@ -14,6 +14,7 @@ The field test includes:
 - Multiple-choice questions with immediate explanations and source signals
 - A dedicated written-answers track with coach notes, kept separate from the multiple-choice mix
 - Java and SQL coding drills, including the Labcorp-style "print every letter of my name" prompt
+- Three whiteboard-ready framework blueprint diagrams (Spring Boot API, Selenium UI, Selenium BDD) with talk-track notes
 - Local streak, best score, and session tracking through browser local storage
 - Responsive desktop and mobile layouts with no backend dependency
 
