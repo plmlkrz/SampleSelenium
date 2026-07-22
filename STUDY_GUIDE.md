@@ -44,8 +44,9 @@ runs with: `$env:MAVEN_OPTS='-Djavax.net.ssl.trustStoreType=Windows-ROOT'; mvn t
 | 8 | Cucumber BDD: feature / steps / runner / hooks / tags | `drills/d08_bdd/` + `resources/features/` | `mvn test -Dtest=RunCucumberDrills -Dheadless=true` |
 | 9 | **API testing**: REST Assured vs local mock microservice, 200 vs 201, JSON calc validation, Spring Boot testing talk track | `drills/d09_api/SourceD09ApiDrills.java` | `mvn test -Dtest=SourceD09ApiDrills` |
 | 10 | CI/CD: GitHub Actions + Jenkins | `.github/workflows/selenium-tests.yml`, `Jenkinsfile` | read + narrate; runs on push to GitHub |
+| 11 | **Resilience**: timeout/retry/circuit-breaker against a WireMock-stubbed downstream | `drills/d11_resilience/SourceD11ResilienceDrills.java` | `mvn test -Dtest=SourceD11ResilienceDrills` |
 
-Modules 6, 7 and 9 need **no browser** — they run in about a second. Perfect for
+Modules 6, 7, 9 and 11 need **no browser** — they run in about a second. Perfect for
 high-repetition days and for warming up the morning of the interview.
 
 Run one single test method: `mvn test -Dtest="SourceD05BrowserMechanicsDrills#alertAcceptAndReadResult" -Dheadless=true`
