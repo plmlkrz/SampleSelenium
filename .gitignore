@@ -26,3 +26,6 @@ Thumbs.db
 jmeter/results.jtl
 jmeter/report/
 jmeter/jmeter.log
+
+# JMeter run log (drill artifact)
+jmeter.log

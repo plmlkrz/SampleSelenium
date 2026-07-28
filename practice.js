@@ -186,6 +186,32 @@ const questionBank = [
     { track: "framework", type: "written", topic: "FRAMEWORK", question: "The application under test has a Windows-based desktop UI in front of a microservices backend. How would you approach automating the desktop UI?", coach: "Lead with your UFT/QTP depth — object identification, synchronization, checkpoints — then bridge: the discipline transfers to WinAppDriver/Appium or FlaUI, and most coverage should live at the API layer anyway with the desktop UI reserved for true end-to-end journeys.", model: "I've automated Windows-based UIs with UFT/QTP for years, and the transferable core is the same as Selenium: reliable object identification, explicit synchronization instead of sleeps, and keeping locators out of test logic. For a Java-centric stack I'd evaluate WinAppDriver or Appium's Windows driver — WebDriver protocol, so it slots into the existing framework, waits, and reporting — or FlaUI over UI Automation if deeper control identification is needed. Strategically, I'd push most validation to the API layer where it's fast and stable, and reserve desktop-UI automation for the critical end-to-end journeys that prove the UI and services agree — the same test-pyramid reasoning as web, just with a different driver at the top.", anchor: "Luxoft VR-123702 gap — Windows desktop UI automation" },
     { track: "framework", type: "written", topic: "PERFORMANCE", question: "Walk me through building a JMeter test plan from scratch for a calculation API.", coach: "Name the actual components in order — thread group, config elements, samplers, assertions, listeners — plus CSV-driven unique data, GUI-for-build/CLI-for-run, and what you look at in the results.", model: "I start with a Thread Group defining users, ramp-up, and duration, sized from the real traffic profile rather than a round number. Under it: an HTTP Request Defaults config so host and headers live in one place, a CSV Data Set Config feeding each thread unique calculation inputs — critical, because identical inputs hit caches and measure nothing — and the HTTP samplers for the endpoints under test. Each sampler gets a Response Assertion on status and a JSON Assertion on a key calculated field, because a fast wrong answer is still a failure. I build and debug in the GUI with a View Results Tree, but the real run is CLI — jmeter -n -t plan.jmx -l results.jtl — since GUI mode distorts load. Afterward I read the Aggregate Report focusing on p90/p95 and error rate, not averages, and correlate spikes with server-side metrics to tell an app bottleneck from an environment artifact.", anchor: "Luxoft VR-123702 gap — JMeter hands-on workflow" },
     { track: "api", type: "mcq", topic: "CUCUMBER", question: "How do Cucumber and Spring Boot actually integrate in a test framework?", options: ["Cucumber replaces the Spring context entirely", "A class annotated @CucumberContextConfiguration (typically with @SpringBootTest) boots the Spring context once; step-definition classes become Spring-managed beans, so shared state and services are injected via @Autowired instead of statics", "Each step definition must call SpringApplication.run() itself", "They cannot be combined; choose one framework"], answer: 1, explanation: "The cucumber-spring module wires Cucumber's glue into Spring's DI. One glue class carries @CucumberContextConfiguration + @SpringBootTest to start the context, and every step class is a bean — so a scenario-scoped shared-state bean or a REST client service is constructor/field injected, solving cross-step state cleanly. Know that the context boots once and scenario-scoped beans reset per scenario.", anchor: "Luxoft VR-123702 gap — cucumber-spring glue" },
+    { track: "interview", type: "written", topic: "UAT / RELEASE", question: "How do you prepare a workstream for UAT and production validation?", coach: "Cover business-critical scenarios, entry and exit criteria, access and test data, defect triage, production smoke checks, and rollback or hypercare readiness.", model: "I prepare UAT by translating the system-test coverage into a short set of business-critical journeys, then confirm entry criteria: the environment is stable, the right users have access, the data is representative and approved, and no unresolved blocker makes the results meaningless. During UAT I keep triage and evidence disciplined so business feedback becomes actionable defects rather than a parallel informal queue. For production I agree the smoke scenarios, monitoring and support contacts, validation data, and rollback or hypercare plan before deployment. The Test Lead's job is to make the handoff observable and reversible, not to declare success because the deployment completed.", anchor: "Maximus JD gap — UAT and Production phases" },
+    { track: "interview", type: "mcq", topic: "AGILE / SAFE", question: "In a large Agile or SAFe implementation, a workstream is behind planned test execution. What should the Test Lead do first?", options: ["Wait until the exit gate so the schedule variance is final", "Report only the percentage complete and let Program Test Management diagnose it", "Quantify planned versus actual work, identify the cause and dependencies, propose recovery options, and escalate the business impact early", "Add more testers immediately without checking requirements, data, or environment constraints"], answer: 2, explanation: "A useful lead response turns variance into a decision: what was planned, what actually happened, why the gap exists, what can recover it, and what risk remains if it cannot. The same view should roll up cleanly to Program Test Management and the broader release cadence.", anchor: "Maximus JD gap — Agile/SAFe execution oversight" },
+    { track: "interview", type: "written", topic: "DEFECT / JIRA", question: "How do you use JIRA to report and track a defect through resolution in a complex automation project?", coach: "Cover a reproducible report, evidence, severity versus priority, ownership, workflow states, links to requirements/tests, retest results, and trend visibility for the team.", model: "I create one defect with a precise title, environment and build, preconditions, repeatable steps, expected versus actual behavior, severity, business impact, and evidence such as logs, request/response data, screenshots, or a failing automation link. I link it to the requirement, test case, or story so coverage and traceability do not disappear into a ticket queue, then assign the right owner and keep the workflow state current as it moves through triage, development, ready-for-test, retest, and closure. On retest I record the build and result rather than just closing the ticket. For the lead view I use JIRA filters or dashboards for open defects by severity, age, assignee, reopen rate, and trend so defect management supports release decisions instead of becoming clerical status work.", anchor: "Luxoft JD gap — JIRA defect and test management" },
+    { track: "interview", type: "written", topic: "API INTEGRATION", question: "How would you design an API integration test strategy for a digital experience that moves data across multiple applications and services?", coach: "Start with the system and data-flow map, then cover contracts, authentication, business rules, negative paths, retries, idempotency, test data, observability, and the boundary between API, integration, and end-to-end coverage.", model: "I start by mapping the business workflow and the data lineage across each producer, consumer, middleware step, and persistence boundary. For each API I document the contract from Swagger or OpenAPI, authentication and authorization, required and optional fields, business rules, error responses, and correlation identifiers. The integration suite then proves mapping and state transitions across systems: valid flows, missing or malformed data, duplicates, timeouts, retries, partial failure, replay, and eventual consistency. I keep fast contract and service checks separate from a smaller set of end-to-end customer journeys, use controlled data or stubs for unavailable dependencies, and capture request, response, correlation ID, and downstream evidence so failures identify the boundary that broke rather than just saying the workflow failed.", anchor: "Builders Mutual JD gap — API integration and data movement" },
+    { track: "interview", type: "written", topic: "SOLE QA", question: "You are the only QA on a new Digital Experience team. What would you do in your first 30 days?", coach: "Show self-direction: stakeholder and system discovery, risk baseline, test strategy, defect workflow, automation priorities, environment/data needs, and a communication cadence.", model: "I would not begin by writing a large automation suite in isolation. First I would map the customer journeys, integrations, environments, release cadence, and the people who own product, development, data, and operations. Then I would baseline risk and coverage: what is already tested, where data moves between systems, which failures matter most to customers, and what is missing from the current defect and release process. I would publish a short test strategy with entry and exit criteria, API-first automation priorities, a small set of critical UI journeys, test-data and AWS dependencies, and a visible defect workflow. I would establish a weekly quality readout early so being the only QA never becomes being the only person who knows the risk.", anchor: "Builders Mutual JD gap — sole QA operating model" },
+    { track: "interview", type: "mcq", topic: "TOOL STRATEGY", question: "A digital experience has API integrations plus a small number of critical browser journeys. How should Playwright, Selenium, and API tests be used together?", options: ["Put every scenario in browser automation so it reflects the user", "Use API tests for contracts, data movement, and business rules; use Playwright or Selenium for critical user journeys, accessibility-relevant behavior, and browser-specific risks; avoid duplicating the same coverage at every layer", "Use Selenium only because API tests cannot validate integrations", "Use Playwright to replace all service and database validation"], answer: 1, explanation: "The test pyramid still applies. API and integration checks provide the strongest signal for service contracts, data movement, and business rules. Browser automation proves the highest-value customer journeys and browser behavior. Playwright and Selenium are alternatives to evaluate for the UI layer, not reasons to duplicate every test twice.", anchor: "Builders Mutual JD gap — Playwright/Selenium/API strategy" },
+    { track: "interview", type: "written", topic: "MIDDLEWARE", question: "How would you test a Workato recipe or another enterprise middleware integration?", coach: "Cover trigger conditions, field mapping, authentication, happy and failure paths, retries, duplicate delivery, idempotency, observability, and reconciliation at both ends.", model: "I would treat the recipe as a system boundary with an input contract, transformation rules, an output contract, and operational behavior. I would test valid and invalid triggers, required and optional fields, type and mapping transformations, authentication failures, downstream 4xx and 5xx responses, timeouts, retries, duplicate delivery, ordering, and partial failure. I would verify the source and target records, not just a successful job status, and use correlation IDs or run history to trace one business event through the workflow. The important questions are whether a replay creates duplicate business effects, whether a failed step is recoverable, and whether the team can detect and reconcile a message that was accepted by one system but not the next.", anchor: "Builders Mutual JD gap — Workato and middleware testing" },
+    { track: "interview", type: "written", topic: "WHITE / GRAY BOX", question: "What is the difference between white-box and gray-box testing, and where would each help in a complex integrated system?", coach: "Define the tester's level of internal knowledge, then connect each approach to risk, data validation, interfaces, logs, and business-facing end-to-end coverage.", model: "White-box testing uses detailed knowledge of the implementation — code paths, branches, queries, or service internals — to target coverage that black-box behavior alone may miss. Gray-box testing uses partial internal knowledge, such as API contracts, database relationships, message schemas, logs, or deployment topology, while still validating behavior from a user's or system consumer's perspective. In an integrated web system I would use white-box collaboration for targeted unit or service-level gaps and gray-box investigation to reconcile API results to database state, trace an interface failure, or choose high-value end-to-end scenarios. The goal is not to expose implementation for its own sake; it is to shorten diagnosis and improve coverage of the real risk.", anchor: "Maximus JD gap — white/gray-box testing" },
+    { track: "interview", type: "mcq", topic: "PLAYWRIGHT", question: "What is the most accurate description of Playwright's auto-waiting compared to Selenium's waits?", options: ["Playwright removes the need to think about timing at all", "Playwright performs actionability checks before every action — visible, stable, enabled, receives events — so most explicit waits disappear, but you still assert on state and set timeouts for app-specific conditions", "Playwright uses a global implicit wait like Selenium", "Selenium auto-waits and Playwright does not"], answer: 1, explanation: "Playwright retries actionability checks (attached, visible, stable, enabled, not obscured) up to the timeout before clicking or typing, and web-first assertions like expect(locator).toBeVisible() retry too. That kills most boilerplate waits, but conditions the framework cannot see — a spinner finishing, a queue draining — still need an explicit expectation.", anchor: "Builders Mutual JD gap — Playwright auto-waiting" },
+    { track: "interview", type: "mcq", topic: "PLAYWRIGHT", question: "Which Playwright locator approach best survives a UI refactor, and what does strict mode do?", options: ["XPath by absolute position; strict mode disables retries", "Role- and text-based locators (getByRole, getByLabel, getByTestId); strict mode fails the test when a locator resolves to more than one element", "CSS by generated class name; strict mode picks the first match silently", "Chained indexes; strict mode ignores duplicates"], answer: 1, explanation: "User-facing locators (getByRole/getByLabel/getByText) plus stable test IDs track intent rather than markup, so styling changes do not break them. Strict mode is the safety net: if a locator matches multiple nodes it errors instead of quietly acting on the first one — the ambiguity that Selenium's findElement hides.", anchor: "Builders Mutual JD gap — Playwright locators" },
+    { track: "interview", type: "mcq", topic: "PLAYWRIGHT", question: "A Playwright test fails only in CI. Which built-in artifact gives the fastest root cause?", options: ["Re-run it locally until it fails", "The trace file opened in the Playwright trace viewer — DOM snapshots per action, network log, console output, and screenshots on a timeline", "The stack trace alone", "Increase the timeout and move on"], answer: 1, explanation: "Configure trace on-first-retry plus video and screenshot on failure. The trace viewer replays each action with a before/after DOM snapshot, the network calls, and console output, so you can separate a genuine app defect from a timing or data problem without reproducing locally.", anchor: "Builders Mutual JD gap — Playwright trace viewer" },
+    { track: "interview", type: "mcq", topic: "PLAYWRIGHT", question: "How can Playwright support API-focused testing, not just browser testing?", options: ["It cannot; you must use a separate HTTP client", "Its APIRequestContext issues HTTP calls directly, can share cookies and auth state with a browser context, and is commonly used to seed or verify data around a UI journey", "It proxies all API calls through the browser UI", "Only via a third-party plugin"], answer: 1, explanation: "Playwright's request fixture is a first-class HTTP client with the same assertion library. Practical uses: set up test data through the API before a UI test, log in once and reuse storageState instead of driving the login form every time, and verify a downstream record after a UI action.", anchor: "Builders Mutual JD gap — Playwright API testing" },
+    { track: "interview", type: "written", topic: "PLAYWRIGHT", question: "Your Selenium background is deep and this role names Playwright. How do you answer 'how quickly could you be productive in Playwright?'", coach: "Be honest about depth, then show the transfer: the hard parts of automation are design, waits, data, and CI — not the API surface. Name specific Playwright concepts to prove you have actually looked at it.", model: "My production depth is in Selenium and Java, and I would rather say that plainly than overclaim. What transfers is everything that actually makes a suite trustworthy: locator strategy, deterministic waiting, page or component objects, test data ownership, parallel isolation, CI integration, and triage discipline. Playwright changes the syntax and gives me things I had to build by hand — actionability-based auto-waiting, web-first retrying assertions, strict-mode locators, worker-level parallelism with isolated browser contexts, storageState for auth reuse, and the trace viewer for CI failures. I would expect to be writing useful tests in the first week and contributing to framework structure inside two or three sprints. The risk is not learning the API; it is carrying over Selenium habits like sprinkling sleeps or over-driving the UI for setup the API should do, and I know to watch for that.", anchor: "Builders Mutual JD gap — Playwright ramp-up honesty" },
+    { track: "interview", type: "mcq", topic: "AWS", question: "You must validate an event-driven flow: a service publishes to SNS, an SQS queue feeds a Lambda, and the Lambda writes to a data store. What proves the flow end to end?", options: ["Assert the publish call returned 200 and stop", "Trigger with a known correlation ID, then assert the downstream persisted record, check the Lambda's CloudWatch logs for that ID, and confirm the dead-letter queue stayed empty", "Wait 30 seconds and check the UI", "Only test the Lambda in isolation with a unit test"], answer: 1, explanation: "A 200 from the publisher proves acceptance, not delivery. The real assertions are the persisted downstream state, the log trail for that correlation ID across hops, and an empty DLQ. Then test the failure side: poison message, retry behavior, and duplicate delivery, since SQS standard queues are at-least-once.", anchor: "Builders Mutual JD gap — AWS event-driven validation" },
+    { track: "interview", type: "mcq", topic: "AWS", question: "An integration intermittently fails in an AWS environment. Which investigation gives the strongest root-cause evidence?", options: ["Re-run the test suite until it passes", "Query CloudWatch Logs Insights by correlation or request ID across the API Gateway, Lambda, and downstream log groups, and line it up with metrics such as throttles, errors, and duration", "Ask the developer to check locally", "Increase all test timeouts"], answer: 1, explanation: "Distributed failures are traced, not guessed. Filter each log group by the same correlation ID to find the hop that broke, then confirm the pattern against metrics — Lambda throttles or timeouts, 5xx counts, queue age. X-Ray does the same job visually. That is what turns 'flaky' into a defect a developer can act on.", anchor: "Builders Mutual JD gap — AWS troubleshooting" },
+    { track: "interview", type: "mcq", topic: "AWS", question: "A test must verify file-based ingestion: a partner drops a CSV into S3 and records should appear in the application. What is the sound approach?", options: ["Manually upload through the console each time", "Automate the upload with the AWS SDK using a scoped test-only IAM role and a unique key, then poll for the processed record with a bounded timeout and assert both the row content and the malformed-file failure path", "Assert only that the object exists in the bucket", "Skip it — file ingestion cannot be automated"], answer: 1, explanation: "Own the whole loop: put the object programmatically, use a unique key so parallel runs do not collide, poll for downstream state instead of sleeping, and clean up. Then test the ugly cases — bad header, wrong encoding, partial file, duplicate delivery — and verify rejected files land where operations can see them.", anchor: "Builders Mutual JD gap — AWS S3 ingestion testing" },
+    { track: "interview", type: "mcq", topic: "AWS", question: "Calling an API through AWS API Gateway, you see a 403, then later a 502. What do these usually tell you?", options: ["Both mean the API is down", "403 is typically authorization, signature, WAF, or a missing API key at the gateway; 502 means the gateway reached the integration but got a bad or malformed response from it", "403 means the record was not found; 502 means throttling", "They are interchangeable gateway noise"], answer: 1, explanation: "Knowing where the status originates saves hours. 401 and 403 usually never reach the backend — authorizer, key, IAM signature, or WAF. 502 means the integration responded badly, 504 is an integration timeout, and 429 is throttling. Capture the request ID from the response headers and hand that to the developer.", anchor: "Builders Mutual JD gap — API Gateway status triage" },
+    { track: "interview", type: "written", topic: "AWS", question: "What changes about your QA approach when the application under test runs in AWS rather than on-prem?", coach: "Cover environment parity, credentials and IAM, observability, eventual consistency, cost and data hygiene, and the services you actually touch as a tester.", model: "The functional testing does not change; the operating context does. Access becomes IAM-shaped, so I use a scoped test role and pull credentials from Secrets Manager or Parameter Store instead of a checked-in properties file. Observability improves and I lean on it: CloudWatch logs and metrics, correlation IDs, and X-Ray become primary evidence in defect reports rather than screenshots. The architecture is more asynchronous, so I stop asserting immediately after a call and poll for downstream state with a bounded timeout, and I add coverage for retries, duplicate delivery, and dead-letter handling. Environment parity matters more — a lower environment with stubbed integrations will not catch IAM, VPC, or throttling problems, so I state which risks are only provable in a production-like environment. I also treat test data and infrastructure as things I clean up, because leftover queues, objects, and records cost money and corrupt later runs.", anchor: "Builders Mutual JD gap — testing cloud applications in AWS" },
+    { track: "interview", type: "mcq", topic: "DATA MOVEMENT", question: "You must prove data moved correctly from a source system through middleware into a target system. What is the strongest validation?", options: ["Confirm the integration job reported success", "Reconcile source and target on record counts, key-level field-by-field comparison across a sampled and boundary-heavy set, transformed values, and rejected-record handling", "Spot-check one record in the UI", "Compare only the total row counts"], answer: 1, explanation: "Counts alone hide truncation, mapping errors, timezone and precision shifts, and silently dropped rows. Reconcile counts first as a cheap tripwire, then compare keys and transformed fields — especially nulls, defaults, max lengths, decimals, dates, and special characters — and prove rejected records are visible somewhere rather than lost.", anchor: "Builders Mutual JD gap — data movement reconciliation" },
+    { track: "interview", type: "mcq", topic: "DATA MOVEMENT", question: "An integration is eventually consistent — the target record appears anywhere from 1 to 20 seconds later. How should the automated check be written?", options: ["Sleep for 20 seconds before asserting", "Poll the target on a short interval with a bounded overall timeout, fail with the last observed state, and treat the observed latency itself as a reportable measurement", "Assert immediately and mark the test flaky", "Retry the whole test three times"], answer: 1, explanation: "A fixed sleep pays the worst case every run and still breaks when the system is slower. Bounded polling — an Awaitility-style loop or a retrying assertion — passes as soon as the state is right and fails with useful diagnostics. Recording how long it took turns a vague 'sometimes slow' into data. Blanket test-level retries just hide real defects.", anchor: "Builders Mutual JD gap — eventual consistency assertions" },
+    { track: "interview", type: "mcq", topic: "DATA MOVEMENT", question: "Why does idempotency matter when testing integrations, and how do you test it?", options: ["It does not matter if the happy path works", "Networks retry: send the same request or event twice with the same idempotency key or message ID and assert one business effect — one record, one payment, one notification — plus a sane response to the duplicate", "Idempotency is only a developer concern", "Test it by sending two different payloads"], answer: 1, explanation: "At-least-once delivery, client retries, and manual replays all mean a message can arrive twice. The test is: replay the identical request and prove the downstream state changed once. Related cases are out-of-order delivery, a retry after a timeout where the first call actually succeeded, and whether replaying a failed batch is safe for operations.", anchor: "Builders Mutual JD gap — idempotency and duplicate delivery" },
+    { track: "interview", type: "mcq", topic: "CONTRACT", question: "The team publishes a Swagger/OpenAPI spec. How do you use it beyond reading endpoint names?", options: ["Only to find the base URL", "Generate the test baseline from it — required fields, types, enums, formats, status codes — validate live responses against the schema, and diff spec versions to catch breaking changes before consumers do", "Trust it as proof the API behaves correctly", "Import it once and never look again"], answer: 1, explanation: "The spec is the contract and also a test oracle. Schema-validate real responses so drift shows up as a failure, drive negative cases from the declared constraints, and diff the spec between builds — a removed field, a narrowed enum, or a changed required flag is a breaking change for every downstream consumer. A spec that disagrees with the implementation is itself a defect.", anchor: "Builders Mutual JD gap — Swagger/OpenAPI contract testing" },
+    { track: "interview", type: "mcq", topic: "TOOLING", question: "You have a large Postman collection for exploratory API work. How should it relate to the automated suite?", options: ["Postman is enough; skip coded tests", "Keep Postman for exploration, documentation, and stakeholder demos, run collections in CI with Newman where they earn it, and move durable regression coverage into code for version control, reuse, and data setup", "Delete Postman once automation exists", "Maintain both as full duplicates of each other"], answer: 1, explanation: "Postman is excellent for discovery, sharing a reproducible request with a developer, and quick environment-driven checks, and Newman makes it CI-runnable. But collections are awkward to refactor, review, and share logic across. The durable regression layer belongs in code next to the application, with the collection kept as an exploration and documentation asset rather than a second unmaintained suite.", anchor: "Builders Mutual JD gap — Postman/Newman vs coded suites" },
+    { track: "interview", type: "written", topic: "ROOT CAUSE", question: "An API returns 200 OK but the record never appears in the downstream system. Walk through your root-cause analysis.", coach: "Show a boundary-narrowing method, not a guess list: reproduce with a correlation ID, verify each hop, separate accepted from processed, then write a defect that names the failing boundary with evidence.", model: "First I reproduce with a controlled payload and a correlation ID I can trace. Then I narrow the boundary rather than speculate. I confirm what the 200 actually means, because many asynchronous APIs return accepted, not processed, and I check the response body for a job or message ID. I follow that ID through the hops: did the message reach the queue or middleware, did the consumer pick it up, did it error, did it land in a dead-letter queue, and what do the logs say at each step. I query the target directly rather than trusting the UI, because a caching or read-model lag looks identical to a lost record. I also diff a working payload against the failing one, since mapping, field length, encoding, or a field that is optional upstream but required downstream is a common cause. Then I write the defect with the request, response, correlation ID, timestamps, the log line from the hop that broke, and whether the data is recoverable — so the developer starts at the failure and operations know whether existing records need reconciliation.", anchor: "Builders Mutual JD gap — integration root-cause analysis" },
+    { track: "interview", type: "written", topic: "TEST PLAN", question: "How do you design and document an API test plan and test cases so developers and business stakeholders can both use them?", coach: "Cover scope, the data-flow map, per-endpoint case design, non-functional angles, environments and data, entry and exit criteria, traceability, and how the automation maps back to it.", model: "I start with scope and a data-flow map: which services and systems participate, what business process the data supports, and where the risky boundaries are. For each endpoint I document the contract from the spec, authentication and authorization, then design cases in layers — happy path, required and optional field validation, boundaries, data types and formats, business rules, error responses with their codes and messages, authorization negatives, and the integration effect on the downstream system. Around that I capture the non-functional checks that matter: response time expectations, payload size, pagination, rate limiting, and sensitive data exposure. The plan states environments, test data ownership and refresh, dependencies and stubs, entry and exit criteria, and risks. Each case traces to a requirement or story, and the automated tests carry the same identifiers so coverage is answerable rather than assumed. I keep the artifact short and living — a readable document plus the suite itself as the executable spec — because a plan nobody reads is not a control.", anchor: "Builders Mutual JD gap — API test plan documentation" },
+    { track: "interview", type: "mcq", topic: "MIDDLEWARE", question: "You are testing an integration whose downstream partner system is unavailable in the test environment. What is the professional approach?", options: ["Skip the tests until the partner is available", "Stub the partner at the boundary with WireMock or a service virtualization layer to prove your side's contract handling, retries, and error paths — while explicitly flagging which risks remain provable only against the real system", "Point the tests at the partner's production system", "Assume the integration works if the code compiles"], answer: 1, explanation: "Stubbing lets you test deterministically and cover failure modes a real partner rarely reproduces on demand — 500s, timeouts, malformed payloads, slow responses. The professional part is being explicit that stubs prove your handling, not the real contract, so you still schedule a connectivity or end-to-end verification window and say so in the test plan rather than letting green tests imply more than they cover.", anchor: "Builders Mutual JD gap — stubbing unavailable partners" },
 ];
 
 const codingDrills = [
@@ -199,11 +225,573 @@ const codingDrills = [
     { category: "LUXOFT-STYLE API", title: "POST and deserialize a trade", prompt: "Using REST Assured, POST a TradeRequest POJO to /api/trades with an API key, assert 201 and the Location header, deserialize the body to TradeResult, and verify the returned money value without floating-point loss.", listening: "given/when/then structure, request serialization, contract assertions before extraction, POJO deserialization, BigDecimal comparison, and a useful negative follow-up", hint: "Send the POJO with contentType(JSON), validate before extract().as(...), and compare BigDecimal with compareTo when scale is not part of the contract.", solution: "TradeRequest request = new TradeRequest(\"AAPL\", \"BUY\", 10, new BigDecimal(\"189.50\"));\nTradeResult result = given()\n        .header(\"X-API-KEY\", \"drill-key\")\n        .contentType(ContentType.JSON)\n        .body(request)\n.when()\n        .post(\"/api/trades\")\n.then()\n        .statusCode(201)\n        .header(\"Location\", notNullValue())\n        .contentType(ContentType.JSON)\n        .extract().as(TradeResult.class);\nassertEquals(0, new BigDecimal(\"189.50\").compareTo(result.getPrice()));\nassertEquals(\"NEW\", result.getStatus());\n// Follow-ups: missing API key -> 401; invalid quantity -> agreed 4xx + field error." }
 ];
 
-const state = { track: "all", questions: [], index: 0, correct: 0, answered: false, selected: null, correctIndex: null, codingIndex: 0 };
+const employerFilters = [
+    { value: "all", label: "ALL JOB DESCRIPTIONS", shortLabel: "ALL", matches: [] },
+    { value: "infosys", label: "Infosys", shortLabel: "INFOSYS", matches: ["infosys"] },
+    { value: "deloitte", label: "Deloitte", shortLabel: "DELOITTE", matches: ["deloitte"] },
+    { value: "barclays", label: "Barclays", shortLabel: "BARCLAYS", matches: ["barclays"] },
+    { value: "luxoft", label: "Luxoft", shortLabel: "LUXOFT", matches: ["luxoft"] },
+    { value: "maximus", label: "Maximus", shortLabel: "MAXIMUS", matches: ["maximus"] },
+    { value: "builders-mutual", label: "Builders Mutual", shortLabel: "BUILDERS MUTUAL", matches: ["builders mutual", "builders"] },
+    { value: "general", label: "General / cross-company", shortLabel: "GENERAL", matches: [] }
+];
+const maximusTrackTags = new Set(["selenium", "java", "testng-sql"]);
+const luxoftTrackTags = new Set(["java", "framework", "testng-sql", "api"]);
+const buildersTrackTags = new Set(["api", "selenium", "framework", "testng-sql"]);
+const maximusQuestionTags = [
+    "What should a Page Object primarily own?",
+    "Which answer best describes a data-driven framework?",
+    "What is the strongest response when asked to explain your SampleSelenium framework?",
+    "Which design patterns show up in a typical Java automation framework",
+    "A new feature ships next sprint. How do you decide what to automate first?",
+    "How does automation typically integrate with Jenkins",
+    "Give your 60-second answer for:",
+    "What is a hybrid framework?",
+    "What roles do Maven play",
+    "How do you run a specific test from the command line?",
+    "How do you manage test data and environment configurations?",
+    "What practices keep automation scripts maintainable?",
+    "Describe a standard Git workflow for automation code.",
+    "How do you perform data-driven testing with Excel and Java?",
+    "In Selenium 4, PageFactory",
+    "How should pipeline stages separate fast PR checks from heavy regression?",
+    "How do you share state (like an order ID",
+    "How do Cucumber and Spring Boot actually integrate",
+    "In REST Assured, which chain correctly asserts",
+    "How do you validate a large JSON response",
+    "What is a POJO request model in Java API automation?",
+    "How would you deserialize a JSON array response",
+    "Beyond the HTTP status code, what do you validate in an API response?",
+    "How would you call a Spring Boot endpoint with REST Assured?",
+    "How would you structure an automation framework for testing Spring Boot services?",
+    "Explain the difference between HTTP 200 and 201",
+    "How would you approach end-to-end API testing for a microservices-based application?",
+    "GET vs POST — the differences that matter?",
+    "How does token-based authentication work in API testing?",
+    "What is the actual difference between SoapUI and a REST API?",
+    "What do the five HTTP status-code families mean?",
+    "A request body is syntactically valid JSON",
+    "GET /api/trades/9999",
+    "When would an API correctly return 409 Conflict",
+    "Your test suite starts receiving 429 responses",
+    "How do you tell apart 500, 502, 503, and 504",
+    "How can Spring's dependency injection",
+    "How do Spring Boot profiles manage multi-environment test setups",
+    "How can Spring Boot Actuator endpoints help",
+    "Developers added new fields to an API response",
+    "How do you deserialize deeply nested JSON",
+    "What is the difference between RequestSpecification",
+    "In a data-driven API suite, how do you dynamically mutate",
+    "How do you communicate the ROI of an automation framework",
+    "What is the difference between retesting and regression testing?",
+    "A developer disagrees that a bug should be fixed.",
+    "Tell me about a serious defect you found",
+    "Severity vs priority",
+    "Smoke vs sanity testing?",
+    "Walk through the bug life cycle.",
+    "How do you identify high-risk areas of an application?",
+    "A defect cannot be reproduced consistently.",
+    "Multiple teams are releasing changes into the same environment",
+    "How do you decide whether a build is ready for release?",
+    "How do you measure release quality?",
+    "How do you decide what belongs in a regression suite?",
+    "Regression execution time has become too long.",
+    "How would you test a database migration without data loss?",
+    "A major release is planned for a large application.",
+    "A new project starts with no existing test assets.",
+    "You find a critical defect just before the production release.",
+    "A production issue is reported by customers.",
+    "Tell me about a situation where you prevented a production issue.",
+    "There is disagreement between QA and Development about release quality.",
+    "You are assigned as QA Lead for a new product.",
+    "How would you improve an existing QA process"
+];
+const luxoftQuestionTags = [
+    "How do you handle flaky Selenium tests",
+    "What is the difference between retesting and regression testing?",
+    "Tell me about a serious defect you found",
+    "How do you communicate the ROI of an automation framework",
+    "How would you test a database migration without data loss?",
+    "A major release is planned for a large application.",
+    "A new project starts with no existing test assets.",
+    "You find a critical defect just before the production release.",
+    "A production issue is reported by customers.",
+    "There is disagreement between QA and Development about release quality."
+];
+const buildersQuestionTags = [
+    "A developer disagrees that a bug should be fixed.",
+    "What is the difference between retesting and regression testing?",
+    "Tell me about a serious defect you found",
+    "Severity vs priority",
+    "Walk through the bug life cycle.",
+    "How do you communicate the ROI of an automation framework",
+    "A business analyst gives you a new calculation rule.",
+    "How do you identify high-risk areas of an application?",
+    "A defect cannot be reproduced consistently.",
+    "Multiple teams are releasing changes into the same environment",
+    "How do you decide whether a build is ready for release?",
+    "How do you measure release quality?",
+    "How do you decide what belongs in a regression suite?",
+    "Regression execution time has become too long.",
+    "A major release is planned for a large application.",
+    "A new project starts with no existing test assets.",
+    "A production issue is reported by customers.",
+    "There is disagreement between QA and Development about release quality.",
+    "You are assigned as QA Lead for a new product.",
+    "How would you improve an existing QA process",
+    "How do you run a stakeholder walkthrough or demo",
+    "Your workstream depends on an interface with an external integration partner",
+    "How do you mentor QA team members"
+];
+const balancedOptionOverrides = {
+    "How can Spring Boot Actuator endpoints help": [
+        "Use Actuator to launch the test suite automatically.",
+        "Use health/readiness as a pre-suite gate and stop when a dependency is unavailable.",
+        "Use Actuator only to monitor production after tests finish.",
+        "Use Actuator as a replacement for performance testing."
+    ],
+    "What roles do Maven play": [
+        "Use Maven only to download dependencies.",
+        "Use Maven for dependencies, lifecycle commands, and Surefire test execution.",
+        "Use Maven as a replacement for Jenkins.",
+        "Use Maven to write the test cases."
+    ],
+    "Severity vs priority": [
+        "Severity and priority are interchangeable labels.",
+        "Severity is technical impact; priority is business urgency.",
+        "Priority is assigned only after severity is fixed.",
+        "QA sets severity and developers set priority."
+    ],
+    "How do you determine JMeter thread count": [
+        "Start with a fixed 1,000-thread load, regardless of production traffic or SLA.",
+        "Use production volume and SLAs to set load; ramp gradually, then separate load, stress, and spike goals.",
+        "Set threads to CPU cores multiplied by two, regardless of the service's traffic profile.",
+        "Treat ramp-up as a reporting setting rather than a control for request arrival rate."
+    ],
+    "What is the difference between RequestSpecification": [
+        "They are two names for one shared specification.",
+        "RequestSpecification holds request setup; ResponseSpecification holds reusable assertions and SLAs.",
+        "ResponseSpecification sends the request and creates its payload.",
+        "Specifications apply only to XML requests, not JSON APIs."
+    ],
+    "How do you decide whether a build is ready": [
+        "Ship whenever all automated tests are green, even if risk is open.",
+        "Ship when developers say the build is ready, without a separate QA gate.",
+        "Use agreed exit criteria: execution, pass rate, defects, regression, and known-risk review.",
+        "Ship on the planned date regardless of open defects or coverage."
+    ],
+    "Developers added new fields to an API response": [
+        "Freeze the API so response fields can never change.",
+        "Ignore additive fields in deserialization, then use contract tests for removed or renamed fields.",
+        "Catch the exception inside every test and continue.",
+        "Parse every response as raw strings to avoid schema decisions."
+    ],
+    "How do you run a specific test": [
+        "Run it only from the IDE's test runner.",
+        "Use Maven's -Dtest selector and add runtime properties such as -Dheadless=true.",
+        "Compile the test file directly with java.",
+        "Use mvn deploy to select one test method."
+    ],
+    "How would you validate paginated API responses": [
+        "Validate only the first page and assume the rest follow it.",
+        "Validate metadata, boundaries, ordering, and no missing or duplicate records across pages.",
+        "Fetch pages and count them once without checking their records.",
+        "Treat pagination as a UI concern rather than an API contract."
+    ],
+    "In Selenium 4, PageFactory": [
+        "Use PageFactory because Selenium 4 requires it for every page.",
+        "Use By plus explicit waits when timing and synchronization need to stay visible.",
+        "Avoid By locators because they cannot be reused between methods.",
+        "Avoid PageFactory because Selenium 4 removed it entirely."
+    ],
+    "Which AWS services are most relevant": [
+        "Use Route 53 and CloudFront as the only test-execution services.",
+        "Use compute for runners, S3 for artifacts, CloudWatch for telemetry, and a managed secrets store.",
+        "Use RDS as the only AWS service relevant to QA execution.",
+        "Treat AWS as unrelated because test execution must stay local."
+    ],
+    "Why is a plain @Component": [
+        "Singletons are slower to create, so they reduce parallel speed.",
+        "A shared singleton lets threads fight over one driver; use ThreadLocal or thread scope.",
+        "Spring forbids WebDriver beans, so the class cannot run.",
+        "Add @Component twice so Spring creates two instances."
+    ],
+    "A stakeholder hands you a feature file": [
+        "Run the click-by-click feature unchanged; more steps mean more coverage.",
+        "Use business-intent steps and keep click mechanics in step definitions and page objects.",
+        "Delete the scenario because imperative Gherkin cannot be tested.",
+        "Convert every step into a Scenario Outline regardless of data variation."
+    ],
+    "What is the difference between 301": [
+        "Treat all three codes as redirects to a new URL.",
+        "301 is permanent, 302 temporary, and 304 is a cache-validation response.",
+        "Treat 304 as a permanent move to a new resource.",
+        "Use 301 only in browsers; APIs never return it."
+    ],
+    "Beyond the HTTP status code": [
+        "Treat any 200 response as sufficient proof that the API worked.",
+        "Check headers, contract shape, negative errors, SLA, and resulting state.",
+        "Check only that the response body is syntactically valid JSON.",
+        "Compare the server IP address with the expected environment."
+    ],
+    "What is SQL injection": [
+        "Treat SQL injection as a performance-tuning technique.",
+        "Verify hostile input is rejected and queries use bound parameters, not concatenated strings.",
+        "Use SQL injection as a way to speed up joins.",
+        "Treat SQL injection as a database backup strategy."
+    ],
+    "How do you tell apart 500": [
+        "Treat 500, 502, 503, and 504 as interchangeable server errors.",
+        "Separate service errors, gateway errors, unavailable services, and upstream timeouts.",
+        "Treat 502 as invalid JSON in the request body.",
+        "Treat 504 as a problem with the client's internet connection."
+    ],
+    "Regression execution time": [
+        "Delete half the tests alphabetically to shorten the run.",
+        "Buy faster laptops so the existing suite finishes sooner.",
+        "Parallelize, move checks to APIs, remove overlap, select by change, and fix slow setup.",
+        "Run regression only once per release instead of each cycle."
+    ],
+    "What negative and boundary cases matter most": [
+        "Test only the happy path with round numbers and valid fields.",
+        "Cover boundaries, nulls, malformed input, wrong types, and precision with useful 4xx errors.",
+        "Use random strings as the only negative-data strategy.",
+        "Test whichever edge cases the developer happens to suggest."
+    ],
+    "How would you performance-test a calculation-heavy": [
+        "Open the UI and time one run with a stopwatch.",
+        "Use realistic parameterized load, assert p90/p95 and error SLAs, then test beyond expected load.",
+        "Run the functional suite twice and compare the averages.",
+        "Use JMeter only for database-performance testing."
+    ],
+    "How can Spring's dependency injection": [
+        "Use Spring only for production applications, not the test framework.",
+        "Inject shared clients and configuration as managed beans with centralized lifecycle control.",
+        "Use Spring as a replacement for the test runner and assertions.",
+        "Use @Autowired only inside Spring MVC controllers."
+    ],
+    "How do Spring Boot profiles": [
+        "Copy the framework once for each environment and maintain separate code paths.",
+        "Store environment settings in profiles and activate the target at runtime without code changes.",
+        "Use profiles only when the test suite connects to a database.",
+        "Edit application.properties by hand before every test run."
+    ],
+    "A calculation API returns a huge nested JSON": [
+        "Compare the response as one raw string against a saved golden file.",
+        "Combine typed business assertions, order-independent structure checks, and schema validation.",
+        "Assert only the number of items returned in the array.",
+        "Treat unordered arrays as impossible to validate reliably."
+    ],
+    "Why must every JMeter thread send UNIQUE": [
+        "Duplicate data crashes JMeter before the request is sent.",
+        "Use unique parameterized data so caching does not hide calculation performance.",
+        "Generate unique inputs only when a database is part of the test.",
+        "Reuse the payload and change only the User-Agent header."
+    ],
+    "A defect cannot be reproduced consistently": [
+        "Close it as non-reproducible after three attempts.",
+        "Escalate it immediately without collecting additional evidence.",
+        "Capture failure context, find patterns, and force the timing or data window.",
+        "Wait for the same defect to appear in production."
+    ],
+    "How would you test a database migration": [
+        "Run the migration and spot-check a few rows afterward.",
+        "Trust the migration because the script received code review.",
+        "Reconcile counts, checksums, constraints, sampled rows, application behavior, and rollback.",
+        "Test only the structure of the new schema."
+    ],
+    "How should pipeline stages separate": [
+        "Run the full regression on every commit and accept slow pull requests.",
+        "Gate PRs with fast checks; schedule full UI, cross-browser, and performance suites separately.",
+        "Run tests manually before releases and skip automated merge gates.",
+        "Run only the smoke suite in scheduled builds."
+    ],
+    "When is JavaScriptExecutor the right tool": [
+        "Use it as the default click mechanism for every element.",
+        "Use it as a fallback for scrolling, JS state, or unreachable elements.",
+        "Avoid it because JavaScriptExecutor is deprecated in Selenium.",
+        "Use it only when the browser displays an alert."
+    ],
+    "GET vs POST": [
+        "GET is newer than POST, so it should be preferred by default.",
+        "GET reads with URL parameters; POST sends a body for create/process work.",
+        "POST requests cannot carry JSON bodies.",
+        "GET is always safer for passwords and other credentials."
+    ],
+    "Smoke vs sanity": [
+        "Smoke and sanity are interchangeable names for the same suite.",
+        "Smoke is broad build health; sanity is focused validation after a change.",
+        "Sanity is always automated, while smoke tests are always manual.",
+        "Smoke tests are valid only after production deployment."
+    ],
+    "Business requirements change in the middle": [
+        "Reject the change until the next sprint starts.",
+        "Retest the entire application from scratch without reassessment.",
+        "Assess coverage impact, update tests, re-estimate, and surface trade-offs.",
+        "Log the requirement change as a product defect."
+    ],
+    "A new feature ships next sprint": [
+        "Automate every scenario immediately, regardless of stability or risk.",
+        "Automate whichever scenario is fastest to implement.",
+        "Prioritize critical, repetitive, stable paths by risk and return.",
+        "Automate only UI flows and leave service checks manual."
+    ],
+    "What is grouping in TestNG": [
+        "Use groups only to format the generated HTML report.",
+        "Use groups to select smoke, regression, or API slices from one suite.",
+        "Use groups to organize browsers rather than test scenarios.",
+        "Use groups only when the test receives DataProvider values."
+    ],
+    "What do the static and this keywords": [
+        "static means unchangeable, while this creates a new object.",
+        "static belongs to the class; this refers to the current object instance.",
+        "this is available only inside the Java main method.",
+        "static and this are interchangeable keywords."
+    ],
+    "How do you deserialize deeply nested JSON": [
+        "Deeply nested JSON cannot be mapped cleanly into Java objects.",
+        "Use nested POJOs, with JsonNode or Map for genuinely dynamic subtrees.",
+        "Flatten the JSON with regular expressions before deserializing it.",
+        "Deserialize the entire response into one String field."
+    ],
+    "How do you feed a large matrix": [
+        "Write one manually maintained Cucumber scenario for every combination.",
+        "Use Examples for readable cases and external vectors for large matrices.",
+        "Cucumber cannot support data-driven test execution.",
+        "Paste the entire spreadsheet into a massive Examples table."
+    ],
+    "How do you share state": [
+        "Store the value in a public static field shared by every scenario.",
+        "Inject a scenario-scoped context so each scenario receives fresh state.",
+        "Write the value to a file so later steps can read it back.",
+        "Merge every step into one large class to share its fields."
+    ],
+    "How do you manage test data": [
+        "Hard-code environment values and test data inside each test.",
+        "Externalize environment settings and data, then select them at runtime.",
+        "Keep environment and test-data decisions in the developer's memory.",
+        "Reuse one shared production account for every environment and test."
+    ],
+    "Primary key vs foreign key": [
+        "Allow both keys to contain duplicates and null values.",
+        "The primary key identifies a row; the foreign key enforces table relationships.",
+        "Require every foreign key value to be unique in its child table.",
+        "Allow a primary key to be null after the first insert."
+    ],
+    "Array vs ArrayList": [
+        "Treat arrays and ArrayList as equivalent collections in modern Java.",
+        "An array has fixed length; ArrayList grows and provides collection methods.",
+        "Use ArrayList only when the number of elements is fixed at compile time.",
+        "Use arrays only for primitives because they cannot hold object references."
+    ],
+    "List vs Set": [
+        "Choose either one because List and Set enforce the same collection rules.",
+        "List preserves order and duplicates; Set represents unique values.",
+        "Use Set when duplicate values must be retained in sorted insertion order.",
+        "Use List only when the collection does not need iteration."
+    ],
+    "How do you measure release quality": [
+        "Count executed test cases without considering the outcome or business risk.",
+        "Use escaped defects, severity trends, changed-area coverage, reopens, and incidents.",
+        "Use deployment speed as the primary measure of release quality.",
+        "Use the amount of automation code delivered during the release."
+    ],
+    "What is the actual difference between SoapUI": [
+        "Treat SoapUI and REST as competing protocols for the same API layer.",
+        "REST and SOAP describe API styles; SoapUI is a tool that tests either type.",
+        "Use SoapUI only when the endpoint returns JSON instead of XML.",
+        "Assume REST APIs require SoapUI before they can be executed."
+    ],
+    "String vs StringBuilder": [
+        "Treat String, StringBuilder, and StringBuffer as immutable text types.",
+        "String is immutable; StringBuilder is mutable; StringBuffer adds synchronization.",
+        "Treat StringBuffer as immutable and use it for every concurrent operation.",
+        "Use StringBuilder when synchronized access between threads is required."
+    ],
+    "What practices keep automation scripts": [
+        "Copy working tests and modify each copy when a new scenario is needed.",
+        "Use page objects, shared waits, clear names, focused tests, reviews, and cleanup.",
+        "Build long end-to-end tests that cover every workflow in one method.",
+        "Add comments to every line instead of extracting reusable test behavior."
+    ],
+    "How do you verify an API calculation correctly": [
+        "Check the response status and assume persistence is correct when it is successful.",
+        "Capture pre-state, query every affected table, and reconcile balances and audit data.",
+        "Compare only the database row count before and after the API call.",
+        "Trust the ORM transaction because related tables cannot become inconsistent."
+    ],
+    "A request body is syntactically valid JSON": [
+        "Return 500 whenever the server rejects a value supplied by the client.",
+        "Use 422 for semantic invalidity and 400 for malformed syntax, per the API contract.",
+        "Return 404 because a valid request cannot create a resource that is not present.",
+        "Return 204 whenever validation prevents a resource from being created."
+    ],
+    "What do priority and dependsOnMethods": [
+        "Use both annotations to randomize execution so hidden order dependencies surface.",
+        "Use priority for order and dependsOnMethods for a prerequisite relationship.",
+        "Use priority to enable parallel execution across independent test methods.",
+        "Use dependsOnMethods as TestNG's built-in mechanism for retrying failures."
+    ],
+    "How do you decide what belongs in a regression": [
+        "Include every test ever written, even when its risk and coverage are obsolete.",
+        "Include only tests that failed recently so the suite follows recent defects.",
+        "Prioritize critical flows, defect history, integrations, and usage in tiers.",
+        "Include whichever tests fit the timebox, regardless of change impact."
+    ],
+    "How does token-based authentication": [
+        "Send the user's password with every request so each call is independently verified.",
+        "Authenticate once, send a bearer token, and cover expiry and invalid-token paths.",
+        "Use tokens only for browser sessions because APIs authenticate differently.",
+        "Base64-encode the URL and treat that value as an authentication token."
+    ],
+    "What is an index": [
+        "Treat an index as a backup copy of the table used for recovery operations.",
+        "Use an index to speed reads while accepting write overhead and extra storage.",
+        "Add an index when the goal is to make every insert and update faster.",
+        "Use index and primary key as interchangeable names for the same constraint."
+    ],
+    "How do you perform drag-and-drop": [
+        "Send keyboard arrow characters to the source and expect the browser to drag it.",
+        "Use Actions with dragAndDrop or moveToElement, then call perform().",
+        "Call driver.drag directly because WebDriver exposes drag as a top-level method.",
+        "Use an external desktop tool because Selenium cannot perform pointer actions."
+    ],
+    "How do you re-run only the failed tests": [
+        "Delete the passing tests from the source suite before starting the next run.",
+        "Run TestNG's generated testng-failed.xml or configure an intentional retry policy.",
+        "Assume TestNG cannot rerun failures without recreating every test class.",
+        "Rename failed methods so the next Maven run treats them as new tests."
+    ],
+    "Your CI pipeline needs to pull a database credential": [
+        "Keep the credential in the private repository because source access is restricted.",
+        "Store it in Secrets Manager or Parameter Store and fetch it with scoped IAM access.",
+        "Base64-encode the credential in the properties file so it is not plain text.",
+        "Email the credential to the team and remove it from the checked-in file."
+    ],
+    "An end-to-end scenario spans a Windows desktop UI": [
+        "Use Selenium WebDriver alone because it drives Windows desktop applications natively.",
+        "Drive the desktop with a Windows UI tool, then assert the backend effect through REST or SQL.",
+        "Capture screenshots and compare pixels instead of validating the resulting transaction state.",
+        "Keep UI and backend checks in separate suites that deliberately share no transaction data."
+    ],
+    "When would an API correctly return 409 Conflict": [
+        "Return 409 whenever two users happen to be logged in at the same time.",
+        "Return 409 when the request conflicts with current resource state or a stale version.",
+        "Reserve 409 for database deadlocks and use another status for resource conflicts.",
+        "Avoid 409 because modern REST APIs consider that response code deprecated."
+    ],
+    "Your test suite starts receiving 429 responses": [
+        "Treat 429 as proof that the server crashed and immediately raise a Sev-1 incident.",
+        "Honor Retry-After, back off, and either throttle tests or verify the rate-limit contract.",
+        "Treat 429 as an expired authentication token and refresh credentials automatically.",
+        "Retry immediately in a tight loop so the service can clear the request backlog."
+    ],
+    "What does ETL testing verify": [
+        "Treat ETL testing as identical to UI testing because both validate displayed values.",
+        "Verify extraction, transformation, and loading preserve mapped data without loss or duplication.",
+        "Verify only that the scheduled ETL job completes without throwing an exception.",
+        "Measure whether the UI displays the loaded data quickly enough for users."
+    ],
+    "How does automation typically integrate with Jenkins": [
+        "Use Jenkins only to launch tests manually when a QA engineer requests a run.",
+        "Run headless tests in pipeline stages, publish reports and evidence, and gate on failures.",
+        "Treat Jenkins as a replacement for Maven, the test framework, and test assertions.",
+        "Send raw console output by email without preserving structured test reports."
+    ],
+    "How would you deserialize a JSON array response": [
+        "Use Selenium's findElements method because a JSON array represents several elements.",
+        "Use ObjectMapper or REST Assured to extract the response into List<TradeResult>.",
+        "Compare the raw JSON strings with == and rely on reference equality for the assertion.",
+        "Convert the response to HTML first so Java can map each item to a POJO."
+    ],
+    "How do you validate a nightly ETL load": [
+        "Check the scheduler status and accept success as proof of data quality.",
+        "Reconcile counts, business-key totals, checksums, mappings, and sampled values with SQL.",
+        "Open a few rows in each table and rely on visual inspection.",
+        "Check only that the target table contains at least one row."
+    ],
+    "How do Cucumber and Spring Boot actually integrate": [
+        "Run Cucumber without Spring and keep all services directly inside step classes.",
+        "Boot a Spring test context, manage step definitions as beans, and inject services.",
+        "Call SpringApplication.run from every step definition before each action.",
+        "Choose either Cucumber or Spring because the frameworks cannot share a test."
+    ],
+    "How do you handle rounding and precision": [
+        "Compare double values with == when the expected result is a monetary amount.",
+        "Use BigDecimal or an explicit tolerance with documented scale and rounding mode.",
+        "Round every monetary result to an integer before comparing expected values.",
+        "Convert both values to strings and compare formatting instead of numeric precision."
+    ],
+    "What makes a FluentWait different": [
+        "Treat it as a long implicit wait configured once for the whole driver.",
+        "Configure its polling interval and ignored exceptions in addition to a timeout.",
+        "Use it when a wait must never time out during a slow environment run.",
+        "Use it only for browser alerts because element waits need WebDriverWait."
+    ],
+    "Walk through the bug life cycle": [
+        "Move a bug directly from found to fixed and close it after the developer's note.",
+        "Track assignment, fix, retest, verification, and closure, with reject and reopen branches.",
+        "Close every bug after the first developer status update and reopen it next release.",
+        "Let QA close bugs immediately because retesting is optional in a fast sprint."
+    ],
+    "What's a practical use of basic shell scripting": [
+        "Limit shell scripts to administrator tasks because QA should not use them in pipelines.",
+        "Use small scripts for log triage, artifact cleanup, health checks, and repeatable steps.",
+        "Replace the Java framework with a complete Bash implementation of every test.",
+        "Avoid shell scripts because Selenium projects can run only from an IDE."
+    ],
+    "How does a HashMap work internally": [
+        "Store entries in sorted array order and use binary search for every key lookup.",
+        "Hash keys into buckets, use equals for collisions, and resize at the load threshold.",
+        "Assign every key a permanent unique slot so collisions cannot occur.",
+        "Keep the initial table size for the map's entire lifetime."
+    ],
+    "How would you verify timeout, retry, and circuit-breaker": [
+        "Wait for a shared environment failure and use its timing as the test oracle.",
+        "Inject downstream delays and errors, then assert timeout, retries, circuit state, and recovery.",
+        "Mock the service under test so its timeout and retry code never executes.",
+        "Increase all configured timeouts until the scenario completes without an error."
+    ],
+    "How do you identify high-risk areas": [
+        "Ask developers which module they personally consider the most difficult.",
+        "Treat the newest feature as highest risk even when usage and impact are low.",
+        "Combine defect history, churn, complexity, dependencies, usage, and business impact.",
+        "Run the complete suite and define risk only from whichever tests fail."
+    ],
+    "Multiple teams are releasing changes": [
+        "Let each team test independently and resolve overlapping changes after release.",
+        "Use a shared change calendar, environment windows, integration checkpoint, and triage channel.",
+        "Allow only one team to release each month so coordination is unnecessary.",
+        "Skip cross-team integration testing whenever the environment is shared."
+    ],
+    "How do you test APIs whose responses contain changing": [
+        "Compare the entire raw response and update the expected file whenever values change.",
+        "Ignore dynamic fields completely because their values are not stable.",
+        "Validate dynamic fields by type, format, and range; assert stable business fields exactly.",
+        "Mock every dynamic value so the API response never varies during testing."
+    ],
+    "Requirements are incomplete or ambiguous": [
+        "Wait for the BA to finish all documentation before contributing to the scenario.",
+        "Use personal assumptions and raise defects whenever behavior differs from them.",
+        "Clarify intent, document assumptions, write acceptance-based scenarios, and review them.",
+        "Skip the feature until a later sprint has more complete requirements."
+    ]
+};
+function applyOptionHardening() {
+    questionBank.forEach((item) => {
+        const override = Object.entries(balancedOptionOverrides).find(([prefix]) => item.question.startsWith(prefix));
+        if (override) item.options = override[1];
+    });
+}
+const state = { track: "all", employer: "all", questions: [], index: 0, correct: 0, answered: false, selected: null, correctIndex: null, codingIndex: 0 };
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 
 function shuffle(items) { return [...items].sort(() => Math.random() - 0.5); }
+function shuffleChoices(item) {
+    const choices = shuffle(item.options.map((text, index) => ({ text, correct: index === item.answer })));
+    return { ...item, options: choices.map((choice) => choice.text), answer: choices.findIndex((choice) => choice.correct) };
+}
 // Question data contains literal tags like <select> and Map<String,String>; escape before innerHTML.
 function esc(text) { return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 function todayKey() { return new Date().toISOString().slice(0, 10); }
@@ -218,29 +806,87 @@ function renderStats() {
     $("#best-stat").textContent = stats.best === null ? "—" : stats.best + "/" + (stats.bestTotal || 10);
     $("#sessions-stat").textContent = stats.sessions || 0;
 }
+function getEmployerFilter(value) { return employerFilters.find((filter) => filter.value === value) || employerFilters[0]; }
+function getSourceEmployers(item) {
+    const source = String(item.anchor || "").toLowerCase();
+    const matched = employerFilters
+        .filter((filter) => filter.value !== "all" && filter.value !== "general")
+        .filter((filter) => filter.matches.some((name) => source.includes(name)))
+        .map((filter) => filter.value);
+    return matched.length ? matched : ["general"];
+}
+function getQuestionEmployers(item) {
+    // Add employers: ["maximus"] to a question when a new job description is added.
+    const explicit = Array.isArray(item.employers) ? item.employers : [];
+    const source = getSourceEmployers(item).filter((employer) => employer !== "general");
+    if (explicit.length) return [...new Set([...explicit, ...source])];
+    return source.length ? source : ["general"];
+}
+function applyJobDescriptionTags() {
+    questionBank.forEach((item) => {
+        const isMaximus = maximusTrackTags.has(item.track)
+            || String(item.anchor || "").toLowerCase().includes("lead qa jd field test")
+            || String(item.anchor || "").toLowerCase().includes("maximus jd gap")
+            || maximusQuestionTags.some((pattern) => item.question.startsWith(pattern));
+        const isLuxoft = luxoftTrackTags.has(item.track)
+            || String(item.anchor || "").toLowerCase().includes("luxoft")
+            || luxoftQuestionTags.some((pattern) => item.question.startsWith(pattern));
+        const isBuildersMutual = buildersTrackTags.has(item.track)
+            || String(item.anchor || "").toLowerCase().includes("builders mutual jd gap")
+            || buildersQuestionTags.some((pattern) => item.question.startsWith(pattern));
+        const employers = [];
+        if (isMaximus) employers.push("maximus");
+        if (isLuxoft) employers.push("luxoft");
+        if (isBuildersMutual) employers.push("builders-mutual");
+        if (employers.length) item.employers = [...new Set([...(item.employers || []), ...employers])];
+    });
+}
+function matchesEmployer(item) {
+    return state.employer === "all" || getQuestionEmployers(item).includes(state.employer);
+}
+function populateEmployerFilter() {
+    $("#employer-filter").innerHTML = employerFilters.map((filter) => "<option value=\"" + filter.value + "\">" + filter.label + "</option>").join("");
+    $("#employer-filter").value = state.employer;
+}
+function updateEmployerLabel(questionCount) {
+    const filter = getEmployerFilter(state.employer);
+    $("#employer-filter-summary").textContent = state.employer === "all"
+        ? "All tagged employers and shared interview questions"
+        : filter.value === "general"
+            ? "Shared questions without a company-specific source tag"
+            : "Questions sourced from the " + filter.label + " interview target";
+    $("#employer-filter-count").textContent = questionCount + " question" + (questionCount === 1 ? "" : "s");
+}
 function updateTrackLabel() {
     const button = document.querySelector("[data-track=\"" + state.track + "\"]");
-    $("#track-label").textContent = (state.track === "all" ? "MIXED SIGNAL" : button.textContent.replace("↗", "").trim()).toUpperCase();
+    const trackLabel = state.track === "all" ? "MIXED SIGNAL" : button.textContent.replace("↗", "").trim();
+    const employerLabel = state.employer === "all" ? "" : " · " + getEmployerFilter(state.employer).shortLabel;
+    $("#track-label").textContent = (trackLabel + employerLabel).toUpperCase();
 }
 function startSession() {
     // Written prompts live in their own module; every other track is MCQ-only.
     const pool = state.track === "written"
-        ? questionBank.filter((item) => item.type === "written")
-        : questionBank.filter((item) => item.type === "mcq" && (state.track === "all" || item.track === state.track));
+        ? questionBank.filter((item) => item.type === "written" && matchesEmployer(item))
+        : questionBank.filter((item) => item.type === "mcq" && (state.track === "all" || item.track === state.track) && matchesEmployer(item));
     // No repeats: sample without replacement, capped at 20 (or the whole pool if smaller).
-    state.questions = shuffle(pool).slice(0, Math.min(20, pool.length));
+    state.questions = shuffle(pool).slice(0, Math.min(20, pool.length)).map((item) => item.type === "mcq" ? shuffleChoices(item) : item);
     state.index = 0; state.correct = 0; state.answered = false; state.selected = null;
-    updateTrackLabel(); renderQuestion();
+    updateEmployerLabel(pool.length); updateTrackLabel(); renderQuestion();
+}
+function getChoiceHeight(options) {
+    const longest = Math.max(...options.map((option) => option.length));
+    const lines = Math.min(6, Math.max(2, Math.ceil(longest / 42)));
+    return lines * 24 + 34;
 }
 function renderQuestion() {
     const question = state.questions[state.index];
-    if (!question) return showComplete();
+    if (!question) return state.questions.length ? showComplete() : showEmptyState();
     state.answered = false; state.selected = null;
     const current = state.index + 1;
     $("#question-count").textContent = "QUESTION " + String(current).padStart(2, "0") + " / " + state.questions.length;
     $("#question-topic").textContent = question.topic;
     $("#progress-fill").style.width = (current / state.questions.length) * 100 + "%";
-    const title = "<h3><span class=\"q-number\">" + (question.type === "written" ? "WRITE YOUR ANSWER" : "CHOOSE THE BEST ANSWER") + "</span>" + esc(question.question) + "</h3>";
+    const title = "<h3><span class=\"q-number\">" + (question.type === "written" ? "WRITE YOUR ANSWER" : "READ EACH OPTION · CHOOSE THE BEST ANSWER") + "</span>" + esc(question.question) + "</h3>";
     const view = $("#question-view");
     if (question.type === "written") {
         view.innerHTML = "<div class=\"question-frame written\">" + title + "<textarea class=\"written-answer\" id=\"written-answer\" placeholder=\"Say it out loud first, then capture your answer here...\"></textarea><p class=\"coach-prompt\">" + esc(question.coach) + "</p><div class=\"question-foot\"><span></span><div class=\"question-actions\"><button class=\"text-button\" id=\"reveal-written\" type=\"button\">Reveal coach note <span>↗</span></button><button class=\"button button-primary\" id=\"next-question\" type=\"button\" disabled>Log answer <span>→</span></button></div></div><div id=\"written-feedback\"></div></div>";
@@ -255,6 +901,7 @@ function renderQuestion() {
         // Shuffle the answer positions every time so the correct letter can't be memorized.
         const order = shuffle(question.options.map((_, index) => index));
         state.correctIndex = order.indexOf(question.answer);
+        view.style.setProperty("--choice-height", getChoiceHeight(question.options) + "px");
         const options = order.map((originalIndex, index) => "<button class=\"option\" data-option=\"" + index + "\" type=\"button\"><span class=\"option-letter\">" + String.fromCharCode(65 + index) + "</span><span>" + esc(question.options[originalIndex]) + "</span></button>").join("");
         view.innerHTML = "<div class=\"question-frame\">" + title + "<div class=\"answer-options\">" + options + "</div><div class=\"question-foot\"><span class=\"anchor-note\">Source signal: " + esc(question.anchor) + "</span><div class=\"question-actions\"><button class=\"text-button\" id=\"skip-question\" type=\"button\">Skip for now</button><button class=\"button button-primary\" id=\"check-answer\" type=\"button\" disabled>Check answer <span>→</span></button></div></div><div id=\"answer-feedback\"></div></div>";
         $$(".option").forEach((button) => button.addEventListener("click", () => {
@@ -266,6 +913,13 @@ function renderQuestion() {
         $("#check-answer").addEventListener("click", checkAnswer);
         $("#skip-question").addEventListener("click", () => { state.index += 1; renderQuestion(); });
     }
+}
+function showEmptyState() {
+    const filter = getEmployerFilter(state.employer);
+    $("#question-count").textContent = "NO MATCHES";
+    $("#question-topic").textContent = filter.shortLabel;
+    $("#progress-fill").style.width = "0%";
+    $("#question-view").innerHTML = "<div class=\"empty-state\"><span class=\"eyebrow\">READY FOR NEW SOURCE MATERIAL</span><h3>No questions are tagged for <em>" + esc(filter.label) + ".</em></h3><p>Use ALL or another interview target for this session. When you add that job description's questions, tag them to this same selector and they will appear here automatically.</p></div>";
 }
 function checkAnswer() {
     if (state.selected === null || state.answered) return;
@@ -309,9 +963,13 @@ function renderCoding() {
 $$(".track-button").forEach((button) => button.addEventListener("click", () => {
     state.track = button.dataset.track; $$(".track-button").forEach((item) => item.classList.toggle("is-active", item === button)); startSession();
 }));
+$("#employer-filter").addEventListener("change", (event) => { state.employer = event.target.value; startSession(); });
 $("#new-session").addEventListener("click", startSession);
 $("#next-coding").addEventListener("click", () => { state.codingIndex = (state.codingIndex + 1) % codingDrills.length; renderCoding(); });
 $("#show-hint").addEventListener("click", () => { $("#hint-box").hidden = !$("#hint-box").hidden; });
 $("#show-solution").addEventListener("click", () => { $("#solution-box").hidden = !$("#solution-box").hidden; });
 $("#date-readout").textContent = new Intl.DateTimeFormat("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" }).format(new Date());
+applyOptionHardening();
+applyJobDescriptionTags();
+populateEmployerFilter();
 renderStats(); renderCoding(); startSession();

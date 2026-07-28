@@ -43,13 +43,21 @@ runs with: `$env:MAVEN_OPTS='-Djavax.net.ssl.trustStoreType=Windows-ROOT'; mvn t
 | 7 | SQL validation (H2 in-memory) | `drills/d07_sql/SourceD07SqlDrills.java` | `mvn test -Dtest=SourceD07SqlDrills` |
 | 8 | Cucumber BDD: feature / steps / runner / hooks / tags | `drills/d08_bdd/` + `resources/features/` | `mvn test -Dtest=RunCucumberDrills -Dheadless=true` |
 | 9 | **API testing**: REST Assured vs local mock microservice, 200 vs 201, JSON calc validation, Spring Boot testing talk track | `drills/d09_api/SourceD09ApiDrills.java` | `mvn test -Dtest=SourceD09ApiDrills` |
-| 10 | CI/CD: GitHub Actions + Jenkins | `.github/workflows/selenium-tests.yml`, `Jenkinsfile` | read + narrate; runs on push to GitHub |
+| 10 | **Playwright**: auto-waiting/actionability, getByRole/getByLabel/getByTestId, strict mode, context isolation, dialogs, `page.request()` API calls, network stubbing, tracing — vs the Selenium equivalents we hand-built | `drills/d10_playwright/SourceD10PlaywrightDrills.java` | `mvn test -Dtest=SourceD10PlaywrightDrills` |
 | 11 | **Resilience**: timeout/retry/circuit-breaker against a WireMock-stubbed downstream | `drills/d11_resilience/SourceD11ResilienceDrills.java` | `mvn test -Dtest=SourceD11ResilienceDrills` |
+| 12 | CI/CD: GitHub Actions + Jenkins | `.github/workflows/selenium-tests.yml`, `Jenkinsfile` | read + narrate; runs on push to GitHub |
 
 Modules 6, 7, 9 and 11 need **no browser** — they run in about a second. Perfect for
 high-repetition days and for warming up the morning of the interview.
 
 Run one single test method: `mvn test -Dtest="SourceD05BrowserMechanicsDrills#alertAcceptAndReadResult" -Dheadless=true`
+
+**Module 10 one-time setup:** the first `mvn test -Dtest=SourceD10PlaywrightDrills` downloads
+Chromium (~1 minute, needs internet once). After that the drills are fully offline — like d09
+they drive a local mock app (`MockPortalApp`, JDK HttpServer) on a random port, so there is no
+Sauce Demo dependency. If the browsers are missing the tests **skip** rather than fail, so a
+clean checkout never breaks `mvn test` for the other modules. Portal login: `adjuster` /
+`secret_sauce`. Traces land in `target/traces/` and open at trace.playwright.dev.
 
 ## Daily Field Test (practice.html)
 
@@ -57,14 +65,25 @@ The recall side of the gym: the drills build muscle memory for WRITING the code;
 field test checks you can PRODUCE the answers cold. Open `practice.html` via a local
 server (`py -m http.server 8080`, then <http://localhost:8080/practice.html>).
 
-- **186 questions** (143 multiple-choice + 43 written prompts) covering the full Infosys
+- **194 questions** (145 multiple-choice + 49 written prompts) covering the full Infosys
   top-100 bank, the Deloitte rounds, the Luxoft high-probability 15 (Spring Boot,
   REST Assured, financial JSON validation, JMeter, release-risk communication), the
   Barclays QA automation rounds (exception handling, cross-browser, test data
-  and config management, maintainability, Git workflow), and a Lead Software QA
-  JD field test (test planning/estimation, defect triage and RCA, risk escalation,
+  and config management, maintainability, Git workflow), and a Lead Software QA /
+  Maximus JD field test (test planning/estimation, defect triage and RCA, risk escalation,
   automation strategy at program scale, AI-assisted testing, ETL/SQL reconciliation,
-  AWS fundamentals, Unix/Linux operations, and stakeholder demos/UAT/status reporting),
+  AWS fundamentals, Unix/Linux operations, stakeholder demos/UAT/status reporting,
+  Agile/SAFe execution oversight, and white-/gray-box testing), plus Luxoft investment-
+  banking topics (Spring Boot/Cucumber, microservices, financial JSON, SQL, JMeter,
+  Windows UI, Git/Bitbucket, code review, and JIRA defect management),
+  plus Builders Mutual API/integration topics (multi-system data flow and reconciliation,
+  eventual consistency, idempotency/duplicate delivery, Swagger/OpenAPI contract testing,
+  Postman/Newman vs coded suites, API test-plan documentation, integration root-cause
+  analysis, stubbing unavailable partners, Workato/middleware, the sole-QA operating model,
+  Playwright specifics — auto-waiting/actionability, role-based locators and strict mode,
+  trace viewer, APIRequestContext, and the honest Selenium-to-Playwright ramp answer —
+  and AWS testing depth — SNS/SQS/Lambda event flows, CloudWatch Logs Insights triage,
+  S3 file ingestion, API Gateway 401/403/502/504 status triage, IAM and secrets),
   plus a 50-question scenario bank (test strategy and prioritization, release
   readiness and quality metrics, scenario-design prompts for login/payment/search/
   cart/file upload, distributed-system testing — pagination, eventual consistency,
@@ -73,6 +92,10 @@ server (`py -m http.server 8080`, then <http://localhost:8080/practice.html>).
 - **Answer positions shuffle on every render**, so "it's always B" can't be memorized.
 - **Tracks 01–06** slice by topic (Selenium, Java, Framework, TestNG+SQL, Interview
   voice, API + Spring Boot); **Mixed Signal** pulls from everything.
+- **Employer filter** narrows the session to ALL, Infosys, Deloitte, Barclays, Luxoft,
+  Maximus, Builders Mutual, or general cross-company questions. It can be combined with a topic track;
+  Maximus currently emphasizes the Lead Software QA JD plus the Selenium/Java,
+  framework, SQL, API, CI/CD, and leadership questions most likely to come up.
 - **Track 07 "Written answers"** holds all typed prompts separately — say the answer
   out loud, type it, then reveal the coach note. These map to the talk tracks in the
   drill modules (e.g. the 200-vs-201 written answer uses the same wording as the

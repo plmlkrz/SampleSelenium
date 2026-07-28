@@ -26,6 +26,7 @@
         <rest-assured.version>5.5.5</rest-assured.version>
         <wiremock.version>2.35.1</wiremock.version>
         <resilience4j.version>2.2.0</resilience4j.version>
+        <playwright.version>1.49.0</playwright.version>
 
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
@@ -133,6 +134,18 @@
             <groupId>io.github.resilience4j</groupId>
             <artifactId>resilience4j-circuitbreaker</artifactId>
             <version>${resilience4j.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Playwright (Java binding): d10 drills. The Builders Mutual JD names Playwright
+             alongside Selenium, so the gym needs a runnable side-by-side comparison.
+             First run downloads browser binaries (~150MB) into a local cache — see
+             STUDY_GUIDE.md for the one-time install command. The drills hit a local
+             mock portal (JDK HttpServer), so after that install they need no internet. -->
+        <dependency>
+            <groupId>com.microsoft.playwright</groupId>
+            <artifactId>playwright</artifactId>
+            <version>${playwright.version}</version>
             <scope>test</scope>
         </dependency>
 

@@ -4,12 +4,13 @@ Practice project for Selenium WebDriver tests — built for interview preparatio
 
 ## Daily interview field test
 
-Open `practice.html` in a browser for a randomized daily practice session based on the Deloitte interview rounds and Infosys top-100 question bank.
+Open `practice.html` in a browser for a randomized daily practice session based on the Deloitte interview rounds, Infosys top-100 question bank, and targeted employer preparation sets.
 
 The field test includes:
 
 - 20 randomized questions per session with no repeats and shuffled answer positions
-- 132-question bank covering the Infosys top-100, Deloitte rounds, Barclays QA rounds, Luxoft-style API/Spring Boot questions, the full HTTP status-code map (2xx/3xx/4xx/5xx), and Spring IoC / REST Assured specification / BDD design-depth questions
+- 194-question bank covering the Infosys top-100, Deloitte rounds, Barclays QA rounds, Luxoft investment-banking automation topics, Maximus Lead Software QA topics, Builders Mutual API/integration QA topics, the full HTTP status-code map (2xx/3xx/4xx/5xx), and Spring IoC / REST Assured specification / BDD design-depth questions
+- Employer filter for ALL, Infosys, Deloitte, Barclays, Luxoft, Maximus, Builders Mutual, and general cross-company questions; the employer filter can be combined with any focus track
 - Focus tracks for Selenium, Java, framework design, TestNG/SQL, interview communication, and API + Spring Boot
 - Multiple-choice questions with immediate explanations and source signals
 - A dedicated written-answers track with coach notes, kept separate from the multiple-choice mix
