@@ -47,8 +47,13 @@ runs with: `$env:MAVEN_OPTS='-Djavax.net.ssl.trustStoreType=Windows-ROOT'; mvn t
 | 11 | **Resilience**: timeout/retry/circuit-breaker against a WireMock-stubbed downstream | `drills/d11_resilience/SourceD11ResilienceDrills.java` | `mvn test -Dtest=SourceD11ResilienceDrills` |
 | 12 | CI/CD: GitHub Actions + Jenkins | `.github/workflows/selenium-tests.yml`, `Jenkinsfile` | read + narrate; runs on push to GitHub |
 
-Modules 6, 7, 9 and 11 need **no browser** — they run in about a second. Perfect for
-high-repetition days and for warming up the morning of the interview.
+Modules 6, 7, 9 and 11 need **no browser and no network** — they run in about a second.
+Perfect for high-repetition days and for warming up the morning of the interview.
+Module 10 does drive a real browser, but against a local mock app, so it is offline too
+(~12s once Chromium is cached — see the setup note below). Modules 1, 2, 5 and 8 are the
+only ones that hit the public practice sites, so they are the ones that break when Sauce
+Demo or the-internet.herokuapp.com is slow or down — a failure there is usually the
+internet, not your code.
 
 Run one single test method: `mvn test -Dtest="SourceD05BrowserMechanicsDrills#alertAcceptAndReadResult" -Dheadless=true`
 
