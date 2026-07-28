@@ -1,8 +1,21 @@
 package com.sampleselenium.drills.d02_waits;
 
 import com.sampleselenium.base.BaseTest;
-import org.junit.jupiter.api.Disabled;
+import com.sampleselenium.driver.DriverManager;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * DRILL 02 — PRACTICE FILE
@@ -26,27 +39,72 @@ import org.junit.jupiter.api.Test;
  */
 class PracticeD02WaitDrills extends BaseTest {
 
-    @Disabled("TODO: re-type from memory, then delete this line")
+    private static final String HIDDEN_ELEMENT_URL = "https://the-internet.herokuapp.com/dynamic_loading/1";
+    private static final String ADDED_ELEMENT_URL = "https://the-internet.herokuapp.com/dynamic_loading/2";
+
+    private static final By START_BUTTON = By.cssSelector("#start button");
+    private static final By FINISH_TEXT = By.id("finish");
+
+    private WebDriver driver;
+    @BeforeEach
+    void grabDriver() {
+        driver = DriverManager.getDriver(); }
+
+
     @Test
     void explicitWaitForHiddenElementToBecomeVisible() {
         // TODO
+        driver.get(HIDDEN_ELEMENT_URL);
+        driver.findElement(START_BUTTON).click();
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebElement finish = wait.until(ExpectedConditions.visibilityOfElementLocated(FINISH_TEXT));
+
+        assertEquals("Hello World!", finish.getText());
     }
 
-    @Disabled("TODO: re-type from memory, then delete this line")
+
     @Test
     void fluentWaitForElementAddedToDom() {
         // TODO
+        driver.get(ADDED_ELEMENT_URL);
+        driver.findElement(START_BUTTON).click();
+
+        Wait<WebDriver> wait = new FluentWait<>(driver).withTimeout(Duration.ofSeconds(10)).pollingEvery(Duration.ofMillis(500)).ignoring(NoSuchElementException.class);
+
+        WebElement finish = wait.until(d -> driver.findElement(FINISH_TEXT));
+        assertEquals("Hello World!", finish.getText());
     }
 
-    @Disabled("TODO: re-type from memory, then delete this line")
+
     @Test
     void implicitWaitRetriesEveryFindElement() {
         // TODO — and don't forget the finally block that resets it to Duration.ZERO
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        try {
+            driver.get(ADDED_ELEMENT_URL);
+            driver.findElement(START_BUTTON).click();
+
+            WebElement finish = driver.findElement(FINISH_TEXT);
+            assertEquals("Hello World!", finish.getText());
+        } finally {
+            driver.manage().timeouts().implicitlyWait(Duration.ZERO);
+        }
     }
 
-    @Disabled("TODO: re-type from memory, then delete this line")
+
     @Test
     void explicitWaitReturnsEarlyUnlikeSleep() {
         // TODO
+        driver.get(HIDDEN_ELEMENT_URL);
+        driver.findElement(START_BUTTON).click();
+
+        long start = System.currentTimeMillis();
+        new WebDriverWait(driver, Duration.ofSeconds(30)).until(ExpectedConditions.visibilityOfElementLocated(FINISH_TEXT));
+        long elapsed = System.currentTimeMillis() - start;
+
+        assertTrue(elapsed < 30_000);
+        System.out.println("[waits drill] explicit wait returned after " + elapsed + " ms (timeout was 30s)");
+
     }
 }

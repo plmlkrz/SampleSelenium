@@ -1,8 +1,18 @@
 package com.sampleselenium.drills.d01_locators;
 
 import com.sampleselenium.base.BaseTest;
-import org.junit.jupiter.api.Disabled;
+import com.sampleselenium.driver.DriverManager;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.locators.RelativeLocator;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * DRILL 01 — PRACTICE FILE
@@ -25,33 +35,61 @@ import org.junit.jupiter.api.Test;
  */
 class PracticeD01LocatorDrills extends BaseTest {
 
-    @Disabled("TODO: re-type from memory, then delete this line")
+    private static final String SAUCE_URL = "https://www.saucedemo.com";
+
+    private WebDriver driver;
+    @BeforeEach
+    void openSite() {
+        driver = DriverManager.getDriver();
+        driver.get(SAUCE_URL);
+    }
+
     @Test
     void findElementReturnsFirstMatchWhenLocatorMatchesMany() {
         // TODO: open saucedemo, findElement(By.tagName("input")) vs findElements — compare
+        WebElement first = driver.findElement(By.tagName("input"));
+        List<WebElement> all = driver.findElements(By.tagName("input"));
+
+        assertTrue(all.size() > 1, "There should be at least one input element");
+        assertEquals(all.get(0), first, "findElement returns the first of the findElements list");
+
     }
 
-    @Disabled("TODO: re-type from memory, then delete this line")
+
     @Test
     void findElementThrowsWhenNothingMatches() {
         // TODO: assertThrows(...) around findElement with a bogus id
+        assertThrows(NoSuchElementException.class, () -> {
+            driver.findElement(By.id("does-not-exist-anywhere"));
+        });
     }
 
-    @Disabled("TODO: re-type from memory, then delete this line")
     @Test
     void findElementsReturnsEmptyListWhenNothingMatches() {
         // TODO: findElements with a bogus id — assert not null AND empty
+        List<WebElement> none = driver.findElements(By.id("does-not-exist-anywhere"));
+        assertNotNull(none, "findElements never returns null");
+        assertTrue(none.isEmpty(), "No match means empty list — NOT an exception");
     }
 
-    @Disabled("TODO: re-type from memory, then delete this line")
     @Test
     void sameElementByIdCssAndXpath() {
         // TODO: locate the login button 3 ways, assert they are the same element
+        WebElement byId = driver.findElement(By.id("login-button"));
+        WebElement byCss = driver.findElement(By.cssSelector("#login-button"));
+        WebElement byXpath = driver.findElement(By.xpath("//input[@id='login-button']"));
+
+        assertEquals(byId, byCss);
+        assertEquals(byId, byXpath);
     }
 
-    @Disabled("TODO: re-type from memory, then delete this line")
+
     @Test
     void relativeLocatorFindsPasswordBelowUsername() {
         // TODO: RelativeLocator.with(...).below(...) — assert you got the password field
+        WebElement password = driver.findElement(
+                RelativeLocator.with(By.tagName("input")).below(By.id("user-name")));
+
+        assertEquals("password", password.getDomAttribute("id"), "The input directly below the username field should be the password field");
     }
 }

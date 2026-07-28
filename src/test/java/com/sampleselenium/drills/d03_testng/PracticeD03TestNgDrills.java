@@ -1,8 +1,13 @@
 package com.sampleselenium.drills.d03_testng;
 
+import com.sampleselenium.drills.support.ScreenshotOnFailureListener;
 import com.sampleselenium.drills.support.TestNgBase;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
+import com.sampleselenium.driver.DriverManager;
+import com.sampleselenium.pages.InventoryPage;
+import com.sampleselenium.pages.LoginPage;
+import org.testng.Assert;
+import org.testng.annotations.*;
+import org.testng.asserts.SoftAssert;
 
 /**
  * DRILL 03 — PRACTICE FILE
@@ -21,31 +26,62 @@ import org.testng.annotations.Test;
  *   6. BONUS, say out loud: how to rerun only failures (testng-failed.xml), where reports
  *      land (target/surefire-reports), how to register a screenshot-on-failure listener
  */
+@Listeners (ScreenshotOnFailureListener.class)
 public class PracticeD03TestNgDrills extends TestNgBase {
 
-    @Test(enabled = false /* TODO: flip to true and write from memory */, priority = 1, groups = "smoke")
+    @BeforeSuite(alwaysRun = true)
+    public void beforeSuite() { System.out.println("[lifecycle] @BeforeSuite — once per suite run");}
+
+    @BeforeTest(alwaysRun = true)
+    public void beforeTest() { System.out.println("[lifecycle] @BeforeTest — once per <test> tag in testng.xml");}
+
+    @BeforeClass(alwaysRun = true)
+    public void beforeClass() { System.out.println("[lifecycle] @BeforeClass — once per class");}
+
+
+
+
+    @Test(priority = 1, groups = "smoke")
     public void loginSucceedsForStandardUser() {
-        // TODO
+        InventoryPage inventory = new LoginPage(DriverManager.getDriver()).open().login("standard_user", "secret_sauce");
+        Assert.assertTrue(inventory.isLoaded());
     }
 
-    @Test(enabled = false /* TODO */, priority = 2, groups = "smoke")
+    @Test(priority = 2, groups = "smoke")
     public void inventoryShowsSixProductsAfterLogin() {
-        // TODO — and add the dependsOnMethods attribute from memory
+        InventoryPage inventory = new LoginPage(DriverManager.getDriver()).open().login("standard_user", "secret_sauce");
+        Assert.assertEquals(inventory.getProductCount(), 6, "Sauce Demo lists 6 products");
     }
 
     @DataProvider(name = "loginScenarios")
     public Object[][] loginScenarios() {
-        // TODO: three rows — standard_user OK, locked_out_user error, wrong password error
-        return new Object[][]{};
+           return new Object[][]{
+                   // username,        password,        expectSuccess, expectedErrorFragment
+                   {"standard_user",   "secret_sauce",  true,          ""},
+                   {"locked_out_user", "secret_sauce",  false,         "Sorry, this user has been locked out"},
+                   {"standard_user",   "wrong_password", false,        "Username and password do not match"},
+           };
     }
 
-    @Test(enabled = false /* TODO */, dataProvider = "loginScenarios", groups = "regression")
+    @Test(dataProvider = "loginScenarios", groups = "regression")
     public void loginDataDriven(String username, String password, boolean expectSuccess, String expectedError) {
-        // TODO
+        LoginPage loginPage = new LoginPage(DriverManager.getDriver()).open();
+        InventoryPage inventory = new LoginPage(DriverManager.getDriver()).open().login(username, password);
+
+        if(expectSuccess) {
+            Assert.assertTrue(inventory.isLoaded(), "Expected successful login for " + username);
+        }else{
+            Assert.assertTrue(loginPage.getErrorMessage().contains(expectedError), "Expected successful login for " + username);
+        }
     }
 
-    @Test(enabled = false /* TODO */, groups = "regression")
+    @Test(groups = "regression")
     public void softAssertChecksSeveralThingsInOnePass() {
-        // TODO — SoftAssert, three checks, and the one line everyone forgets
+        InventoryPage inventory = new LoginPage(DriverManager.getDriver()).open().login("standard_user", "secret_sauce");
+        SoftAssert softAssert = new SoftAssert();
+        softAssert.assertTrue(inventory.isLoaded(), "should be on inventory page");
+        softAssert.assertEquals(inventory.getPageTitle(), "Products", "page header");
+        softAssert.assertEquals(inventory.getProductCount(), 6, "Product count");
+        softAssert.assertAll();
     }
 }

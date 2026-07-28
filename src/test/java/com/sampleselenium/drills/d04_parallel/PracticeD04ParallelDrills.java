@@ -1,7 +1,18 @@
 package com.sampleselenium.drills.d04_parallel;
 
 import com.sampleselenium.drills.support.TestNgBase;
+import com.sampleselenium.driver.DriverManager;
+import com.sampleselenium.pages.LoginPage;
+import org.junit.jupiter.api.Assertions;
+import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * DRILL 04 — PRACTICE FILE
@@ -19,20 +30,39 @@ import org.testng.annotations.Test;
  *   4. Say out loud WHY DriverManager uses ThreadLocal and what a plain static
  *      WebDriver would do to a parallel run.
  */
+
 public class PracticeD04ParallelDrills extends TestNgBase {
 
-    @Test(enabled = false /* TODO: flip to true and write from memory */)
+    private static final Map<Long, Integer> DRIVER_PER_THREAD = new ConcurrentHashMap<>();
+
+    @Test
     public void parallelLoginCheckOne() {
-        // TODO: print thread id + driver hash, then log in and assert inventory loaded
+        proveThreadIsolation("one");
     }
 
-    @Test(enabled = false /* TODO */)
+    @Test
     public void parallelLoginCheckTwo() {
-        // TODO
+        proveThreadIsolation("two");
     }
 
-    @Test(enabled = false /* TODO */)
+    @Test
     public void parallelLoginCheckThree() {
-        // TODO
+        proveThreadIsolation("three");
+    }
+
+    private void proveThreadIsolation(String label) {
+        long threadId = Thread.currentThread().getId();
+        int driverHash = System.identityHashCode(DriverManager.getDriver());
+
+        System.out.printf("[parallel drill %s] thread=%d driver=%h%n", label, threadId, driverHash);
+        Integer previous = DRIVER_PER_THREAD.put(threadId, driverHash);
+        DRIVER_PER_THREAD.forEach((otherThread, otherHash) -> {
+            if (otherThread != threadId) {
+                Assert.assertNotEquals(otherHash.intValue(), driverHash, "Two threads are sharing one WebDriver — ThreadLocal isolation failed");
+            }
+        });
+        boolean loaded = new LoginPage(DriverManager.getDriver()).open().login("standard_user", "secret_sauce").isLoaded();
+        Assert.assertTrue(loaded, "Each parallel thread should complete its own login");
+
     }
 }

@@ -1,8 +1,30 @@
 package com.sampleselenium.drills.d05_mechanics;
 
 import com.sampleselenium.base.BaseTest;
-import org.junit.jupiter.api.Disabled;
+import com.sampleselenium.driver.DriverManager;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.WindowType;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * DRILL 05 — PRACTICE FILE
@@ -29,82 +51,169 @@ import org.junit.jupiter.api.Test;
  *  13. get() vs navigate(): back / forward / refresh
  */
 class PracticeD05BrowserMechanicsDrills extends BaseTest {
+    private static final String THE_INTERNET = "https://the-internet.herokuapp.com";
+    private WebDriver driver;
+    private WebDriverWait wait;
 
-    @Disabled("TODO: re-type from memory, then delete this line")
+    @BeforeEach
+    void grabDriver() {
+        driver = DriverManager.getDriver();
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    }
+
+    /** Plain alert: switchTo().alert(), read text, accept. */
     @Test
     void alertAcceptAndReadResult() {
-        // TODO
+        driver.get(THE_INTERNET + "/javascript_alerts");
+        driver.findElement(By.cssSelector("button[onclick='jsAlert()']")).click();
+
+        Alert alert = wait.until(ExpectedConditions.alertIsPresent());
+        assertEquals("I am a JS Alert", alert.getText());
+        alert.accept();
+        assertEquals("You successfully clicked an alert", driver.findElement(By.id("result")).getText());
     }
 
-    @Disabled("TODO: re-type from memory, then delete this line")
+    /** Plain alert: switchTo().alert(), read text, accept. */
     @Test
     void confirmDismissClicksCancel() {
-        // TODO
+        driver.get(THE_INTERNET + "/javascript_alerts");
+        driver.findElement(By.cssSelector("button[onclick='jsConfirm()']")).click();
+        wait.until(ExpectedConditions.alertIsPresent()).dismiss();
+        assertEquals("You clicked: Cancel", driver.findElement(By.id("result")).getText());
     }
 
-    @Disabled("TODO: re-type from memory, then delete this line")
+
     @Test
     void promptAlertTypeTextThenAccept() {
-        // TODO
+        driver.get(THE_INTERNET + "/javascript_alerts");
+        driver.findElement(By.cssSelector("button[onclick='jsConfirm()']")).click();
+        Alert prompt = wait.until(ExpectedConditions.alertIsPresent());
+        prompt.sendKeys("Peter");
+        prompt.accept();
+        assertEquals("You Entered: Peter", driver.findElement(By.id("result")).getText());
     }
 
-    @Disabled("TODO: re-type from memory, then delete this line")
+
     @Test
     void switchIntoNestedFramesAndReadText() {
-        // TODO
+        driver.get(THE_INTERNET + "/nested_frames");
+        driver.switchTo().frame("frame-top");
+        driver.switchTo().frame("frame-middle");
+        assertEquals("MIDDLE", driver.findElement(By.id("content")).getText());
+        driver.switchTo().defaultContent();
+        driver.switchTo().frame("frame-bottom");
+        assertEquals("BOTTOM", driver.findElement(By.tagName("body")).getText());
     }
 
-    @Disabled("TODO: re-type from memory, then delete this line")
+
     @Test
     void switchToNewWindowThenBack() {
-        // TODO
+        driver.get(THE_INTERNET + "/windows");
+        String original = driver.getWindowHandle();
+        driver.findElement(By.linkText("Click Here")).click();
+        wait.until(ExpectedConditions.numberOfWindowsToBe(2));
+        List<String> handles = new ArrayList<>(driver.getWindowHandles());
+        handles.remove(original);
+        driver.switchTo().window(handles.get(0));
+        assertEquals("New Window", driver.findElement(By.tagName("h3")).getText());
+        driver.close();
+        driver.switchTo().window(original);
+        assertTrue(driver.getCurrentUrl().contains("/windows"));
     }
 
-    @Disabled("TODO: re-type from memory, then delete this line")
+
     @Test
     void openNewTabWithSelenium4() {
-        // TODO
+        driver.get("https://www.saucedemo.com");
+        String original = driver.getWindowHandle();
+        driver.switchTo().newWindow(WindowType.TAB);
+        driver.get(THE_INTERNET);
+        assertTrue(driver.getTitle().contains("The Internet"));
+        driver.close();
+        driver.switchTo().window(original);
+        assertEquals("Swag Labs",  driver.getTitle());
     }
 
-    @Disabled("TODO: re-type from memory, then delete this line")
+
     @Test
     void selectDropdownOptionThreeWays() {
-        // TODO
+        driver.get(THE_INTERNET + "/dropdown");
+        Select dropdown = new Select(driver.findElement(By.id("dropdown")));
+        dropdown.selectByVisibleText("Option 1");
+        assertEquals("Option 1", dropdown.getFirstSelectedOption().getText());
+        dropdown.selectByValue("2");
+        assertEquals("Option 2", dropdown.getFirstSelectedOption().getText());
     }
 
-    @Disabled("TODO: re-type from memory, then delete this line")
+
     @Test
     void hoverRevealsHiddenCaption() {
-        // TODO
+        driver.get(THE_INTERNET + "/hovers");
+        WebElement firstAvatar = driver.findElement(By.cssSelector(".figure"));
+        new Actions(driver).moveToElement(firstAvatar).perform();
+        WebElement caption = firstAvatar.findElement(By.cssSelector(".figcaption h5"));
+        assertTrue(caption.isDisplayed(), "Caption should appear on hover");
+        assertEquals("name: user1", caption.getText());
     }
 
-    @Disabled("TODO: re-type from memory, then delete this line")
+
     @Test
     void javascriptExecutorScrollAndRead() {
-        // TODO
+        driver.get(THE_INTERNET + "/large");
+        JavascriptExecutor js = (JavascriptExecutor)  driver;
+        WebElement deepRow = driver.findElement(By.id("large-table"));
+        js.executeScript("arguments[0].scrollIntoView(true);", deepRow);
+        String title = (String) js.executeScript("return document.title;");
+        assertEquals("The Internet", title);
+        Long scrollY = (Long) js.executeScript("return Math.round(window.pageYOffset);");
+        assertTrue(scrollY > 0, "Page should have scrolled down");
     }
 
-    @Disabled("TODO: re-type from memory, then delete this line")
+
     @Test
-    void takeScreenshotToFile() {
-        // TODO
+    void takeScreenshotToFile()throws Exception {
+        driver.get("https://www.saucedemo.com");
+        byte[]png = ((TakesScreenshot)driver).getScreenshotAs(OutputType.BYTES);
+        Path dir = Path.of("target", "screenshots");
+        Files.createDirectories(dir);
+        Path file = dir.resolve("manual_demo.png");
+        Files.write(file, png);
+        assertTrue(Files.size(file) > 0, "Screenshot file should not be empty");
     }
 
-    @Disabled("TODO: re-type from memory, then delete this line")
+
     @Test
     void staleElementAfterDomRemoval() {
-        // TODO
+        driver.get(THE_INTERNET + "/dynamic_controls");
+        WebElement checkbox = driver.findElement(By.cssSelector("#checkbox input"));
+        driver.findElement(By.cssSelector("#checkbox-example button")).click();
+        wait.until(ExpectedConditions.textToBe(By.id("message"), "It's gone!"));
+        assertThrows(StaleElementReferenceException.class, checkbox::isSelected);
+        assertTrue (driver.findElements(By.cssSelector("#checkbox input")).isEmpty());
     }
 
-    @Disabled("TODO: re-type from memory, then delete this line")
+
     @Test
     void readTypedTextWithGetAttributeValue() {
-        // TODO
+        driver.get(THE_INTERNET + "/inputs");
+        WebElement input = driver.findElement(By.tagName("input"));
+        input.sendKeys("42");
+        assertEquals("", input.getText(), "getText() is empty for input elements");
+        assertEquals("42", input.getDomAttribute("value"),  "The typed value lives in the element's value property");
+
     }
 
-    @Disabled("TODO: re-type from memory, then delete this line")
+
     @Test
     void navigateBackForwardRefresh() {
-        // TODO
+        driver.get("https://www.saucedemo.com");
+        driver.navigate().to(THE_INTERNET + "/login");
+        assertTrue(driver.getCurrentUrl().contains("the-internet"));
+        driver.navigate().back();
+        assertTrue(driver.getCurrentUrl().contains("saucedemo"));
+        driver.navigate().forward();
+        assertTrue(driver.getCurrentUrl().contains("the-internet"));
+        driver.navigate().refresh();
+        assertTrue(driver.getCurrentUrl().contains("the-internet"));
     }
 }

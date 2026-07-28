@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -58,55 +59,166 @@ class PracticeD09ApiDrills {
         RestAssured.reset();
     }
 
-    @Disabled("delete this line, then write the body from memory")
+
     @Test
     void getTradeReturns200WithExpectedJsonBody() {
         // TODO: given().accept(JSON).when().get("/api/trades/1001").then()
         //       assert statusCode 200, contentType JSON, and body fields:
         //       tradeId=1001, instrument=AAPL, side=BUY, price=189.50f, status=SETTLED
+        given()
+                .accept(ContentType.JSON)
+        .when()
+                .get("api/trades/1001")
+        .then()
+                .statusCode(200)
+                .contentType(ContentType.JSON)
+                .body("tradeId", equalTo(1001))
+                .body("instrument", equalTo("AAPL"))
+                .body("side", equalTo("BUY"))
+                .body("price", equalTo(189.50f))
+                .body("status", equalTo("SETTLED"));
     }
 
-    @Disabled("delete this line, then write the body from memory")
+
     @Test
     void postNewTradeReturns201CreatedWithLocationHeader() {
         // TODO: POST a JSON trade body to /api/trades with header X-API-KEY
         //       assert 201 (NOT 200!), Location header notNullValue(),
         //       extract the Location header and assertEquals("/api/trades/1002", ...)
+        String locationOfNewTrade =
+        given()
+                .header("X-API-KEY", "drill-key")
+                .contentType(ContentType.JSON)
+                .body("""
+                          {"instrument": "MSFT", "side": "SELL","quantity": 50, "price": 425.10}""")
+        .when()
+                .post("/api/trades")
+        .then()
+                .statusCode(201)
+                .header("Location", notNullValue())
+                .body("tradeId", equalTo(1002))
+                .body("status", equalTo("NEW"))
+                .extract().header("Location");
+        assertEquals("/api/trades/1002", locationOfNewTrade);
+
+
     }
 
-    @Disabled("delete this line, then write the body from memory")
+
     @Test
     void postWithoutApiKeyReturns401() {
         // TODO: same POST but WITHOUT the X-API-KEY header
         //       assert 401 and body "error" containsString("X-API-KEY")
         //       (say out loud: 401 = who are you, 403 = you may not)
+        given()
+                .contentType(ContentType.JSON)
+                .body("""
+                        {"instrument": "MSFT", "side": "SELL","quantity": 50, "price": 425.10}""")
+        .when()
+                .post("/api/trades")
+        .then()
+                .statusCode(401)
+                .body("error", containsString("X-API-KEY"));
     }
 
-    @Disabled("delete this line, then write the body from memory")
+
     @Test
     void getUnknownTradeReturns404WithErrorBody() {
         // TODO: GET /api/trades/9999 -> 404, body error="trade not found", path echoes the URI
+        given()
+        .when()
+                .get("api/trades/9999")
+        .then()
+                .statusCode(404)
+                .body("error", equalTo("trade not found"))
+                .body("path", equalTo("/api/trades/9999"));
     }
 
-    @Disabled("delete this line, then write the body from memory")
+
     @Test
     void putReturns200WithBodyAndDeleteReturns204Empty() {
         // TODO: PUT /api/trades/1001 with a JSON body -> 200, status=CANCELLED
         //       DELETE /api/trades/1001 -> 204, extract the Response and assert body is ""
+        given()
+                .contentType(ContentType.JSON)
+                .body("""
+                      {"status": "CANCELLED"}""")
+        .when()
+                .put("/api/trades/1001")
+        .then()
+                .statusCode(200)
+                .body("status", equalTo("CANCELLED"));
+        Response deleteResponse =
+                given()
+                .when()
+                        .delete("/api/trades/1001")
+                .then()
+                        .statusCode(204)
+                        .extract().response();
     }
 
-    @Disabled("delete this line, then write the body from memory")
+
     @Test
     void portfolioValuationJsonRecomputesToItsOwnTotals() {
         // TODO: GET /api/portfolio/valuation -> 200, positions hasSize(3)
         //       extract lists: positions.quantity, positions.price, positions.marketValue
         //       loop: assert marketValue[i] == quantity[i] * price[i] (delta 0.01)
         //       sum them and assert equals totals.grossMarketValue and totals.positionCount
-    }
+        Response response =
+                given()
+                .when()
+                        .get("/api/portfolio/valuation")
+                .then()
+                        .statusCode(200)
+                        .body("positions", hasSize(3))
+                        .body("positions.instrument", contains("AAPL", "MSFT", "GOOG"))
+                        .extract().response();
+        List<Integer> quantities = response.jsonPath().getList("positions.quantity");
+        List<Float> prices = response.jsonPath().getList("positions.price");
+        List<Float> marketValues = response.jsonPath().getList("positions.marketValue");
 
-    @Disabled("delete this line, then write the body from memory")
+        double recomputedTotal = 0;
+        for (int i = 0; i < quantities.size(); i++) {
+            double expected = quantities.get(i) * (double) prices.get(i);
+            assertEquals(expected, marketValues.get(i), 0.01,
+                    "position" + i + ": marketValue must equal quantity * price");
+            recomputedTotal += expected;
+        }
+        double reportedTotal = response.jsonPath().getDouble("totals.grossMarketValue");
+        assertEquals(recomputedTotal, reportedTotal, 0.01,
+                "grossMarketValue must equal the sum of position market values");
+        assertEquals(quantities.size(), response.jsonPath().getInt("totals.positionCount"));
+        }
+
+
+
+
     @Test
     void valuationEndpointRespondsWithinSla() {
         // TODO: GET the valuation and assert .time(lessThan(2L), TimeUnit.SECONDS)
+        given()
+        .when()
+                .get("/api/portfolio/valuation")
+        .then()
+                .statusCode(200)
+                .time(lessThan(2L), TimeUnit.SECONDS);
     }
+
+//    @Test
+//    void postAndDeserializeTrade(){
+//        TradeRequest request = new TradeRequest("AAPL", "BUY", "10", new BigDecimal("158.50"));
+//        TradeResult result = given()
+//                .header("X-API-KEY", "drill-key")
+//                .contentType(ContentType.JSON)
+//                .body(request)
+//        .when()
+//                .post("/api/trades")
+//        .then()
+//                .statusCode(201)
+//                .header("Location", notNullValue())
+//                .contentType(ContentType.JSON)
+//                .extract().as(Trade.class);
+//        assertEquals(0, new BigDecimal("158.50").compareTo(result.getPrice()));
+//        assertEquals("NEW", result.getStatus());
+//    }
 }

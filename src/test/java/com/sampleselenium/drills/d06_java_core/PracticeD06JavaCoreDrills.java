@@ -3,6 +3,10 @@ package com.sampleselenium.drills.d06_java_core;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * DRILL 06 — PRACTICE FILE  (no browser — fastest drill in the project)
  *
@@ -27,11 +31,17 @@ import org.junit.jupiter.api.Test;
  */
 class PracticeD06JavaCoreDrills {
 
-    @Disabled("TODO: re-type from memory, then delete this line")
+
     @Test
     void reverseAString() {
-        // TODO
+        String input = "Peter";
+        StringBuilder manual = new StringBuilder();
+        for (int i = input.length() - 1; i >= 0; i--) {
+            manual.append(input.charAt(i));
+        }
+        assertEquals("reteP", manual.toString());
     }
+
 
     @Disabled("TODO: re-type from memory, then delete this line")
     @Test
@@ -92,4 +102,12 @@ class PracticeD06JavaCoreDrills {
     void exceptionsAndFinallyOrder() {
         // TODO
     }
+
+    @Test
+    void printEveryLetterName() {
+        String name = "peter";
+        for (int i = 0; i < name.length(); i++);
+        System.out.println(name.charAt(0));
+    }
+
 }
