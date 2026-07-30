@@ -9,8 +9,8 @@ Open `practice.html` in a browser for a randomized daily practice session based 
 The field test includes:
 
 - 20 randomized questions per session with no repeats and shuffled answer positions
-- 194-question bank covering the Infosys top-100, Deloitte rounds, Barclays QA rounds, Luxoft investment-banking automation topics, Maximus Lead Software QA topics, Builders Mutual API/integration QA topics, the full HTTP status-code map (2xx/3xx/4xx/5xx), and Spring IoC / REST Assured specification / BDD design-depth questions
-- Employer filter for ALL, Infosys, Deloitte, Barclays, Luxoft, Maximus, Builders Mutual, and general cross-company questions; the employer filter can be combined with any focus track
+- 234-question bank covering the Infosys top-100, Deloitte rounds, Barclays QA rounds, Luxoft investment-banking automation topics, Maximus Lead Software QA topics, Builders Mutual API/integration QA topics, Inn-Flow automation-first QA topics (AI-assisted QA, Cypress/Playwright, React, .NET APIs, SQL Server, multi-tenant SaaS on Azure, JMeter/k6, CI/CD continuous testing), the full HTTP status-code map (2xx/3xx/4xx/5xx), and Spring IoC / REST Assured specification / BDD design-depth questions
+- Employer filter for ALL, Infosys, Deloitte, Barclays, Luxoft, Maximus, Builders Mutual, Inn-Flow, and general cross-company questions; the employer filter can be combined with any focus track
 - Focus tracks for Selenium, Java, framework design, TestNG/SQL, interview communication, and API + Spring Boot
 - Multiple-choice questions with immediate explanations and source signals
 - A dedicated written-answers track with coach notes, kept separate from the multiple-choice mix

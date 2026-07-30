@@ -89,6 +89,12 @@ server (`py -m http.server 8080`, then <http://localhost:8080/practice.html>).
   trace viewer, APIRequestContext, and the honest Selenium-to-Playwright ramp answer —
   and AWS testing depth — SNS/SQS/Lambda event flows, CloudWatch Logs Insights triage,
   S3 file ingestion, API Gateway 401/403/502/504 status triage, IAM and secrets),
+  plus Inn-Flow QA Automation Engineer topics (AI-assisted QA tooling and how to adopt
+  it safely, Cypress vs Selenium architecture, React SPA testing, multi-tenant SaaS
+  tenant isolation, SQL Server/database testing depth, testing .NET APIs from a
+  non-.NET stack, Azure environments and Azure DevOps pipeline stages, JMeter vs k6,
+  shift-left defect prevention, mentoring and quality culture, defensible quality
+  metrics, and continuous testing in CI/CD),
   plus a 50-question scenario bank (test strategy and prioritization, release
   readiness and quality metrics, scenario-design prompts for login/payment/search/
   cart/file upload, distributed-system testing — pagination, eventual consistency,
@@ -98,7 +104,7 @@ server (`py -m http.server 8080`, then <http://localhost:8080/practice.html>).
 - **Tracks 01–06** slice by topic (Selenium, Java, Framework, TestNG+SQL, Interview
   voice, API + Spring Boot); **Mixed Signal** pulls from everything.
 - **Employer filter** narrows the session to ALL, Infosys, Deloitte, Barclays, Luxoft,
-  Maximus, Builders Mutual, or general cross-company questions. It can be combined with a topic track;
+  Maximus, Builders Mutual, Inn-Flow, or general cross-company questions. It can be combined with a topic track;
   Maximus currently emphasizes the Lead Software QA JD plus the Selenium/Java,
   framework, SQL, API, CI/CD, and leadership questions most likely to come up.
 - **Track 07 "Written answers"** holds all typed prompts separately — say the answer
