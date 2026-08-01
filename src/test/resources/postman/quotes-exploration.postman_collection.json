@@ -1,0 +1,27 @@
+{
+  "info": {
+    "name": "Quotes API - exploration",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "b7e2f6a0-quotes-exploration"
+  },
+  "item": [
+    {
+      "name": "Get Quote by Symbol",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/api/quotes/AAPL", "path": ["api", "quotes", "AAPL"] }
+      }
+    },
+    {
+      "name": "Create Quote",
+      "request": {
+        "method": "POST",
+        "url": { "raw": "{{baseUrl}}/api/quotes", "path": ["api", "quotes"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"symbol\":\"MSFT\",\"price\":425.10}"
+        }
+      }
+    }
+  ]
+}
