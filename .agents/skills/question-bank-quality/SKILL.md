@@ -14,11 +14,22 @@ For each employer-specific written prompt, ensure at least one employer-tagged M
 MCQ rules:
 
 - Use four options and one unambiguous answer index.
-- Make all options plausible and similar in word count; never make the correct answer consistently more detailed.
 - Put detail, nuance, and trade-offs in `explanation`, not one option.
 - Avoid all/none, joke distractors, and factual traps unrelated to the stated learning objective.
 - Preserve randomized answer position and the written-track separation.
-- The correct option must never be the single longest one. Length is a tell that survives answer shuffling, so a learner can score without reading. Trim the correct option and fill out the distractors; do not only pad distractors.
+
+Answer length is the bias that actually shows up here, and it survives answer shuffling — a
+learner who always clicks the longest option should not beat guessing. "Keep the options a
+similar length" is too soft to act on; it was already in this file while 93% of the bank had
+the correct answer as its longest option. Use the mechanical form instead:
+
+- **At least one distractor must be strictly longer than the correct option.** Aim for the
+  correct option to be second or third longest of the four.
+- Keep `max(len) - min(len)` under 55 characters.
+- Trim the correct option to its essential claim *and* fill the distractors out to full,
+  genuinely tempting wrong answers. Doing only one of the two leaves the ranking unchanged —
+  shaving the correct answer alone just shrinks every option together.
+- A longer distractor still has to be a plausible wrong answer, never padding.
 
 Rebalanced options go in `balancedOptionOverrides`, keyed by a question prefix. An entry is
 either a bare array of four options, which keeps the question's original `answer` index, or
@@ -26,7 +37,13 @@ either a bare array of four options, which keeps the question's original `answer
 the correct option moves — replacing options alone leaves `answer` pointing at a distractor,
 and nothing surfaces that until a learner is marked wrong on a correct choice.
 
-Before finishing, run `node --check practice.js` and `node scripts/audit-question-bank.mjs`. Audit changed questions for duplicate wording, correct answer indexes, employer-filter reachability, and option-length bias. The script blocks structural errors and regressions beyond the committed length-bias baseline; lower that baseline whenever a batch is rebalanced. Both commands also run as the `question-bank-audit` job in `.github/workflows/selenium-tests.yml`, which is the only CI job that cannot fail because a public practice site is down.
+Before finishing, run `node --check practice.js` and `node scripts/audit-question-bank.mjs`. Audit changed questions for duplicate wording, correct answer indexes, employer-filter reachability, and option-length bias. The script blocks structural errors and regressions beyond the committed length-bias baseline, and also fails when the bank has improved past the baseline without the baseline being lowered — that is what keeps the ratchet tightening. Both commands also run as the `question-bank-audit` job in `.github/workflows/selenium-tests.yml`, which is the only CI job that cannot fail because a public practice site is down.
+
+After any rebalance, prove the correct answer survived rather than assuming it. Load the bank,
+run `applyOptionHardening()`, and assert that `item.options[item.answer]` is still the option
+you meant — a rewrite that reorders choices without updating `answer` marks a correct choice
+wrong, and no syntax check or page load reveals it. Verify against the text of the intended
+answer, not the index.
 
 ## Full-Bank Audit Mode
 

@@ -18,6 +18,17 @@ Route work as follows:
 
 Use specialists inline for a narrow task. Delegate independent reviews only when the task warrants it and the user has authorized parallel work. Do not ask several specialists to repeat the same general review.
 
+Most of this project's content lives in one file, `practice.js`, so parallel specialists
+cannot each edit their own slice of it. When fanning out work that lands in a shared file,
+have every specialist return structured data to a path of its own and let the coordinator
+apply it. Keep the applier separate from the author: validate each returned item against
+mechanically checkable constraints, apply only what passes, and report what was rejected and
+why. Specialists that self-report success are not evidence — verify their output yourself.
+
+Give specialists constraints a script can check, not adjectives. A rejected batch should come
+back with the specific lever that fixes it and the measurements that prove the failure, then
+be re-sent to the same specialist so its context survives.
+
 Return one report: **Scope**, **Specialists consulted**, then merged findings under **Must fix**, **Should fix**, and **Consider**. Include exact files/lines where possible, the smallest relevant verification command, and any documentation that must be updated.
 
 Before closing, check configuration drift: if a new skill, agent, command, module, test profile, or question-bank rule was added, update the relevant routing table and project guidance in the same change.
