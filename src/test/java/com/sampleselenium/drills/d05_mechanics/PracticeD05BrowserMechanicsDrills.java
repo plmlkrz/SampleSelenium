@@ -86,11 +86,11 @@ class PracticeD05BrowserMechanicsDrills extends BaseTest {
     @Test
     void promptAlertTypeTextThenAccept() {
         driver.get(THE_INTERNET + "/javascript_alerts");
-        driver.findElement(By.cssSelector("button[onclick='jsConfirm()']")).click();
+        driver.findElement(By.cssSelector("button[onclick='jsPrompt()']")).click();
         Alert prompt = wait.until(ExpectedConditions.alertIsPresent());
         prompt.sendKeys("Peter");
         prompt.accept();
-        assertEquals("You Entered: Peter", driver.findElement(By.id("result")).getText());
+        assertEquals("You entered: Peter", driver.findElement(By.id("result")).getText());
     }
 
 
@@ -199,7 +199,7 @@ class PracticeD05BrowserMechanicsDrills extends BaseTest {
         WebElement input = driver.findElement(By.tagName("input"));
         input.sendKeys("42");
         assertEquals("", input.getText(), "getText() is empty for input elements");
-        assertEquals("42", input.getDomAttribute("value"),  "The typed value lives in the element's value property");
+        assertEquals("42", input.getDomProperty("value"), "The typed value lives in the element's value property");
 
     }
 
