@@ -54,6 +54,15 @@ const pairedCoverage = (employer) => {
     const pairedCount = mcqs.filter((item) => item.anchor?.includes(`paired recall`) && item.anchor?.includes(employer)).length;
     return { writtenCount, pairedCount };
 };
+// A question with no deep dive shows no "More information" control at all, so a coverage gap
+// is silent from the UI. Track it as a ratchet: it may shrink, never grow.
+const missingDeepDives = mcqs.filter((item) => !context.deep[item.question]);
+// Entries that skip `distractors` teach the rule but not why the tempting option is wrong,
+// which is the part a learner who just answered incorrectly actually needs.
+const deepDivesWithoutDistractors = Object.entries(context.deep)
+    .filter(([, value]) => !Array.isArray(value.distractors) || value.distractors.length !== 3)
+    .map(([question]) => question);
+
 const conciseOverrideIssues = Object.entries(context.concise).flatMap(([prefix, expectedAnswer]) => {
     const matches = mcqs.filter((item) => item.question.startsWith(prefix));
     if (matches.length !== 1) return [{ prefix, matches: matches.length, reason: "prefix must identify exactly one MCQ" }];
@@ -65,6 +74,8 @@ const conciseOverrideIssues = Object.entries(context.concise).flatMap(([prefix, 
 // without writing the better numbers back here. Otherwise slack accumulates silently and the
 // gate stops meaning anything.
 const BASELINE = { uniqueLongest: 32, spreadAtLeast55: 0 };
+// Deep-dive coverage ratchets the same way: lower it as questions gain explanations, never up.
+const BASELINE_MISSING_DEEP_DIVES = 0;
 // With four parallel choices the correct answer should be uniquely longest about 25% of
 // the time. Strict mode allows a small sampling margin instead of demanding zero and
 // accidentally teaching learners that the longest option is always wrong.
@@ -75,6 +86,12 @@ console.log(JSON.stringify({
     invalidMcqs: invalid.length, duplicateQuestions: duplicateQuestions.length,
     shadowedOverrideKeys: duplicateOverrideKeys,
     bespokeDeepDives: Object.keys(context.deep).length,
+    deepDiveCoverage: {
+        withDeepDive: mcqs.length - missingDeepDives.length,
+        missing: missingDeepDives.length,
+        baselineMissing: BASELINE_MISSING_DEEP_DIVES,
+        missingDistractorRebuttals: deepDivesWithoutDistractors.length
+    },
     conciseAnswerOverrides: { total: Object.keys(context.concise).length, issues: conciseOverrideIssues.length },
     optionLength: {
         uniqueLongest, spreadAtLeast55: spread55, flaggedQuestions: lengthViolations.length,
@@ -90,6 +107,21 @@ const strictLengthBias = uniqueLongest > STRICT_MAX_UNIQUE_LONGEST || spread55 >
 if (baselineStale && !baselineRegressed) {
     console.error("Question-bank audit failed: the bank improved past the committed baseline. Lower BASELINE in this file to { uniqueLongest: "
         + uniqueLongest + ", spreadAtLeast55: " + spread55 + " } so the gain cannot be given back.");
+    process.exitCode = 1;
+}
+if (missingDeepDives.length > BASELINE_MISSING_DEEP_DIVES) {
+    console.error("Question-bank audit failed: " + missingDeepDives.length + " MCQs lack a deep dive, worse than the committed "
+        + BASELINE_MISSING_DEEP_DIVES + ". Those questions show no \"More information\" control at all.");
+    process.exitCode = 1;
+} else if (missingDeepDives.length < BASELINE_MISSING_DEEP_DIVES) {
+    console.error("Question-bank audit failed: deep-dive coverage improved. Lower BASELINE_MISSING_DEEP_DIVES in this file to "
+        + missingDeepDives.length + " so the gain cannot be given back.");
+    process.exitCode = 1;
+}
+if (deepDivesWithoutDistractors.length) {
+    console.error("Question-bank audit failed: " + deepDivesWithoutDistractors.length
+        + " deep dive(s) lack exactly 3 distractor rebuttals, the part that explains why a tempting option is wrong:");
+    for (const q of deepDivesWithoutDistractors.slice(0, 5)) console.error("  " + q.slice(0, 70));
     process.exitCode = 1;
 }
 if (duplicateOverrideKeys.length) {
