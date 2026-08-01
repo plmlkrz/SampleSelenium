@@ -45,9 +45,10 @@ runs with: `$env:MAVEN_OPTS='-Djavax.net.ssl.trustStoreType=Windows-ROOT'; mvn t
 | 9 | **API testing**: REST Assured vs local mock microservice, 200 vs 201, JSON calc validation, Spring Boot testing talk track | `drills/d09_api/SourceD09ApiDrills.java` | `mvn test -Dtest=SourceD09ApiDrills` |
 | 10 | **Playwright**: auto-waiting/actionability, getByRole/getByLabel/getByTestId, strict mode, context isolation, dialogs, `page.request()` API calls, network stubbing, tracing — vs the Selenium equivalents we hand-built | `drills/d10_playwright/SourceD10PlaywrightDrills.java` | `mvn test -Dtest=SourceD10PlaywrightDrills` |
 | 11 | **Resilience**: timeout/retry/circuit-breaker against a WireMock-stubbed downstream | `drills/d11_resilience/SourceD11ResilienceDrills.java` | `mvn test -Dtest=SourceD11ResilienceDrills` |
-| 12 | CI/CD: GitHub Actions + Jenkins | `.github/workflows/selenium-tests.yml`, `Jenkinsfile` | read + narrate; runs on push to GitHub |
+| 12 | **Promoting Postman to coded suites**: read an exported collection with JsonPath, port its happy-path requests into REST Assured, then add the negative/boundary cases exploratory clicking skipped | `drills/d12_postman_promotion/SourceD12PostmanPromotionDrills.java` | `mvn test -Dtest=SourceD12PostmanPromotionDrills` |
+| 13 | CI/CD: GitHub Actions + Jenkins | `.github/workflows/selenium-tests.yml`, `Jenkinsfile` | read + narrate; runs on push to GitHub |
 
-Modules 6, 7, 9 and 11 need **no browser and no network** — they run in about a second.
+Modules 6, 7, 9, 11 and 12 need **no browser and no network** — they run in about a second.
 Perfect for high-repetition days and for warming up the morning of the interview.
 Module 10 does drive a real browser, but against a local mock app, so it is offline too
 (~12s once Chromium is cached — see the setup note below). Modules 1, 2, 5 and 8 are the
