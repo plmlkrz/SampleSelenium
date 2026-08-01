@@ -847,17 +847,29 @@ function getQuestionEmployers(item) {
     if (explicit.length) return [...new Set([...explicit, ...source])];
     return source.length ? source : ["general"];
 }
+// A track sweep (maximusTrackTags and friends) claims every question in a track for an
+// employer. That is fine for questions with no employer in their source signal, but it used
+// to also claim questions anchored to a *different* employer — which is why the Builders
+// Mutual set showed cards reading "Source signal: Luxoft Q8". When an anchor names a specific
+// employer, that anchor wins: only an explicit tag can add another employer to the question.
+function anchorClaimsOtherEmployer(item, employer) {
+    const anchored = getSourceEmployers(item).filter((value) => value !== "general");
+    return anchored.length > 0 && !anchored.includes(employer);
+}
 function applyJobDescriptionTags() {
     questionBank.forEach((item) => {
-        const isMaximus = maximusTrackTags.has(item.track)
-            || String(item.anchor || "").toLowerCase().includes("lead qa jd field test")
-            || String(item.anchor || "").toLowerCase().includes("maximus jd gap")
+        const anchor = String(item.anchor || "").toLowerCase();
+        const isMaximus = (maximusTrackTags.has(item.track) && !anchorClaimsOtherEmployer(item, "maximus"))
+            || anchor.includes("lead qa jd field test")
+            || anchor.includes("maximus jd gap")
             || maximusQuestionTags.some((pattern) => item.question.startsWith(pattern));
-        const isLuxoft = luxoftTrackTags.has(item.track)
-            || String(item.anchor || "").toLowerCase().includes("luxoft")
+        const isLuxoft = (luxoftTrackTags.has(item.track) && !anchorClaimsOtherEmployer(item, "luxoft"))
+            || anchor.includes("luxoft")
             || luxoftQuestionTags.some((pattern) => item.question.startsWith(pattern));
-        const isBuildersMutual = (buildersTrackTags.has(item.track) && !buildersExcludeQuestionTags.some((pattern) => item.question.startsWith(pattern)))
-            || String(item.anchor || "").toLowerCase().includes("builders mutual jd gap")
+        const isBuildersMutual = (buildersTrackTags.has(item.track)
+                && !buildersExcludeQuestionTags.some((pattern) => item.question.startsWith(pattern))
+                && !anchorClaimsOtherEmployer(item, "builders-mutual"))
+            || anchor.includes("builders mutual jd gap")
             || buildersQuestionTags.some((pattern) => item.question.startsWith(pattern));
         const employers = [];
         if (isMaximus) employers.push("maximus");
