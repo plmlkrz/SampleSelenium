@@ -898,7 +898,7 @@ function applyOptionHardening() {
         if (override) item.options = override[1];
     });
 }
-const state = { track: "all", employer: "all", questions: [], index: 0, correct: 0, answered: false, selected: null, correctIndex: null, codingIndex: 0 };
+const state = { track: "all", employer: "all", topic: "all", questions: [], index: 0, correct: 0, answered: false, selected: null, correctIndex: null, codingIndex: 0 };
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 
@@ -986,13 +986,32 @@ function updateTrackLabel() {
     const button = document.querySelector("[data-track=\"" + state.track + "\"]");
     const trackLabel = state.track === "all" ? "MIXED SIGNAL" : button.textContent.replace("↗", "").trim();
     const employerLabel = state.employer === "all" ? "" : " · " + getEmployerFilter(state.employer).shortLabel;
-    $("#track-label").textContent = (trackLabel + employerLabel).toUpperCase();
+    const topicLabel = state.topic === "all" ? "" : " · " + state.topic;
+    $("#track-label").textContent = (trackLabel + employerLabel + topicLabel).toUpperCase();
 }
-function startSession() {
+// The pool before the topic filter is applied — also the source for the topic dropdown,
+// so the options only ever list topics that the current track and employer can actually serve.
+function poolBeforeTopic() {
     // Written prompts live in their own module; every other track is MCQ-only.
-    const pool = state.track === "written"
+    return state.track === "written"
         ? questionBank.filter((item) => item.type === "written" && matchesEmployer(item))
         : questionBank.filter((item) => item.type === "mcq" && (state.track === "all" || item.track === state.track) && matchesEmployer(item));
+}
+function matchesTopic(item) { return state.topic === "all" || item.topic === state.topic; }
+function populateTopicFilter(scoped) {
+    const counts = new Map();
+    scoped.forEach((item) => counts.set(item.topic, (counts.get(item.topic) || 0) + 1));
+    // Drop a stale selection rather than stranding the session on an empty pool.
+    if (state.topic !== "all" && !counts.has(state.topic)) state.topic = "all";
+    const options = [...counts.entries()].sort((a, b) => a[0].localeCompare(b[0]))
+        .map(([topic, count]) => "<option value=\"" + topic + "\">" + topic + " (" + count + ")</option>");
+    $("#topic-filter").innerHTML = "<option value=\"all\">ALL TOPICS (" + scoped.length + ")</option>" + options.join("");
+    $("#topic-filter").value = state.topic;
+}
+function startSession() {
+    const scoped = poolBeforeTopic();
+    populateTopicFilter(scoped);
+    const pool = scoped.filter(matchesTopic);
     // No repeats: sample without replacement, capped at 20 (or the whole pool if smaller).
     state.questions = shuffle(pool).slice(0, Math.min(20, pool.length)).map((item) => item.type === "mcq" ? shuffleChoices(item) : item);
     state.index = 0; state.correct = 0; state.answered = false; state.selected = null;
@@ -1089,6 +1108,7 @@ $$(".track-button").forEach((button) => button.addEventListener("click", () => {
     state.track = button.dataset.track; $$(".track-button").forEach((item) => item.classList.toggle("is-active", item === button)); startSession();
 }));
 $("#employer-filter").addEventListener("change", (event) => { state.employer = event.target.value; startSession(); });
+$("#topic-filter").addEventListener("change", (event) => { state.topic = event.target.value; startSession(); });
 $("#new-session").addEventListener("click", startSession);
 $("#next-coding").addEventListener("click", () => { state.codingIndex = (state.codingIndex + 1) % codingDrills.length; renderCoding(); });
 $("#show-hint").addEventListener("click", () => { $("#hint-box").hidden = !$("#hint-box").hidden; });
