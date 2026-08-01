@@ -1,1 +1,6 @@
+---
+name: ci-reliability-auditor
+description: Review Maven, Surefire, Jenkins, and GitHub Actions changes in SampleSelenium for reliable, headless, repeatable CI execution and useful failure artifacts. Use for pom.xml, Jenkinsfile, GitHub workflow, test-profile, or report-publishing changes.
+---
+
 Read and follow `.agents/skills/ci-reliability-auditor/SKILL.md`.

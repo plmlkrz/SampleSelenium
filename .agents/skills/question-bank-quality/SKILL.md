@@ -18,8 +18,15 @@ MCQ rules:
 - Put detail, nuance, and trade-offs in `explanation`, not one option.
 - Avoid all/none, joke distractors, and factual traps unrelated to the stated learning objective.
 - Preserve randomized answer position and the written-track separation.
+- The correct option must never be the single longest one. Length is a tell that survives answer shuffling, so a learner can score without reading. Trim the correct option and fill out the distractors; do not only pad distractors.
 
-Before finishing, run `node --check practice.js` and `node scripts/audit-question-bank.mjs`. Audit changed questions for duplicate wording, correct answer indexes, employer-filter reachability, and option-length bias. The script blocks structural errors and regressions beyond the committed length-bias baseline; lower that baseline whenever a batch is rebalanced.
+Rebalanced options go in `balancedOptionOverrides`, keyed by a question prefix. An entry is
+either a bare array of four options, which keeps the question's original `answer` index, or
+`{ options, answer }` when the rebalance reordered the choices. Use the second shape whenever
+the correct option moves — replacing options alone leaves `answer` pointing at a distractor,
+and nothing surfaces that until a learner is marked wrong on a correct choice.
+
+Before finishing, run `node --check practice.js` and `node scripts/audit-question-bank.mjs`. Audit changed questions for duplicate wording, correct answer indexes, employer-filter reachability, and option-length bias. The script blocks structural errors and regressions beyond the committed length-bias baseline; lower that baseline whenever a batch is rebalanced. Both commands also run as the `question-bank-audit` job in `.github/workflows/selenium-tests.yml`, which is the only CI job that cannot fail because a public practice site is down.
 
 ## Full-Bank Audit Mode
 

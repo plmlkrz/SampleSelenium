@@ -80,6 +80,10 @@ multiple-choice question with a long-answer cue or a 55+ character option spread
 
 The audit checks question structure, duplicate wording, employer written-to-MCQ coverage, bespoke deep-dive count, and option-length bias. It fails if structural issues occur or the committed answer-length baseline gets worse; reduce that baseline deliberately as legacy questions are rebalanced.
 
+This runs in CI as the `question-bank-audit` job. It needs no JDK, browser, or network, so it
+is the one job that stays trustworthy when the Selenium suites go red because Sauce Demo or
+the-internet.herokuapp.com is unreachable.
+
 ## Test Site
 
 Tests run against [Sauce Demo](https://www.saucedemo.com) — a purpose-built Selenium practice application.

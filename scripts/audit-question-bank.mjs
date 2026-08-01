@@ -32,12 +32,12 @@ console.log(JSON.stringify({
     total: bank.length, mcqs: mcqs.length, written: written.length,
     invalidMcqs: invalid.length, duplicateQuestions: duplicateQuestions.length,
     bespokeDeepDives: Object.keys(context.deep).length,
-    optionLength: { uniqueLongest, spreadAtLeast55: spread55, flaggedQuestions: lengthViolations.length, baseline: { uniqueLongest: 187, spreadAtLeast55: 75 } },
+    optionLength: { uniqueLongest, spreadAtLeast55: spread55, flaggedQuestions: lengthViolations.length, baseline: { uniqueLongest: 127, spreadAtLeast55: 15 } },
     pairedCoverage: { buildersMutual: pairedCoverage("Builders Mutual"), innFlow: pairedCoverage("Inn-Flow") }
 }, null, 2));
 
 const strict = process.argv.includes("--strict");
-const baselineRegressed = uniqueLongest > 187 || spread55 > 75;
+const baselineRegressed = uniqueLongest > 127 || spread55 > 15;
 if (invalid.length || duplicateQuestions.length || baselineRegressed || (strict && lengthViolations.length)) {
     console.error("Question-bank audit failed: fix invalid data, duplicates, or a regression beyond the committed length-bias baseline.");
     process.exitCode = 1;
