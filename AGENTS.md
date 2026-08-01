@@ -193,3 +193,12 @@ class MyTest extends BaseTest {
 
 Canonical project skills live in `.agents/skills/`; Claude and Codex wrappers point there so their instructions cannot drift. Use `coordinate` for multi-surface work. It routes Java/Selenium changes to `automation-framework-reviewer`, practice-question changes to `question-bank-quality` plus `learning-explanation-author` when post-answer teaching content changes, Maven/CI changes to `ci-reliability-auditor`, and practice-site UI changes to `practice-site-visual-verification`.
 
+Two skills apply to every change rather than a surface. `qa-engineer` gives the risk tier, the
+post-conditions worth asserting, and the smallest verification command — consult it before
+starting, not as a closing rubber stamp. `subagent-orchestration` decides whether to fan work
+out at all and how to shard it without two agents editing `practice.js` at once.
+
+The single rule behind both: **green does not mean applied.** A passing `node --check`, a
+successful-looking applier, and a subagent reporting success have each accompanied an edit that
+never reached its target here. Assert the post-condition against freshly re-read state.
+
