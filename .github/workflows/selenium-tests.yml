@@ -40,6 +40,12 @@ jobs:
       - name: Audit the question bank
         run: node scripts/audit-question-bank.mjs
 
+      # Scores the bank the way a test-taker who knows nothing about the subject would:
+      # pick the wordiest option, the longest, the one avoiding "never"/"always". If any of
+      # those beats chance by much, the bank is measuring style instead of knowledge.
+      - name: Audit answer guessability
+        run: node scripts/audit-guessability.mjs
+
   junit-and-cucumber:
     runs-on: ubuntu-latest   # GitHub-hosted runners ship with current Chrome preinstalled
     steps:
