@@ -114,3 +114,4 @@ button, textarea { font: inherit; } button { cursor: pointer; }
     .intro-band { min-height: 0; padding: 42px 0 35px; display: block; }
     .intro-band h2 { max-width: 100%; font-size: 40px; overflow-wrap: anywhere; }
 }
+.deep-dive-hook { margin-top: 10px; padding: 9px 11px; border-left: 3px solid var(--yellow); background: #fffaf0; color: var(--ink); }
