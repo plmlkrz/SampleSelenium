@@ -32,7 +32,7 @@ const mcqs = context.bank.filter((q) => q.type === "mcq");
 // Keyed by question prefix; entries whose question is gone are reported, never silently dropped.
 const SALT = [
     ["What is the difference between HTTP 401 and 403", "401 means authenticated but forbidden (you may not); 403 means unauthenticated (who are you?)"],
-    ["Which HTTP methods are idempotent", "POST and PATCH — repeating them leaves the same end state"],
+    ["Which standard HTTP methods are idempotent", "POST and PATCH are idempotent by specification."],
     ["String vs StringBuilder", "String is mutable; StringBuilder is immutable; StringBuffer removes synchronization."],
     ["Array vs ArrayList", "An array grows dynamically; ArrayList has a fixed length set at construction."],
     ["List vs Set", "List enforces uniqueness; Set preserves insertion order and allows duplicates."],
