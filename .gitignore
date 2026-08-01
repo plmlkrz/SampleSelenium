@@ -22,6 +22,9 @@ target/
 .DS_Store
 Thumbs.db
 
+# Cygwin/Git Bash crash dumps (bash.exe.stackdump and friends)
+*.stackdump
+
 # JMeter drill output
 jmeter/results.jtl
 jmeter/report/
