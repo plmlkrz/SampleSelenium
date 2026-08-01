@@ -45,6 +45,20 @@ and nothing surfaces that until a learner is marked wrong on a correct choice.
 
 Before finishing, run `node --check practice.js` and `node scripts/audit-question-bank.mjs`. Audit changed questions for duplicate wording, correct answer indexes, employer-filter reachability, and option-length bias. The script blocks structural errors and regressions beyond the committed length-bias baseline, and also fails when the bank has improved past the baseline without the baseline being lowered — that is what keeps the ratchet tightening. Both commands also run as the `question-bank-audit` job in `.github/workflows/selenium-tests.yml`, which is the only CI job that cannot fail because a public practice site is down.
 
+To check whether marked answers are actually true, run the blind pass
+(`scripts/blind-pass-build.mjs` then `scripts/blind-pass-score.mjs`; see the README). Give the
+solver the questions without the key or explanations, tell it some items may have no correct
+option, and never show it the marked answer first — seeing the answer turns the task into "is
+this defensible?" instead of "what is true?", and it will almost always say yes.
+
+Treat a clean result as evidence only if the salted control items were caught in that same
+run. A pass with no salt, or one where planted falsehoods slipped through, is uninterpretable
+no matter how high the agreement. Note also what the control does and does not cover: it
+reverses crisp facts, so it validates the method on the roughly one-fifth of the bank that is
+factual, and says little about the judgment questions that make up most of it. Agreement from
+a solver that shares the question author's training data can confirm a shared misconception,
+so blind agreement raises confidence without establishing truth.
+
 After any rebalance, prove the correct answer survived rather than assuming it. Load the bank,
 run `applyOptionHardening()`, and assert that `item.options[item.answer]` is still the option
 you meant — a rewrite that reorders choices without updating `answer` marks a correct choice
