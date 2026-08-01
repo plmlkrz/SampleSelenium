@@ -15,6 +15,12 @@ Route work as follows:
 | `practice.js`, employer filters, MCQs, written prompts | `question-bank-quality`; add `learning-explanation-author` for post-answer teaching content |
 | `pom.xml`, `Jenkinsfile`, `.github/workflows` | `ci-reliability-auditor` |
 | `practice.html`, `practice.css`, responsive or accessibility changes | `practice-site-visual-verification` |
+| Any change, before starting and before closing | `qa-engineer` for the risk tier, the post-conditions to assert, and the minimal verification command |
+| Deciding whether to fan work out, and how to shard it | `subagent-orchestration` |
+
+Consult `qa-engineer` early, not as a final rubber stamp. Its risk tier decides how much
+verification the change warrants, and its pre-flight checks exist because the expensive failures
+here were cheap to detect beforehand and costly to discover afterwards.
 
 Use specialists inline for a narrow task. Delegate independent reviews only when the task warrants it and the user has authorized parallel work. Do not ask several specialists to repeat the same general review.
 

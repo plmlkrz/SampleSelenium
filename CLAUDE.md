@@ -72,5 +72,9 @@ The project has both JUnit 5 and TestNG on the classpath. `LoginTestsTestNg` use
 
 ## Project AI Specialists
 
-The canonical instructions are in `.agents/skills/`; `.claude/skills`, `.claude/agents`, and `.codex/agents` are thin wrappers. Use `coordinate` for work spanning multiple surfaces. It routes framework code to `automation-framework-reviewer`, `practice.js` content to `question-bank-quality` plus `learning-explanation-author` for deep-dive learning content, CI files to `ci-reliability-auditor`, and practice-site UI changes to `practice-site-visual-verification`.
+The canonical instructions are in `.agents/skills/`; `.claude/skills`, `.claude/agents`, and `.codex/agents` are thin wrappers.
+
+Use `qa-engineer` before and after any non-trivial change: it carries this project's risk tiers and the pre-flight checks that catch a mis-targeted edit before a batch of work is spent on it. Use `subagent-orchestration` to decide whether to delegate and how to shard.
+
+**Green does not mean applied.** `node --check` has passed on an edit written into the wrong object, an applier has reported 74 successful edits to a map nobody wanted changed, and a subagent has reported success on a batch a validator then rejected outright. Assert the post-condition against freshly re-read state; an exit code is not evidence. Use `coordinate` for work spanning multiple surfaces. It routes framework code to `automation-framework-reviewer`, `practice.js` content to `question-bank-quality` plus `learning-explanation-author` for deep-dive learning content, CI files to `ci-reliability-auditor`, and practice-site UI changes to `practice-site-visual-verification`.
 
