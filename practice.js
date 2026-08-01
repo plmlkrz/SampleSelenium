@@ -525,6 +525,36 @@ const deepDiveByQuestion = {
         distractors: ["Different logos are presentation, not authorization.", "Shared test accounts can conceal cross-tenant leakage.", "Different record counts say nothing about access control."],
         example: "given().auth().oauth2(tenantAToken).when().get(\"/api/tenants/B/payroll\").then().statusCode(403);",
         interview: "I test horizontal and vertical authorization: tenant A versus tenant B, and low-privilege versus admin roles. I cover UI, APIs, exports, and background jobs because the UI is not the only access path."
+    },
+    "What is the strongest foundation for an API integration strategy across several systems?": {
+        concept: "Integration automation starts with data flow, not endpoint lists. Map producer, transformation, consumer, persistence, and operational evidence; then choose contract, service, and end-to-end checks for the risks at each boundary.",
+        distractors: ["UI-first coverage is slow and does not localize a broken data boundary.", "Checking only the final record cannot identify which mapping or service failed.", "Documentation helps design tests but cannot prove the deployed integration works."],
+        example: "createPolicy();\nawaitUntil(() -> billingApi.policyExists(policyId));\nassertEquals(expectedPremium, billingApi.getPolicy(policyId).premium());",
+        interview: "I map the business data flow first, validate each contract and transformation independently, then keep a small end-to-end suite for the customer journey. Correlation IDs and reconciliation make failures diagnosable."
+    },
+    "What changes most when QA tests an AWS-hosted application?": {
+        concept: "The functional rule stays the same, but the evidence and failure modes change. QA needs scoped identity, service logs and metrics, realistic asynchronous expectations, environment-parity awareness, and disciplined data cleanup.",
+        distractors: ["Cloud hosting does not remove the need for normal functional assertions.", "A local-only suite misses IAM, queue, network, and throttling behavior.", "Screenshots are useful, but they cannot replace request traces and correlation IDs."],
+        example: "CloudWatch query: fields @timestamp, @message | filter correlationId = 'test-123' | sort @timestamp asc",
+        interview: "I test the same business outcomes, but I use cloud-native evidence such as scoped test roles, CloudWatch traces, queue state, and bounded polling for asynchronous workflows."
+    },
+    "What validates a .NET API beyond a successful HTTP status?": {
+        concept: "The technology behind the API does not change the quality contract. A useful API test proves authorization, payload and business rules, durable state, idempotency, negative behavior, and an agreed performance expectation.",
+        distractors: ["A nonempty 200 response can still contain wrong data or no durable effect.", "The implementation framework is not evidence that a public contract works.", "A browser is only one client and does not cover direct API authorization."],
+        example: "given().auth().oauth2(token).body(request).when().post(\"/api/payroll\").then().statusCode(201).body(\"status\", equalTo(\"POSTED\"));",
+        interview: "I treat a .NET API as a contract from the client side. I validate the business outcome and persisted state, then add security, negative, idempotency, and latency checks based on the service risk."
+    },
+    "What makes a performance plan credible for payroll or dashboard APIs?": {
+        concept: "A credible test models real work rather than maximizing threads. It defines arrival rate, data variety, ramp-up, duration, percentiles, error budget, and the difference between expected load, stress, spike, and soak goals.",
+        distractors: ["One local average hides tail latency and production concurrency behavior.", "Starting at the highest thread count skips the ramp and obscures the failure threshold.", "Functional assertions alone do not define volume, duration, or service-level objectives."],
+        example: "Thresholds: p95 < 800ms; error_rate < 1%; throughput >= 60 requests/second.",
+        interview: "I begin with production-like workload and unique data, then judge p95 latency, throughput, and errors against agreed SLOs. I run load, stress, and soak tests for different questions."
+    },
+    "What is the right pass criterion for an AI-assisted invoice workflow?": {
+        concept: "An AI workflow needs both model-quality evaluation and system-behavior testing. Measure it against labeled data, test confidence routing and overrides, retain audit evidence, and prove safe fallback when the model is slow, unavailable, or malformed.",
+        distractors: ["One exact match cannot estimate quality across invoice variability.", "A healthy provider response does not prove accounting correctness or routing safety.", "A nonzero confidence score says nothing about whether the threshold is safe."],
+        example: "assertThat(lowConfidenceInvoice.route()).isEqualTo(HUMAN_REVIEW);\nassertThat(audit.modelVersion()).isNotBlank();",
+        interview: "I separate model accuracy from the workflow around it. I use labeled edge cases, enforce confidence routing, verify auditability and overrides, and make failure fall back to human review rather than auto-posting."
     }
 };
 const balancedOptionOverrides = {
@@ -1192,7 +1222,14 @@ function checkAnswer() {
         if (opening) $("#copy-study-prompt").addEventListener("click", async () => {
             const copyButton = $("#copy-study-prompt");
             try { await navigator.clipboard.writeText(studyPrompt(question, getDeepDive(question))); copyButton.textContent = "Study prompt copied"; }
-            catch { copyButton.textContent = "Copy unavailable — select the explanation above"; }
+            catch {
+                copyButton.textContent = "Copy unavailable — prompt shown below";
+                const prompt = document.createElement("textarea");
+                prompt.className = "study-prompt"; prompt.readOnly = true;
+                prompt.value = studyPrompt(question, getDeepDive(question));
+                prompt.setAttribute("aria-label", "Study prompt for manual copying");
+                copyButton.after(prompt); prompt.focus(); prompt.select();
+            }
         });
     });
     $("#next-question").addEventListener("click", () => { state.index += 1; renderQuestion(); });

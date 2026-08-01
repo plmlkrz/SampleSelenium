@@ -69,6 +69,17 @@ mvn test -Dtest=LoginTests
 mvn test -Dtest=LoginTests#loginWithValidCredentials
 ```
 
+## Auditing the practice bank
+
+```powershell
+node scripts/audit-question-bank.mjs
+```
+
+Use `--strict` when the answer-length backlog has reached zero; it then rejects every
+multiple-choice question with a long-answer cue or a 55+ character option spread.
+
+The audit checks question structure, duplicate wording, employer written-to-MCQ coverage, bespoke deep-dive count, and option-length bias. It fails if structural issues occur or the committed answer-length baseline gets worse; reduce that baseline deliberately as legacy questions are rebalanced.
+
 ## Test Site
 
 Tests run against [Sauce Demo](https://www.saucedemo.com) — a purpose-built Selenium practice application.

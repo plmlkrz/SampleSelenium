@@ -19,4 +19,17 @@ MCQ rules:
 - Avoid all/none, joke distractors, and factual traps unrelated to the stated learning objective.
 - Preserve randomized answer position and the written-track separation.
 
-Before finishing, run `node --check practice.js`. Audit changed questions for duplicate wording, correct answer indexes, employer-filter reachability, and option-length bias. Report any legacy imbalance outside the requested scope rather than silently changing unrelated questions.
+Before finishing, run `node --check practice.js` and `node scripts/audit-question-bank.mjs`. Audit changed questions for duplicate wording, correct answer indexes, employer-filter reachability, and option-length bias. The script blocks structural errors and regressions beyond the committed length-bias baseline; lower that baseline whenever a batch is rebalanced.
+
+## Full-Bank Audit Mode
+
+Use this mode when the user asks to audit the practice test, question bank, or interview-prep content as a whole. Do not create a second audit skill; this skill owns both targeted edits and whole-bank review.
+
+1. Run `node --check practice.js` and `node scripts/audit-question-bank.mjs`.
+2. Report the audit totals and categorize findings as **Must fix**, **Should fix**, and **Consider**.
+3. Review answer-length findings in bounded batches. Rebalance only the options under review, keep the correct index valid, and lower the committed baseline after each verified batch.
+4. Sample questions across topics, employers, and tracks for ambiguity, plausible distractors, one learning objective, correct employer tagging, and explanation quality. Flag factual uncertainty rather than guessing.
+5. Confirm every employer-specific written prompt has a matching employer-tagged MCQ, then inspect the post-answer deep dive for the most important missed concepts.
+6. When UI behavior changes, route responsive, accessibility, and interaction verification to `practice-site-visual-verification` before closing.
+
+The audit is complete only when automated checks pass, all must-fix findings are resolved, and remaining should-fix or consider work is explicitly recorded as a bounded follow-up rather than silently deferred.
