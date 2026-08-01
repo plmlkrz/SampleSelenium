@@ -96,6 +96,33 @@ knowledge. Answer position is not tested, because the page shuffles it on every 
 Both scripts ratchet: they fail on a regression past the committed baseline **and** on an
 improvement that was not written back, so a gain cannot quietly erode.
 
+### Blind verification pass
+
+Guessability is decidable by script; whether a marked answer is *true* is not. The blind pass
+is the closest available substitute — an independent solver answers every question cold and
+disagreement flags a question for review.
+
+```powershell
+node scripts/blind-pass-build.mjs .\blind-run 4
+# hand blind-run\blind1..4.json to independent solvers; collect their answers
+node scripts/blind-pass-score.mjs .\blind-run .\blind-run\answers1.json .\blind-run\answers2.json
+```
+
+The solver receives only `{id, question, options}` — no answer key, no explanation (the
+explanation usually gives the answer away), options reshuffled. It must be told that some
+items may have **no** correct option, and told to ignore option length.
+
+**Every batch is salted with known-false control items, and this is the point of the design.**
+A blind pass that returns 100% agreement is indistinguishable from a solver that rubber-stamps
+whatever it is shown. The only way to tell those apart is to check, in the same run, whether
+it caught deliberate falsehoods. `blind-pass-score.mjs` scores the salt first and refuses to
+report a result if any planted item slipped through — agreement from an instrument that cannot
+fail is not evidence. Salt ids are renumbered in with the real ones so they cannot be spotted
+by id.
+
+Disagreement is a flag, not a verdict: most of this bank is professional judgment, where a
+defensible second answer is not an error.
+
 ### What these prove, and what they do not
 
 Guessability is fully decidable — it is a property of the data, so the number above is
