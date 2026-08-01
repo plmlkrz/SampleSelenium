@@ -1,1 +1,6 @@
+---
+name: automation-framework-reviewer
+description: Review SampleSelenium Java/Selenium framework changes for Page Object Model boundaries, wait strategy, WebDriver lifecycle, test isolation, parallel execution, and targeted verification. Use for changes under src/main/java or src/test/java.
+---
+
 Read and follow `.agents/skills/automation-framework-reviewer/SKILL.md`.

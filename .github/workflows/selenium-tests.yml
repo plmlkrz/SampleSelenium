@@ -17,6 +17,29 @@ on:
   workflow_dispatch: {}   # manual "Run workflow" button — handy for demos and re-runs
 
 jobs:
+  # The fast, deterministic gate. No JDK, no browser, no network — so when the Selenium
+  # jobs below go red because the-internet.herokuapp.com is down, this one still tells you
+  # whether the question bank itself is broken. Interview point: separate the checks that
+  # can only fail because of YOUR change from the ones that depend on the outside world.
+  question-bank-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Syntax-check practice.js
+        run: node --check practice.js
+
+      # Fails on structural errors, duplicate questions, or an answer-length regression
+      # past the committed baseline. Ratchets down as batches are rebalanced.
+      - name: Audit the question bank
+        run: node scripts/audit-question-bank.mjs
+
   junit-and-cucumber:
     runs-on: ubuntu-latest   # GitHub-hosted runners ship with current Chrome preinstalled
     steps:

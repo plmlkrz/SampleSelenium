@@ -1,1 +1,6 @@
+---
+name: question-bank-quality
+description: Create, edit, or audit SampleSelenium interview-practice questions in practice.js. Use for MCQs, written prompts, employer tagging, answer explanations, distractor quality, coverage pairing, or question-bank validation.
+---
+
 Read and follow `.agents/skills/question-bank-quality/SKILL.md`.

@@ -555,6 +555,114 @@ const deepDiveByQuestion = {
         distractors: ["One exact match cannot estimate quality across invoice variability.", "A healthy provider response does not prove accounting correctness or routing safety.", "A nonzero confidence score says nothing about whether the threshold is safe."],
         example: "assertThat(lowConfidenceInvoice.route()).isEqualTo(HUMAN_REVIEW);\nassertThat(audit.modelVersion()).isNotBlank();",
         interview: "I separate model accuracy from the workflow around it. I use labeled edge cases, enforce confidence routing, verify auditability and overrides, and make failure fall back to human review rather than auto-posting."
+    },
+    "What does a StaleElementReferenceException usually tell you?": {
+        concept: "A WebElement is a live pointer into a specific DOM snapshot, not a name you can re-use forever. Any action that replaces the underlying node — a page navigation, an AJAX re-render, even React/Angular re-rendering the same visible row — invalidates every reference that pointed at the old node, even though the new node looks identical on screen.",
+        distractors: ["Invalid locator syntax throws InvalidSelectorException at lookup time, not StaleElementReferenceException after a successful find.", "A dropped network connection surfaces as a WebDriverException or timeout, not a stale-element error.", "An element hidden by CSS is still attached to the DOM and still a valid reference; Selenium would throw ElementNotInteractableException instead."],
+        example: "WebElement row = driver.findElement(By.id(\"row-5\"));\ntable.refreshData(); // DOM re-renders\n// row is now stale -- re-locate instead of reusing it\nrow = driver.findElement(By.id(\"row-5\"));\nrow.click();",
+        interview: "I treat a stale element as a synchronization signal, not a random flake. Something re-rendered the DOM between my findElement call and my action, so I re-locate right before I interact instead of caching WebElements across steps that trigger AJAX or framework re-renders."
+    },
+    "If a product has 100 pages, do you automatically create 100 Page Objects?": {
+        concept: "Page Object count tracks structural uniqueness, not URL count or route table size. A product with 100 URLs might share one header, one nav, one search-results grid, and one modal component across most of them — model those once as component objects and compose them into the handful of pages that actually differ.",
+        distractors: ["One class per URL duplicates every shared header, filter panel, and grid locator dozens of times and multiplies maintenance cost when a shared element changes.", "One giant class for every locator defeats the point of the pattern -- tests can no longer see which locators belong to which screen, and merge conflicts spike.", "Title uniqueness is a UI detail, not a structural signal; two pages can share a title and still have different layouts, or have different titles and identical structure."],
+        example: "public class SiteHeader { // shared component\n    public SearchResultsPage search(String term) { ... }\n}\npublic class ProductListPage {\n    private final SiteHeader header = new SiteHeader(driver);\n}",
+        interview: "When I scope page objects I ask what's structurally distinct, not how many routes exist. Shared chrome like a header or results grid becomes its own component class that gets composed into whichever pages use it, so a locator change is a one-file fix instead of a hundred-file hunt."
+    },
+    "Which answer best describes a data-driven framework?": {
+        concept: "The defining trait is that the same test flow can execute against many inputs without touching the test code -- the flow is a fixed shape, and the data source (CSV, JSON, database, DataProvider) is swappable independently. This is what lets a QA team add a new boundary case by editing a spreadsheet row instead of writing a new @Test method.",
+        distractors: ["Randomly generated data with no logic connecting it to expected results defeats the purpose -- data-driven still needs an input paired with a known expected outcome.", "A spreadsheet is one possible data source, but the framework property is the separation of data from logic, not the file format used to store it.", "Restricting inputs to database rows only describes a subset -- TestNG's @DataProvider, CSV readers, and JSON fixtures are equally valid data-driven sources."],
+        example: "@DataProvider(name = \"logins\")\npublic Object[][] logins() {\n    return new Object[][] { {\"standard_user\", true}, {\"locked_out_user\", false} };\n}\n@Test(dataProvider = \"logins\")\npublic void login(String user, boolean shouldSucceed) { ... }",
+        interview: "I keep the flow constant and vary the data through a provider, so adding a new edge case is a data-row change, not a new test method. It also keeps expected results next to inputs, which makes the test self-documenting when someone else has to extend it later."
+    },
+    "What is the strongest response when asked to explain your SampleSelenium framework?": {
+        concept: "An interviewer asking you to 'explain your framework' is really asking whether you can justify architectural choices under a why, not just list a tech stack. The strongest answer pairs each component with the problem it solves: POM for locator coupling, explicit waits for synchronization, ThreadLocal for thread-safe parallelism, and CI for repeatable, evidence-producing runs.",
+        distractors: ["Test count and browser choice are surface facts that say nothing about design decisions or trade-offs, which is what the question is actually probing.", "A framework with no automation contradicts the premise of the question and signals you can't speak to design at all.", "Calling it a pile of copied scripts undersells any real structure and invites a harder follow-up you won't be ready for."],
+        example: "\"Maven + Java 17 + Selenium 4, Page Object Model with a shared BasePage for explicit waits, ThreadLocal<WebDriver> so parallel TestNG threads don't collide, and GitHub Actions running the suite headless on every push.\"",
+        interview: "I lead with the stack, then immediately pair each piece with the problem it solves -- Page Objects for locator coupling, explicit waits over Thread.sleep for real synchronization, ThreadLocal so parallel threads never share a driver, and CI so every push produces the same evidence. That structure shows I made deliberate choices, not that I memorized a list."
+    },
+    "Which design patterns show up in a typical Java automation framework, and where?": {
+        concept: "Interviewers ask this to see if you recognize patterns in code you already wrote, not whether you can recite Gang-of-Four definitions. Point at concrete files: Page Object for structure, a Factory method for browser-specific driver creation, Singleton/ThreadLocal for the one-driver-per-thread lifecycle, and Builder for fluently assembling test data or REST Assured request specs.",
+        distractors: ["Limiting the answer to Page Object only misses the driver-lifecycle and data-construction patterns that are just as visible in a typical framework's code.", "MVC is a UI application architecture, not a test-framework pattern -- claiming it applies signals you're pattern-matching the name rather than the actual design.", "Observer describes event subscription (like a listener reacting to test results), not locator storage -- conflating the two is a common but avoidable mix-up."],
+        example: "public static WebDriver createDriver(String browser) { // Factory\n    return switch (browser) {\n        case \"firefox\" -> new FirefoxDriver();\n        default -> new ChromeDriver();\n    };\n}",
+        interview: "I point to my own code: DriverManager's ThreadLocal is a Singleton-per-thread for the driver lifecycle, a factory method picks the right WebDriver implementation, page objects are the Page Object pattern, and I'll reach for a Builder when assembling REST Assured request specs with a lot of optional fields."
+    },
+    "Why does a ThreadLocal WebDriver help parallel tests?": {
+        concept: "ThreadLocal solves a specific race condition: without it, all threads share one static WebDriver variable, so thread A calling driver.quit() while thread B is mid-click crashes B's test with a stale session. ThreadLocal gives each thread its own private slot for the reference, so 'the driver' means something different depending on which thread asks -- no locking required.",
+        distractors: ["Browser speed is a rendering/hardware concern; ThreadLocal changes how driver references are stored, not how fast pages load.", "Waits are still required per-thread for synchronization -- ThreadLocal only isolates the driver reference, it has no effect on timing.", "Running everything in one browser is the opposite of the goal -- that would serialize tests and defeat parallel execution entirely."],
+        example: "private static final ThreadLocal<WebDriver> DRIVER = new ThreadLocal<>();\npublic static WebDriver getDriver() { return DRIVER.get(); }\npublic static void quitDriver() { DRIVER.get().quit(); DRIVER.remove(); }",
+        interview: "Without ThreadLocal, parallel TestNG threads fight over one shared driver variable and one thread's quit() call can kill another thread's session mid-test. ThreadLocal gives each thread its own isolated reference, so I can run parallel='methods' safely without any manual locking."
+    },
+    "How do you reconcile API results against database values?": {
+        concept: "Reconciliation means computing the expected answer independently in SQL -- the same joins and aggregates the service is supposed to be doing -- and then diffing that against the API response field by field and in aggregate totals. A row-count match alone can hide a swapped column or a wrong join condition; totals plus row-level spot checks catch both.",
+        distractors: ["Trusting the API and skipping the database treats the layer most likely to contain a calculation bug as unquestionable ground truth.", "Row counts alone can match even when individual field values are wrong, so a count-only check misses the defects that matter most.", "Visual screenshot comparison doesn't scale past a handful of rows and can't verify numeric correctness, only that something rendered."],
+        example: "SELECT customer_id, SUM(amount) AS total\nFROM invoices WHERE status = 'POSTED'\nGROUP BY customer_id;\n-- then assert API's /customers/{id}/summary.total matches this row",
+        interview: "I write the SQL that defines the correct answer -- the joins and aggregates the business logic is supposed to reproduce -- then assert the API's fields and totals against that independently-computed result. A mismatch tells me whether the bug is in the API layer, the calculation service, or the underlying data."
+    },
+    "What is SQL injection, and what do you verify as a tester?": {
+        concept: "SQL injection happens when user input is concatenated directly into a query string, letting an attacker change the query's logic (e.g. ' OR '1'='1 turning a WHERE clause always-true). As a tester you don't need to write exploit payloads to add value -- you verify the fix that actually matters: parameterized queries or ORM bind variables, plus generic error messages that don't leak table or column names.",
+        distractors: ["Calling it a performance-tuning technique confuses injection with query optimization -- it's a security vulnerability class, not a speed trick.", "Framing it as a way to speed up joins has nothing to do with what SQL injection actually is or does.", "Calling it a backup strategy is unrelated to the concept -- injection is an attack vector, not a data-durability practice."],
+        example: "// Vulnerable: \"SELECT * FROM users WHERE name = '\" + input + \"'\"\n// Safe:\nPreparedStatement ps = conn.prepareStatement(\"SELECT * FROM users WHERE name = ?\");\nps.setString(1, input);",
+        interview: "I probe login and search fields with classic payloads like ' OR '1'='1 to confirm they're rejected rather than authenticating. In code review I look for PreparedStatement or ORM bind variables instead of string concatenation, and I check that error messages don't echo back schema details that help an attacker."
+    },
+    "Which HTTP methods are idempotent?": {
+        concept: "Idempotent means calling the operation N times produces the same server end-state as calling it once -- it says nothing about whether the response body is identical or whether the operation has side effects at all, just that repeating it doesn't compound the effect. This matters directly for retry logic: a client can safely auto-retry a timed-out PUT or DELETE, but auto-retrying a timed-out POST risks creating duplicate resources.",
+        distractors: ["Limiting idempotency to POST and PUT is backwards -- POST is the one standard method that is explicitly NOT idempotent.", "Claiming all methods are idempotent ignores POST, which by definition can create a new resource on every call.", "HTTP does define idempotency (RFC 7231 section 4.2.2); it's a real, testable property, not an absent concept."],
+        example: "// Safe to retry automatically:\nDELETE /orders/42  -- repeating leaves order 42 deleted either way\n// NOT safe to retry blindly:\nPOST /orders       -- each retry can create another order",
+        interview: "I use idempotency to decide what my test harness or client code is allowed to retry automatically. GET, PUT, and DELETE are safe to retry because the end state doesn't change on repetition, but a bare POST retry risks creating duplicate resources, so I test that duplicate-POST scenario explicitly when retry logic exists."
+    },
+    "Your microservice under test calls three downstream microservices. How do you test it in isolation?": {
+        concept: "Isolation and integration answer different questions, so you need both, not one instead of the other. WireMock stubs the downstream HTTP calls so your service's own logic can be tested fast and deterministically regardless of downstream health; contract tests (Pact, Spring Cloud Contract) separately verify that the stub's assumed shape still matches what the real downstream service actually returns, catching drift before it reaches a shared integration environment.",
+        distractors: ["Always testing against the full integrated environment makes tests slow, flaky when any one dependency is down, and unable to localize which service caused a failure.", "Mocking the service under test itself means you're no longer testing your own code -- the point is to isolate dependencies, not the system in scope.", "Skipping those code paths leaves the exact integration risk you're supposed to be testing completely uncovered."],
+        example: "stubFor(get(urlEqualTo(\"/pricing/quote\"))\n    .willReturn(aResponse().withStatus(200).withBody(\"{\\\"total\\\": 42.50}\")));\n// contract test separately verifies pricing service actually returns this shape",
+        interview: "I stub the downstream calls with WireMock so my service's own logic gets fast, deterministic tests independent of three other teams' uptime. Then I keep contract tests running against the real downstream APIs so I know the moment a provider changes a field shape, before it ever reaches a shared integration environment."
+    },
+    "Beyond the HTTP status code, what do you validate in an API response?": {
+        concept: "Status code only proves the server didn't crash -- it says nothing about whether the response is correct. A thorough check validates response headers (content-type, caching), every business-relevant field against an independently computed expected value, the schema/contract shape, negative-path error bodies, response time against an SLA, and -- critically -- whether the operation actually produced a durable side effect (a row in the database, a downstream event).",
+        distractors: ["Treating any 200 as sufficient proof ignores the many ways a response can be structurally fine but semantically wrong or have no lasting effect.", "Checking only that the body parses as JSON verifies syntax, not that any field in it is correct.", "Comparing server IP addresses is an infrastructure detail unrelated to whether the API's contract or business logic is correct."],
+        example: "given().post(\"/orders\").then().statusCode(201)\n    .body(\"total\", equalTo(42.50))\n    .header(\"Content-Type\", containsString(\"application/json\"))\n    .time(lessThan(800L));\n// then query the DB to confirm the order row actually persisted",
+        interview: "Status is the weakest signal I check. I validate headers, recompute business fields instead of eyeballing them, check the schema and negative-path error bodies, measure response time against an SLA, and confirm the operation actually persisted -- because a 201 with nothing written to the database is still a bug."
+    },
+    "How do you handle rounding and precision when asserting financial calculations in Java tests?": {
+        concept: "Binary floating point (double/float) cannot exactly represent most base-10 fractions, so 0.1 + 0.2 evaluates to 0.30000000000000004, not 0.3 -- a direct == comparison on money will intermittently fail for reasons that have nothing to do with the business logic under test. BigDecimal stores an exact decimal value and its compareTo (not equals, which also checks scale) lets you assert against the spec's documented rounding mode.",
+        distractors: ["Comparing doubles with == is exactly the trap that causes flaky, hard-to-reproduce failures on financial assertions -- it's the thing to avoid, not the answer.", "Rounding every result to an integer before comparing throws away the precision the test exists to verify, masking real off-by-cents defects.", "Comparing formatted strings couples the assertion to display formatting (commas, currency symbols, locale) instead of the actual numeric value."],
+        example: "BigDecimal expected = new BigDecimal(\"19.995\").setScale(2, RoundingMode.HALF_UP);\nassertEquals(0, expected.compareTo(actualTotal));",
+        interview: "I never compare monetary doubles with ==, because binary floating point can't represent most decimal fractions exactly. I assert with BigDecimal.compareTo against the spec's documented rounding mode, and I pair that with boundary and precision-stress inputs like 0.005 that expose rounding bugs specifically."
+    },
+    "What negative and boundary cases matter most for a financial calculation endpoint?": {
+        concept: "Calculation engines break at their edges, not in the middle of the happy path: zero and negative amounts, values that push past the storage or display scale, missing/null required fields, wrong data types, and precision-stress values like 0.005 that expose rounding-mode bugs. The error contract matters as much as the happy path -- a malformed request should return a 400/422 with a field-level message, and a 500 on bad input is itself a defect to file.",
+        distractors: ["Testing only round numbers on the happy path skips exactly the inputs most likely to reveal a calculation defect.", "Random strings as the only negative strategy are unfocused and won't systematically cover the boundary, null, and type-mismatch categories that actually matter.", "Deferring entirely to whatever edge cases a developer happens to mention risks missing categories they didn't think of, which is the tester's job to catch."],
+        example: "given().body(\"{\\\"amount\\\": null}\").post(\"/calc\").then().statusCode(422)\n    .body(\"errors[0].field\", equalTo(\"amount\"));\n// also test: negative amount, amount=0.005, amount at max scale, missing currency",
+        interview: "I map boundaries, nulls, malformed and wrong-type input, and precision-stress values like 0.005 before I write happy-path tests, because that's where calc engines actually break. I also assert the error contract itself -- a 400 with a field-level message is correct, a 500 on bad input is a bug I'd file."
+    },
+    "What is the difference between retesting and regression testing?": {
+        concept: "Retesting is narrow and confirmatory -- rerun the exact steps that previously failed to confirm the specific defect is fixed. Regression is broad and exploratory of side effects -- sweep the surrounding functionality that wasn't directly touched, because a fix (or any change) can break something unrelated. This distinction is exactly why regression is the automation investment: retesting a fix is a one-off manual check, but regression needs repeatable coverage run every cycle.",
+        distractors: ["Treating them as the same activity misses the core distinction between confirming one fix and sweeping for unrelated side effects.", "Regression is not release-day-only -- it runs every cycle a change lands, which is precisely why it justifies automation investment.", "Retesting can be manual or automated and so can regression -- automation status isn't what separates the two activities."],
+        example: "// Retest: rerun TC-142 exactly, confirm the reported defect no longer reproduces\n// Regression: rerun the checkout suite to confirm the fix for TC-142 didn't break shipping calc",
+        interview: "Retesting confirms the exact defect is fixed by rerunning the failed case. Regression sweeps everything around that change for collateral damage, because a fix can break something the ticket never mentioned. That's why my regression suite is automated and runs every cycle, while retesting a specific fix is usually a quick manual confirmation."
+    },
+    "What are the components of the Selenium suite today?": {
+        concept: "Selenium is a suite, not one tool, and knowing the current lineup matters because RC is deprecated history, not something you should describe as active. WebDriver drives the browser natively through the W3C protocol, IDE is a record/playback tool for quick prototyping (not production suites), and Grid distributes execution across machines and browsers for parallel or cross-browser runs.",
+        distractors: ["Reducing the suite to WebDriver alone omits IDE and Grid, both of which are still part of the current toolset and worth naming.", "RC is retired -- Selenium 4's WebDriver protocol replaced RC's JavaScript-injection approach years ago, so naming it as current is a dated answer.", "JMeter and Cucumber are separate tools entirely -- JMeter is for performance testing and Cucumber is a BDD framework, neither is part of the Selenium project."],
+        example: "// Grid hub + nodes for distributed execution:\nnew RemoteWebDriver(new URL(\"http://grid-hub:4444/wd/hub\"), chromeOptions);",
+        interview: "Today's suite is WebDriver, IDE, and Grid. WebDriver drives the browser natively via the W3C protocol, IDE is useful for quick record-and-playback prototyping, and Grid distributes runs across machines and browsers. I'm careful to mention RC only as retired history, since Selenium 4 replaced its JS-injection approach with native browser automation."
+    },
+    "What makes a FluentWait different from a standard WebDriverWait?": {
+        concept: "WebDriverWait actually extends FluentWait -- it's FluentWait pre-configured with a default 500ms polling interval and NotFoundException in its ignored list. FluentWait exposes the two knobs WebDriverWait hides behind that default: pollingEvery() to change how often the condition is re-checked, and ignoring() to add extra exception types that should be swallowed and retried instead of failing the wait immediately.",
+        distractors: ["Confusing it with a long-lived implicit wait misses that both FluentWait and WebDriverWait are explicit, condition-based waits configured per-call, not a single global driver setting.", "Claiming a wait should never time out defeats its purpose -- a wait exists specifically to fail after a bounded timeout so the test doesn't hang forever.", "Restricting it to alerts only is wrong -- FluentWait is a general-purpose element/condition wait; alerts have their own ExpectedConditions like alertIsPresent."],
+        example: "Wait<WebDriver> wait = new FluentWait<>(driver)\n    .withTimeout(Duration.ofSeconds(30))\n    .pollingEvery(Duration.ofMillis(200))\n    .ignoring(NoSuchElementException.class);\nwait.until(d -> d.findElement(By.id(\"result\")).isDisplayed());",
+        interview: "I know WebDriverWait actually extends FluentWait with a default 500ms poll baked in, so when I need a tighter or looser polling interval, or need to ignore a specific exception type while retrying, I drop down to FluentWait directly instead of fighting WebDriverWait's defaults."
+    },
+    "How do you capture a screenshot in Selenium?": {
+        concept: "The driver itself implements the TakesScreenshot interface, so you cast it and call getScreenshotAs -- no external library required. In a real framework this call doesn't live in the test method; it lives in a JUnit extension or TestNG ITestListener's onTestFailure hook so every failure automatically produces a named screenshot without the test author remembering to add one.",
+        distractors: ["There is no driver.snapshot() method in Selenium's API -- it's a made-up method name, not a real capture mechanism.", "Robot-class print-screen captures the whole OS screen including other windows, and doesn't use Selenium's driver-aware API at all.", "Screenshots work fine on a plain local WebDriver session -- Grid is not a prerequisite for TakesScreenshot."],
+        example: "@Override\npublic void onTestFailure(ITestResult result) {\n    File src = ((TakesScreenshot) DriverManager.getDriver()).getScreenshotAs(OutputType.FILE);\n    FileUtils.copyFile(src, new File(\"screenshots/\" + result.getName() + \".png\"));\n}",
+        interview: "I cast the driver to TakesScreenshot and call getScreenshotAs, but the important part is where that call lives -- in a TestNG listener's onTestFailure hook, not inside individual test methods, so every failure gets a named screenshot automatically without relying on the test author to remember it."
+    },
+    "How do you select an option from a standard <select> dropdown?": {
+        concept: "Selenium's Select class is a thin wrapper specifically for real HTML <select> tags -- it gives you three targeted methods (selectByVisibleText, selectByValue, selectByIndex) plus getOptions() and isMultiple() for multi-select dropdowns. The moment a 'dropdown' is actually a styled <div> with JavaScript-driven show/hide (common in modern component libraries), Select throws because there's no native <select> to wrap, and you fall back to click-then-click with explicit waits between the two.",
+        distractors: ["Clicking and blindly typing skips the structured API entirely and won't reliably select a specific option out of an open list.", "JavaScriptExecutor is a fallback for non-native dropdowns, not a requirement for standard <select> elements -- Select handles those natively.", "sendKeys can type into some select elements' visible text but is unreliable across browsers and doesn't work at all for custom JS-driven dropdowns, so it's not a universal answer."],
+        example: "Select browserDropdown = new Select(driver.findElement(By.id(\"browser\")));\nbrowserDropdown.selectByVisibleText(\"Firefox\");\nassertFalse(browserDropdown.isMultiple());",
+        interview: "For a real <select> tag I wrap it in Selenium's Select class and use selectByVisibleText or selectByValue depending on what's stable across environments. If it turns out to be a styled div instead of a native select, Select won't apply at all, and I switch to a click-open, click-option pattern with explicit waits on visibility."
     }
 };
 const balancedOptionOverrides = {
@@ -989,12 +1097,260 @@ const balancedOptionOverrides = {
         "Use personal assumptions and raise defects whenever behavior differs from them.",
         "Clarify intent, document assumptions, write acceptance-based scenarios, and review them.",
         "Skip the feature until a later sprint has more complete requirements."
-    ]
+    ],
+    "The JD names Cypress, Playwright, and Selenium. What is the most accurate architectural difference between Cypress and Selenium?": {
+        options: ["Cypress is just Selenium's WebDriver protocol wrapped in a more modern JavaScript syntax", "Cypress runs inside the browser event loop, trading cross-origin reach for auto-waiting", "Cypress is architecturally unable to intercept or stub outgoing network calls", "Selenium executes fully inside the browser process while Cypress drives it externally"],
+        answer: 1
+    },
+    "The JD lists JMeter and k6 for performance/load testing. What is the practical difference in choosing between them?": {
+        options: ["k6 is simply a modern rewrite of JMeter that keeps the same GUI-based workflow", "JMeter is GUI-authored with broad protocols; k6 is scripted and CI-native", "k6 has no built-in way to express ramp-up periods or think time at all", "JMeter can only run through its GUI and never executes headless in CI"],
+        answer: 1
+    },
+    "The JD names Functional Decomposition, Data Flow Diagrams, and Activity Diagrams. What is each actually best used for when you're designing test coverage?": {
+        options: ["They are interchangeable ways of drawing the same box-and-arrow diagram", "Decomposition scopes functions, data flow maps integrations, activity maps branches", "Data Flow Diagrams are strictly and only a database administrator's tool, not a tester's", "Activity Diagrams are detailed enough to fully replace writing test cases"],
+        answer: 1
+    },
+    "You are testing a .NET REST API and your automation stack is Java/REST Assured or JS/Postman. What is the correct framing in an interview?": {
+        options: ["You would need to rewrite the entire automation suite in C# before testing it at all", "The contract is the interface; knowing .NET conventions like casing still helps", "Only unit tests written natively in C# can ever actually validate a .NET API", "Postman and REST Assured cannot send requests to a .NET endpoint at all"],
+        answer: 1
+    },
+    "You're asked to review a developer's unit test plan before a change merges. What are you actually checking for?": {
+        options: ["Confirming only that some tests exist somewhere and the build stays green overall", "That branches and error paths are asserted, not just happy paths behind mocks", "The raw line-coverage percentage the build tool happens to report, alone", "Whether the developer used the same test framework QA prefers to use"],
+        answer: 1
+    },
+    "How do non-functional testing, edge-case testing, and exploratory testing actually differ, and when does each belong in a cycle?": {
+        options: ["They're just three interchangeable labels analysts use for the same core testing activity", "Non-functional covers system qualities; edge-case covers boundaries; exploratory is charter-driven", "Exploratory testing just means clicking around aimlessly, so it has no place in any serious testing process", "Edge-case testing is simply another name people use for exploratory testing"],
+        answer: 1
+    },
+    "You're asked to perform impact analysis on a proposed modification to an existing application before regression testing begins. What does that actually involve?": {
+        options: ["Trusting the developer's own stated scope and retesting only the changed screen", "Mapping dependencies to size blast radius and scope regression to actual risk", "Running the entire regression suite in full for every change, however small", "Skipping impact analysis whenever a change is simply labeled a bug fix"],
+        answer: 1
+    },
+    "The JD asks for familiarity with AI-assisted QA tools. What is the most credible description of where AI actually helps a test automation program today?": {
+        options: ["AI can fully replace the automation framework and maintain the suite from plain English", "AI speeds up reviewable tasks like drafting cases, while a human owns the oracle", "AI has no legitimate place in QA work since its output can never be trusted", "AI is only genuinely useful for generating raw test data, nothing more"],
+        answer: 1
+    },
+    "For an API-integration-heavy digital experience, which statement best describes how testing should fit across the SDLC?": {
+        options: ["Testing is a distinct phase that starts only once development finishes", "Testing spans the SDLC from design review through post-release monitoring", "SDLC only describes waterfall projects, so it doesn't apply to Agile teams", "QA's only real SDLC job is running the regression suite before sign-off"],
+        answer: 1
+    },
+    "The JD lists Quality Center/ALM, TestComplete, and Zephyr alongside Selenium. What's the actual difference in role between a test management tool and your automation framework?": {
+        options: ["They are direct competitors doing the exact same job, so a team only ever needs to pick just one", "A management tool owns the portfolio and traceability; automation reports results back", "TestComplete alone is fully capable of replacing a management tool entirely", "Management tools serve manual testers only, with no automation integration"],
+        answer: 1
+    },
+    "You must track and report quality metrics to improve release confidence. Which set is most defensible?": {
+        options: ["Raw counts of test cases written and bugs logged per individual tester each sprint", "Escaped defect rate, removal efficiency, flake rate, and mean time to resolve", "Code coverage percentage treated as the one mandatory quality gate", "Total automated test count, tracked purely as a growth target each quarter"],
+        answer: 1
+    },
+    "What is the most important category of test that a multi-tenant SaaS application needs and a single-tenant application does not?": {
+        options: ["A standard functional regression suite run once each release cycle", "Tenant isolation testing, proving data can never leak via reports or caches", "Only performance testing, since tenants merely share the same hardware", "Browser compatibility testing repeated separately for each individual tenant"],
+        answer: 1
+    },
+    "You are testing an integration whose downstream partner system is unavailable in the test environment. What is the professional approach?": {
+        options: ["Pause all related testing entirely until the partner system finally comes back online", "Stub the partner boundary to verify your handling, flagging risks left unproven", "Point the whole test environment directly at the partner's live production system", "Assume the integration works fine as long as the code compiles cleanly"],
+        answer: 1
+    },
+    "In a healthcare or other regulated-industry implementation, what does the Test Lead need to add on top of standard system testing?": {
+        options: ["Nothing changes at all, since regulated industries are tested exactly like any other industry", "Requirement-to-defect traceability, synthetic PHI/PII, and audit-ready evidence", "Only faster test cycles, since compliance doesn't really affect testing", "Dropping negative testing entirely to save time on a tight schedule"],
+        answer: 1
+    },
+    "Your workstream depends on an interface with an external integration partner, and their test data isn't ready for your scheduled cycle. As Test Lead, what's the right sequence of actions?": {
+        options: ["Skip interface testing for this cycle entirely and just mark the item complete anyway", "Confirm the schedule impact, escalate with a target date, stub it meanwhile", "Wait silently for the partner team to respond on its own timeline", "Test directly against the partner's own production data to skip the gap"],
+        answer: 1
+    },
+    "How do you handle a hidden scrollbar or infinite scroll in automation?": {
+        options: ["Selenium is fundamentally unable to interact with anything outside the visible viewport", "Use JavascriptExecutor to scroll into view until scroll height stops growing", "Resize the browser window until every single element fits on one screen", "Insert a Thread.sleep of a full minute so everything loads first"],
+        answer: 1
+    },
+    "How would you validate eventual consistency in a distributed system?": {
+        options: ["Assert right after the write completes; treat any failure as proof the system is broken", "Add a fixed thirty-second sleep before issuing every single read", "Poll the read side for convergence within the SLA, testing duplicate delivery", "Eventual consistency is inherently untestable, so don't bother trying"],
+        answer: 2
+    },
+    "Why does idempotency matter when testing integrations, and how do you test it?": {
+        options: ["It does not really matter much at all as long as the happy path already works", "Replay the same request twice and assert exactly one business effect", "Idempotency is purely a developer concern that testers never verify", "Test it by sending two structurally different payloads back to back"],
+        answer: 1
+    },
+    "A Program Test Manager asks for a test-effort estimate before requirements are fully finalized. What is the strongest approach?": {
+        options: ["Refuse to give any estimate at all until every requirement is fully frozen and signed off", "Give one fixed number up front and hold it no matter how scope shifts", "Estimate current scope with a repeatable method, stating assumptions to revisit", "Copy an estimate from a similar past project without adjusting it"],
+        answer: 2
+    },
+    "A digital experience has API integrations plus a small number of critical browser journeys. How should Playwright, Selenium, and API tests be used together?": {
+        options: ["Put every single scenario into browser automation so it always mirrors the real user", "Use API tests for contracts, browser tools for journeys, without duplication", "Use Selenium exclusively, since API tests can't validate integrations", "Use Playwright to fully replace all service-layer and database checks"],
+        answer: 1
+    },
+    "A test must verify file-based ingestion: a partner drops a CSV into S3 and records should appear in the application. What is the sound approach?": {
+        options: ["Manually upload a sample file through the console each release cycle and eyeball the record in the UI afterward", "Automate the upload via SDK with a scoped IAM role, poll for the record, and assert its content", "Assert only that the object landed in the bucket, without checking any downstream processing", "Skip automated coverage since file ingestion is too environment-dependent to script reliably"],
+        answer: 1
+    },
+    "You have a large Postman collection for exploratory API work. How should it relate to the automated suite?": {
+        options: ["Rely on the Postman collection alone for all coverage and never write any coded regression tests", "Keep Postman for exploration and demos, run key flows via Newman, move regression into code", "Delete the entire Postman collection once any coded automation exists in the repository", "Maintain Postman and code as two independent, fully duplicated suites of the same cases"],
+        answer: 1
+    },
+    "As the Test Lead defining automation strategy for a large regression suite across a program, what should drive the roadmap?": {
+        options: ["Let whichever engineer on the team is most enthusiastic pick which modules to automate first each sprint", "Prioritize by risk and frequency, pick the cheapest reliable layer, time it to the release cadence", "Commit up front to automating one hundred percent of the manual test cases before the next release", "Delay all automation work until the application reaches feature-complete status"],
+        answer: 1
+    },
+    "The team publishes a Swagger/OpenAPI spec. How do you use it beyond reading endpoint names?": {
+        options: ["Use the spec only to look up the service's base URL whenever someone writes a brand-new test case", "Generate the test baseline from it, schema-validate live responses, and diff versions for breaks", "Treat the published spec on its own as sufficient proof that the API behaves correctly", "Import it once into the tooling at project kickoff and never revisit it again"],
+        answer: 1
+    },
+    "What is the most accurate description of Playwright's auto-waiting compared to Selenium's waits?": {
+        options: ["Playwright removes the need to think about timing or waits from the test author entirely, in every scenario", "Playwright checks actionability before each action, cutting most waits, but state still needs assertions", "Playwright relies on one configurable global implicit wait, much like Selenium's default", "Selenium auto-waits on every action by default, and Playwright requires explicit waits"],
+        answer: 1
+    },
+    "An integration intermittently fails in an AWS environment. Which investigation gives the strongest root-cause evidence?": {
+        options: ["Keep re-running the suite locally over and over until the intermittent failure happens to go away", "Correlate logs across API Gateway, Lambda, and downstream by request ID, and line up metrics", "Ask the developer who owns the service to try reproducing it on their own machine", "Raise every test timeout in the suite until the flaky failures stop showing up"],
+        answer: 1
+    },
+    "Which Spring Boot test layer should you choose for a controller, repository, full service, and deployed API?": {
+        options: ["Use @SpringBootTest with a full application context for every one of these four testing needs", "@WebMvcTest for controllers, @DataJpaTest for repositories, RANDOM_PORT app, REST Assured deployed", "Drive all four of these different layers end to end through a real browser with Selenium WebDriver instead", "Use @DataJpaTest to test controllers and @WebMvcTest to test SQL queries directly"],
+        answer: 1
+    },
+    "How would you click an element that keeps becoming stale?": {
+        options: ["Catch the StaleElementReferenceException at the very top level of the test method and quietly swallow it", "Re-locate the element right before clicking instead of reusing an old reference, retrying if needed", "Tear down and restart the entire WebDriver session every time this exception surfaces", "Switch every interaction over to JavaScriptExecutor so the exception never fires"],
+        answer: 1
+    },
+    "You must prove data moved correctly from a source system through middleware into a target system. What is the strongest validation?": {
+        options: ["Trust the integration job's own reported success status without inspecting the actual records it moved", "Reconcile record counts, then compare key fields on a sampled, boundary-heavy set plus rejects", "Open the target application and eyeball a single record that looks about right", "Compare only the aggregate row counts on each side and call it reconciled"],
+        answer: 1
+    },
+    "You must validate an event-driven flow: a service publishes to SNS, an SQS queue feeds a Lambda, and the Lambda writes to a data store. What proves the flow end to end?": {
+        options: ["Treat the publisher's 200 response by itself as proof that the whole downstream pipeline fully succeeded", "Trigger with a correlation ID, assert the persisted record, check Lambda logs, confirm the DLQ empty", "Wait a fixed thirty seconds after publishing and then glance at the UI", "Unit test the Lambda handler in isolation and skip the rest of the pipeline"],
+        answer: 1
+    },
+    "An integration is eventually consistent — the target record appears anywhere from 1 to 20 seconds later. How should the automated check be written?": {
+        options: ["Add a flat twenty-second sleep before every single assertion made against the target system's state", "Poll the target on a short interval within a bounded timeout, failing with the last observed state", "Assert right after the trigger fires and label the test flaky if it fails", "Wrap the whole test in a retry so the runner just tries it three more times"],
+        answer: 1
+    },
+    "How do you perform data-driven testing with Excel and Java?": {
+        options: ["Java has no built-in way to read Excel files directly, so convert every workbook to CSV first", "Use Apache POI to read .xlsx rows, feeding each row via a DataProvider or ParameterizedTest", "Copy each cell's value by hand out of the workbook into hard-coded Java arrays", "Screenshot the spreadsheet and run OCR over the image to extract the values"],
+        answer: 1
+    },
+    "How can Playwright support API-focused testing, not just browser testing?": {
+        options: ["It has no HTTP client of its own at all, so you must pair it with a separate REST library", "Its APIRequestContext issues HTTP calls directly and can share auth state with a browser", "Every API call still ends up getting routed through the rendered browser UI underneath", "That capability only exists through a community plugin bolted on top of it"],
+        answer: 1
+    },
+    "How should Selenium scripts handle exceptions?": {
+        options: ["Put one broad try/catch around the entire test run so that no failure ever really surfaces at all", "Catch only where it adds value — retry, screenshot, clearer message — otherwise fail loudly", "Call System.exit(1) from inside each catch block to halt the JVM process immediately", "Assume Selenium calls never throw, so no exception handling is really needed"],
+        answer: 1
+    },
+    "Calling an API through AWS API Gateway, you see a 403, then later a 502. What do these usually tell you?": {
+        options: ["Treat both status codes the exact same way, as a clear sign that the whole API is fully offline now", "403 usually means auth, signature, WAF, or a missing key; 502 means a bad integration response", "Read 403 as meaning record-not-found and 502 as the request having been throttled", "Log them as generic gateway noise that doesn't need further triage"],
+        answer: 1
+    },
+    "Describe a standard Git workflow for automation code.": {
+        options: ["Have every engineer commit their work straight onto the shared main branch each single day", "Feature branches off main, small commits, PR with review and CI green as the merge gate", "Circulate zipped copies of the whole framework by email whenever something changes", "Give each engineer one long-lived personal branch merged back once a year"],
+        answer: 1
+    },
+    "How do you run cross-browser tests?": {
+        options: ["Maintain a separate, hand-written copy of the whole test suite just for each target browser", "Parameterize the browser choice into a driver factory, then scale out via Grid or cloud", "Assume only Chrome is realistically automatable with Selenium WebDriver at all", "Install every browser locally and run the whole suite against each one in turn"],
+        answer: 1
+    },
+    "Two weeks before a planned go-live, your workstream has a cluster of interface defects with the same root cause, and the fix depends on an external integration partner. What is the right escalation move?": {
+        options: ["Keep quietly working the defects and only cover it at the next scheduled status meeting time slot", "Escalate immediately to Program Test Management with the risk, impact, dependency, and options", "Mark the whole cluster of defects as won't-fix so the metrics stay clean going into go-live", "Hold off and wait for the integration partner to raise the issue first"],
+        answer: 1
+    },
+    "You have very limited time before a release. How do you prioritize testing?": {
+        options: ["Push ahead with the entire full regression suite regardless and let the release date slip", "Default to running whichever modules the team already knows best from experience", "Risk-based: cover changed code and critical flows first, and flag what got skipped", "Run only the automated checks, since they're the fastest tests available"],
+        answer: 2
+    },
+    "HashMap vs Hashtable?": {
+        options: ["Treat Hashtable as the modern, preferred replacement for HashMap in any new code being written", "HashMap is unsynchronized and allows one null key; Hashtable is legacy and forbids nulls", "Assume HashMap is simply incapable of storing any null key or value", "Assume the two classes differ only by their package name, nothing functional"],
+        answer: 1
+    },
+    "A POST returns 202 Accepted and a job ID. How should an automated test wait for the final calculation result?": {
+        options: ["Sleep a fixed 60 seconds, then check the result exactly once", "Poll the status endpoint with a bounded timeout", "Assume the 202 response body already contains the final result", "Keep retrying the original POST request until it returns 200"],
+        answer: 1
+    },
+    "A Playwright test fails only in CI. Which built-in artifact gives the fastest root cause?": {
+        options: ["Re-run the same test locally over and over until it happens to fail", "The trace viewer, showing DOM snapshots, network log, and console", "Read only the raw stack trace printed in the CI job console", "Increase the test timeout value and move on to other work"],
+        answer: 1
+    },
+    "What is a hybrid framework?": {
+        options: ["A framework that automates both mobile and web applications", "One combining multiple styles, like Page Object plus data-driven", "A test suite that runs half manual and half automated cases", "A framework whose scripts are written in two programming languages"],
+        answer: 1
+    },
+    "Your microservice under test calls three downstream microservices. How do you test it in isolation?": {
+        options: ["Always run tests against the full integrated environment instead", "Stub the downstream calls with WireMock and add contract tests", "Mock out the entire service under test rather than dependencies", "Skip the code paths that touch those downstream services"],
+        answer: 1
+    },
+    "Name the four OOP pillars and the one-line meaning of each.": {
+        options: ["Compilation, execution, debugging, and deployment of a program", "Encapsulation, inheritance, polymorphism, and abstraction", "Classes, objects, packages, and imports within a module", "Speed, safety, syntax, and style of the written code"],
+        answer: 1
+    },
+    "You need to confirm a specific service is running and check its recent errors on a Linux test environment before kicking off a regression cycle. Which commands do that?": {
+        options: ["Run the Windows commands dir and type against the remote host", "ps -ef or systemctl status the service, then grep the log", "Only cd and ls around the filesystem to look for obvious clues", "None; a GUI is always required, there is no command-line option"],
+        answer: 1
+    },
+    "How do you validate a large JSON response of financial calculations beyond spot-checking one field?": {
+        options: ["Assert only that the response body is not null or empty", "Diff the raw response string against a previously saved copy", "Recompute the row math and compare to the totals", "Check only that the HTTP status code came back as a 200"],
+        answer: 2
+    },
+    "Which design patterns show up in a typical Java automation framework, and where?": {
+        options: ["Only the Page Object pattern; no other pattern really applies", "Page Object, Factory for drivers, Singleton/ThreadLocal, Builder", "The MVC pattern applied broadly across the whole framework code", "The Observer pattern used to watch for locator changes at runtime"],
+        answer: 1
+    },
+    "How do you reconcile API results against database values?": {
+        options: ["Trust the API response; treat the database as an implementation detail", "Query the source tables in SQL and assert the API matches them", "Compare only the row counts returned by each side", "Take screenshots of both and compare them visually"],
+        answer: 1
+    },
+    "What is the strongest response when asked to explain your SampleSelenium framework?": {
+        options: ["It has many tests in it and it runs fine in Chrome", "Maven, Java 17, Selenium 4 with POM, waits, and ThreadLocal", "It is really just a big pile of manual test cases on paper", "It is a loose collection of scripts copied from random forum posts"],
+        answer: 1
+    },
+    "Absolute vs relative XPath — why does everyone use relative?": {
+        options: ["Absolute XPath is not considered valid syntax in modern browsers anymore", "Absolute breaks on any DOM change; relative anchors on an attribute", "Relative XPath is simply faster for a person to type out by hand", "Absolute XPath cannot locate elements that are nested deeply in the DOM tree"],
+        answer: 1
+    },
+    "What is the correct syntax contrast between absolute and relative XPath?": {
+        options: ["Absolute uses //input[@id='user']; relative uses /html/body/div/input", "Absolute starts at the root; relative uses // plus an attribute", "Both absolute and relative XPath always start with a single leading slash", "Relative XPath expressions can only ever use tag names, never attributes"],
+        answer: 1
+    },
+    "GET /api/trades/9999 for a nonexistent trade vs PATCH to an endpoint that only supports GET and POST — which statuses do you expect?": {
+        options: ["A 404 status code is returned for both of these two cases", "404 for the missing trade; 405 with an Allow header for the verb", "A 400 Bad Request status code is returned in both of these cases", "405 for the missing trade record; 404 for the unsupported verb used"],
+        answer: 1
+    },
+    "What is the difference between retesting and regression testing?": {
+        options: ["They describe the same testing activity under two different names", "Retesting checks the fixed defect; regression checks nearby behavior", "Regression testing only ever happens right before the release day", "Retesting is always automated while regression is always run manually"],
+        answer: 1
+    },
+    "What do Cucumber tags and data tables give you?": {
+        options: ["Tags just rename scenarios; data tables only format the report", "Tags select which scenarios run; data tables pass multi-row input", "Both tags and data tables are deprecated Gherkin features now", "Tags are a feature that only ever works when running through Jenkins"],
+        answer: 1
+    },
+    "final vs finally vs finalize?": {
+        options: ["Three different spellings of what is really the same keyword", "final blocks change; finally always runs; finalize is a GC hook", "The finally block runs only when an exception is actually thrown", "The final keyword makes an object eligible for GC sooner"],
+        answer: 1
+    },
+    "In Cucumber, what is the relationship between a feature file, step definitions, and hooks?": {
+        options: ["Feature files contain Java code that the test runner executes directly", "Gherkin steps map to Java methods by expression; hooks wrap scenarios", "Hooks exist purely to replace the need for step definitions entirely", "Step definition code must always live physically inside the feature file"],
+        answer: 1
+    },
+    "How do you capture a screenshot in Selenium?": {
+        options: ["Call a built-in driver.snapshot() method on the WebDriver instance", "Cast to TakesScreenshot and call getScreenshotAs(OutputType.FILE)", "Use the OS-level print-screen key via a Robot instance only", "Screenshots are only ever possible when running through Selenium Grid"],
+        answer: 1
+    },
+    "Which Playwright locator approach best survives a UI refactor, and what does strict mode do?": {
+        options: ["XPath by absolute position; strict mode turns off automatic retries", "Role- and text-based locators; strict mode fails on multiple matches", "CSS selectors by generated class name; strict mode picks the first match", "Chained numeric indexes; strict mode silently ignores duplicates"],
+        answer: 1
+    },
+    "A developer disagrees that a bug should be fixed. What is the most senior first response?": {
+        options: ["Escalate the disagreement immediately without any further discussion", "Reproduce it, align on expected behavior, then document and route", "Close the bug quietly to keep the team's velocity looking good", "Keep arguing the point until the developer eventually agrees"],
+        answer: 1
+    }
 };
+// An override entry is either a bare array of four options (legacy: the correct answer keeps
+// its original index) or { options, answer } when rebalancing reordered the choices. The
+// second shape exists because replacing options without the index silently moves the
+// correct answer — the failure mode is invisible until a learner is marked wrong.
 function applyOptionHardening() {
     questionBank.forEach((item) => {
         const override = Object.entries(balancedOptionOverrides).find(([prefix]) => item.question.startsWith(prefix));
-        if (override) item.options = override[1];
+        if (!override) return;
+        const value = override[1];
+        if (Array.isArray(value)) { item.options = value; return; }
+        item.options = value.options;
+        item.answer = value.answer;
     });
 }
 const state = { track: "all", employer: "all", topic: "all", questions: [], index: 0, correct: 0, answered: false, selected: null, correctIndex: null, codingIndex: 0 };
@@ -1010,7 +1366,6 @@ function shuffleChoices(item) {
 function esc(text) { return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 function getDeepDive(question) {
     const deepDive = deepDiveByQuestion[question.question];
-    const correctAnswer = question.options[question.answer];
     return deepDive || {
         concept: question.explanation,
         interview: "I would define the concept, name the decision or trade-off, and give one concrete example from my automation framework.",
@@ -1224,11 +1579,16 @@ function checkAnswer() {
             try { await navigator.clipboard.writeText(studyPrompt(question, getDeepDive(question))); copyButton.textContent = "Study prompt copied"; }
             catch {
                 copyButton.textContent = "Copy unavailable — prompt shown below";
-                const prompt = document.createElement("textarea");
+                // Clipboard is blocked outside a secure context (opening the file directly
+                // with file://). Reuse the one fallback textarea; clicking again must not
+                // stack another copy of it.
+                const existing = panel.querySelector(".study-prompt");
+                const prompt = existing || document.createElement("textarea");
                 prompt.className = "study-prompt"; prompt.readOnly = true;
                 prompt.value = studyPrompt(question, getDeepDive(question));
                 prompt.setAttribute("aria-label", "Study prompt for manual copying");
-                copyButton.after(prompt); prompt.focus(); prompt.select();
+                if (!existing) copyButton.after(prompt);
+                prompt.focus(); prompt.select();
             }
         });
     });

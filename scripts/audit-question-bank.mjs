@@ -28,16 +28,27 @@ const pairedCoverage = (employer) => {
     return { writtenCount, pairedCount };
 };
 
+// A ratchet, not a threshold: going past the baseline fails, and so does improving on it
+// without writing the better numbers back here. Otherwise slack accumulates silently and the
+// gate stops meaning anything.
+const BASELINE = { uniqueLongest: 127, spreadAtLeast55: 15 };
+
 console.log(JSON.stringify({
     total: bank.length, mcqs: mcqs.length, written: written.length,
     invalidMcqs: invalid.length, duplicateQuestions: duplicateQuestions.length,
     bespokeDeepDives: Object.keys(context.deep).length,
-    optionLength: { uniqueLongest, spreadAtLeast55: spread55, flaggedQuestions: lengthViolations.length, baseline: { uniqueLongest: 187, spreadAtLeast55: 75 } },
+    optionLength: { uniqueLongest, spreadAtLeast55: spread55, flaggedQuestions: lengthViolations.length, baseline: BASELINE },
     pairedCoverage: { buildersMutual: pairedCoverage("Builders Mutual"), innFlow: pairedCoverage("Inn-Flow") }
 }, null, 2));
 
 const strict = process.argv.includes("--strict");
-const baselineRegressed = uniqueLongest > 187 || spread55 > 75;
+const baselineRegressed = uniqueLongest > BASELINE.uniqueLongest || spread55 > BASELINE.spreadAtLeast55;
+const baselineStale = uniqueLongest < BASELINE.uniqueLongest || spread55 < BASELINE.spreadAtLeast55;
+if (baselineStale && !baselineRegressed) {
+    console.error("Question-bank audit failed: the bank improved past the committed baseline. Lower BASELINE in this file to { uniqueLongest: "
+        + uniqueLongest + ", spreadAtLeast55: " + spread55 + " } so the gain cannot be given back.");
+    process.exitCode = 1;
+}
 if (invalid.length || duplicateQuestions.length || baselineRegressed || (strict && lengthViolations.length)) {
     console.error("Question-bank audit failed: fix invalid data, duplicates, or a regression beyond the committed length-bias baseline.");
     process.exitCode = 1;
