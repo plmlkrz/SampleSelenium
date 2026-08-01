@@ -660,7 +660,7 @@ const deepDiveByQuestion = {
     },
     "How do you select an option from a standard <select> dropdown?": {
         concept: "Selenium's Select class is a thin wrapper specifically for real HTML <select> tags -- it gives you three targeted methods (selectByVisibleText, selectByValue, selectByIndex) plus getOptions() and isMultiple() for multi-select dropdowns. The moment a 'dropdown' is actually a styled <div> with JavaScript-driven show/hide (common in modern component libraries), Select throws because there's no native <select> to wrap, and you fall back to click-then-click with explicit waits between the two.",
-        distractors: ["Clicking and blindly typing skips the structured API entirely and won't reliably select a specific option out of an open list.", "JavaScriptExecutor is a fallback for non-native dropdowns, not a requirement for standard <select> elements -- Select handles those natively.", "sendKeys can type into some select elements' visible text but is unreliable across browsers and doesn't work at all for custom JS-driven dropdowns, so it's not a universal answer."],
+        distractors: ["Treating every dropdown as custom markup skips checking the tag and discards the native Select API when it applies.", "JavaScriptExecutor is a fallback for non-native dropdowns, not a requirement for standard <select> elements -- Select handles those natively.", "sendKeys can type into some select elements' visible text but is unreliable across browsers and doesn't work at all for custom JS-driven dropdowns, so it's not a universal answer."],
         example: "Select browserDropdown = new Select(driver.findElement(By.id(\"browser\")));\nbrowserDropdown.selectByVisibleText(\"Firefox\");\nassertFalse(browserDropdown.isMultiple());",
         interview: "For a real <select> tag I wrap it in Selenium's Select class and use selectByVisibleText or selectByValue depending on what's stable across environments. If it turns out to be a styled div instead of a native select, Select won't apply at all, and I switch to a click-open, click-option pattern with explicit waits on visibility."
     },
@@ -1895,7 +1895,7 @@ const balancedOptionOverrides = {
     "What does @WebMvcTest with MockMvc give you": { options: ["A full application context, real HTTP port, production database, and every service bean", "A web-layer slice exercised without opening a server socket, with collaborators mocked", "A browser session, rendered templates, JavaScript execution, and WebDriver-managed cookies", "A repository slice, real database transaction, migration runner, and no controller beans"], answer: 1 },
     "Which locator is generally fastest, and why?": { options: ["XPath, because browser engines optimize every expression and guarantee unique results", "A stable unique ID, because it supports a direct and narrowly scoped browser lookup", "Link text, because visible strings remain stable across localization and content changes", "A class name, because CSS classes are required to identify exactly one DOM element"], answer: 1 },
     "How do you interact with an element inside an iframe?": {
-        options: ["Locate through the top document, because frame boundaries are transparent to WebDriver", "Switch into the frame, locate and interact there, then return to the parent context", "Use JavaScript for frame interactions, bypassing WebDriver's browsing contexts", "Open the frame source in another tab, test it separately, and skip restoring context"],
+        options: ["Locate through the top document, because frame boundaries are transparent to WebDriver", "Switch into the frame, locate and interact there, then return to the parent context", "Use JavaScript to locate iframe content from the top document without changing browsing context", "Open the frame source in another tab, test it separately, and skip restoring context"],
         answer: 1
     },
     "A click opens a new window. How do you continue the test there?": { options: ["Assume Selenium follows automatically, interact immediately, and close the original handle", "Compare window handles, switch to the new handle, and restore the original when done", "Send an operating-system Alt+Tab action, wait for focus, and continue without handles", "Restart WebDriver on every new window, reload the application, and recreate test data"], answer: 1 },
@@ -1904,7 +1904,7 @@ const balancedOptionOverrides = {
         answer: 1
     },
     "How do you select an option from a standard <select> dropdown?": {
-        options: ["Click the element, type the visible text, then press Enter to confirm the choice", "Wrap the element in Select and choose by visible text, value, or index", "Use JavaScript to set the value directly, which fires the change event for you", "Send keys directly to the dropdown, treating it like a plain text input field"],
+        options: ["Treat every dropdown as custom markup, ignore the tag, skip Select, and click arbitrary text", "Wrap the element in Select and choose by visible text, value, or index", "Use JavaScript to set the value directly, which fires the change event for you", "Send keys directly to the dropdown, treating it like a plain text input field"],
         answer: 1
     },
     "In what order do TestNG's Before annotations fire?": { options: ["Method, class, test, then suite; After annotations execute in the same order", "Suite, XML test, class, then method; After annotations unwind in reverse", "Class, suite, method, then XML test; After annotations run alphabetically", "The order changes on every execution unless all configuration methods have priorities"], answer: 1 },
@@ -3236,7 +3236,7 @@ function checkAnswer() {
     });
     const hasDeepDive = Boolean(getDeepDive(question));
     const deepDiveButton = hasDeepDive
-        ? "<button class=\"text-button\" id=\"show-deep-dive\" type=\"button\" aria-expanded=\"false\">More information</button>"
+        ? "<button class=\"text-button\" id=\"show-deep-dive\" type=\"button\" aria-expanded=\"false\" aria-controls=\"deep-dive-panel\">More information</button>"
         : "";
     $("#answer-feedback").innerHTML = "<div class=\"feedback " + (correct ? "is-correct" : "") + "\"><strong>" + (correct ? "Correct." : "Not quite.") + "</strong> " + esc(question.explanation) + "</div><div class=\"question-actions next-action\">" + deepDiveButton + "<button class=\"button button-primary\" id=\"next-question\" type=\"button\">" + (state.index === state.questions.length - 1 ? "See score" : "Next question") + " <span>→</span></button></div><div id=\"deep-dive-panel\" hidden></div>";
     $("#check-answer").remove(); $("#skip-question").remove();

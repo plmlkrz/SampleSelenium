@@ -104,13 +104,20 @@ disagreement flags a question for review.
 
 ```powershell
 node scripts/blind-pass-build.mjs .\blind-run 4
-# hand blind-run\blind1..4.json to independent solvers; collect their answers
-node scripts/blind-pass-score.mjs .\blind-run .\blind-run\answers1.json .\blind-run\answers2.json
+# hand blind-run\blind1..4.json to independent solvers; collect one answer JSON per batch
+node scripts/blind-pass-score.mjs .\blind-run .\blind-run\answers1.json .\blind-run\answers2.json .\blind-run\answers3.json .\blind-run\answers4.json
 ```
 
 The solver receives only `{id, question, options}` — no answer key, no explanation (the
 explanation usually gives the answer away), options reshuffled. It must be told that some
 items may have **no** correct option, and told to ignore option length.
+
+Each answer file is a JSON array with one object per item: `{ "id": 12, "pick": 1,
+"noneCorrect": false, "confidence": "high", "why": "...", "alsoDefensible": [] }`.
+`pick` is the zero-based option index, or `-1` when no option is correct. `noneCorrect`,
+`confidence`, `why`, and `alsoDefensible` are optional; when present, `confidence` must be
+`high`, `medium`, or `low`, and `alsoDefensible` must be an array. The scorer rejects malformed
+answers and requires every answer file to contain and catch its salted control item(s).
 
 **Every batch is salted with known-false control items, and this is the point of the design.**
 A blind pass that returns 100% agreement is indistinguishable from a solver that rubber-stamps
@@ -118,7 +125,9 @@ whatever it is shown. The only way to tell those apart is to check, in the same 
 it caught deliberate falsehoods. `blind-pass-score.mjs` scores the salt first and refuses to
 report a result if any planted item slipped through — agreement from an instrument that cannot
 fail is not evidence. Salt ids are renumbered in with the real ones so they cannot be spotted
-by id.
+by id. Set `BLIND_SEED` to a non-negative integer to reproduce a build; the seed printed in the
+build summary is the input seed. The builder distributes at least one salted control into every
+batch.
 
 Disagreement is a flag, not a verdict: most of this bank is professional judgment, where a
 defensible second answer is not an error.

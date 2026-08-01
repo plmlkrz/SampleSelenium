@@ -19,6 +19,7 @@ if (!dir || !answerFiles.length) {
 const key = new Map(JSON.parse(fs.readFileSync(path.join(dir, "blind-key.json"), "utf8")).map((k) => [k.id, k]));
 const seen = new Set();
 const saltResults = [];
+const fileChecks = [];
 const disagreements = [];
 const ambiguous = [];
 const confidence = { high: 0, medium: 0, low: 0 };
@@ -26,15 +27,33 @@ let scored = 0;
 let agreed = 0;
 
 for (const file of answerFiles) {
-    for (const a of JSON.parse(fs.readFileSync(file, "utf8"))) {
+    const fileSaltResults = [];
+    let answers;
+    try { answers = JSON.parse(fs.readFileSync(file, "utf8")); }
+    catch (error) { console.error("could not parse " + file + ": " + error.message); process.exitCode = 1; fileChecks.push({ file, saltItems: 0, caught: 0, valid: false }); continue; }
+    if (!Array.isArray(answers)) { console.error("answer file must contain a JSON array: " + file); process.exitCode = 1; fileChecks.push({ file, saltItems: 0, caught: 0, valid: false }); continue; }
+    for (const a of answers) {
+        if (!a || !Number.isInteger(a.id) || !Number.isInteger(a.pick) || a.pick < -1 || a.pick > 3
+            || (a.noneCorrect !== undefined && typeof a.noneCorrect !== "boolean")
+            || (a.noneCorrect === true && a.pick !== -1)
+            || (a.confidence !== undefined && !["high", "medium", "low"].includes(a.confidence))
+            || (a.why !== undefined && typeof a.why !== "string")
+            || (a.alsoDefensible !== undefined && !Array.isArray(a.alsoDefensible))) {
+            console.error("invalid answer schema in " + file + "; expected {id, pick (-1..3), optional noneCorrect, confidence, why, alsoDefensible}");
+            process.exitCode = 1;
+            continue;
+        }
         const k = key.get(a.id);
         if (!k) { console.error("answer for unknown id " + a.id + " in " + file); process.exitCode = 1; continue; }
         if (seen.has(a.id)) { console.error("duplicate answer for id " + a.id + " in " + file); process.exitCode = 1; continue; }
         seen.add(a.id);
-        confidence[a.confidence] = (confidence[a.confidence] || 0) + 1;
+        if (a.confidence) confidence[a.confidence]++;
 
         const flaggedNone = a.noneCorrect === true || a.pick === -1;
-        if (k.kind === "salt") { saltResults.push({ id: a.id, caught: flaggedNone, question: k.question }); continue; }
+        if (k.kind === "salt") {
+            const result = { id: a.id, caught: flaggedNone, question: k.question };
+            saltResults.push(result); fileSaltResults.push(result); continue;
+        }
 
         scored++;
         if (flaggedNone) { disagreements.push({ id: a.id, why: "solver says no option is correct", confidence: a.confidence, question: k.question }); }
@@ -42,10 +61,12 @@ for (const file of answerFiles) {
         else { disagreements.push({ id: a.id, why: a.why || "picked a different option", confidence: a.confidence, question: k.question }); }
         if ((a.alsoDefensible || []).length) ambiguous.push({ id: a.id, question: k.question });
     }
+    fileChecks.push({ file, saltItems: fileSaltResults.length, caught: fileSaltResults.filter((s) => s.caught).length,
+        valid: fileSaltResults.length > 0 && fileSaltResults.every((s) => s.caught) });
 }
 
 const saltCaught = saltResults.filter((s) => s.caught).length;
-const saltValid = saltResults.length > 0 && saltCaught === saltResults.length;
+const saltValid = fileChecks.length > 0 && fileChecks.every((check) => check.valid);
 const unanswered = [...key.keys()].filter((id) => !seen.has(id));
 
 console.log(JSON.stringify({
@@ -56,6 +77,7 @@ console.log(JSON.stringify({
             : saltValid ? "instrument discriminates" : "INSTRUMENT UNRELIABLE — agreement below is uninformative",
         missed: saltResults.filter((s) => !s.caught).map((s) => s.question)
     },
+    perAnswerFile: fileChecks,
     realQuestions: { scored, agreed, agreementPct: scored ? Number((100 * agreed / scored).toFixed(1)) : null },
     disagreements,
     ambiguousQuestions: ambiguous,

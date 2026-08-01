@@ -12,7 +12,7 @@ vm.runInContext(source.slice(0, cutoff)
 // every earlier copy is dead text. That is invisible to `node --check` and to the bank at
 // runtime, so an edit applied to the shadowed copy appears to do nothing for no visible
 // reason. Nine of these had accumulated across the override maps before this check existed.
-const duplicateOverrideKeys = ["balancedOptionOverrides", "conciseCorrectOptionOverrides"].flatMap((name) => {
+const duplicateOverrideKeys = ["balancedOptionOverrides", "conciseCorrectOptionOverrides", "deepDiveByQuestion"].flatMap((name) => {
     const start = source.indexOf("const " + name + " = {");
     if (start < 0) return [{ object: name, key: "(object not found)" }];
     let i = source.indexOf("{", start);
@@ -62,6 +62,10 @@ const missingDeepDives = mcqs.filter((item) => !context.deep[item.question]);
 const deepDivesWithoutDistractors = Object.entries(context.deep)
     .filter(([, value]) => !Array.isArray(value.distractors) || value.distractors.length !== 3)
     .map(([question]) => question);
+const invalidDeepDives = Object.entries(context.deep)
+    .filter(([, value]) => !value || ["concept", "example", "interview"].some((field) => typeof value[field] !== "string" || !value[field].trim())
+        || !Array.isArray(value.distractors) || value.distractors.some((text) => typeof text !== "string" || !text.trim()))
+    .map(([question]) => question);
 
 const conciseOverrideIssues = Object.entries(context.concise).flatMap(([prefix, expectedAnswer]) => {
     const matches = mcqs.filter((item) => item.question.startsWith(prefix));
@@ -90,7 +94,8 @@ console.log(JSON.stringify({
         withDeepDive: mcqs.length - missingDeepDives.length,
         missing: missingDeepDives.length,
         baselineMissing: BASELINE_MISSING_DEEP_DIVES,
-        missingDistractorRebuttals: deepDivesWithoutDistractors.length
+        missingDistractorRebuttals: deepDivesWithoutDistractors.length,
+        invalidEntries: invalidDeepDives.length
     },
     conciseAnswerOverrides: { total: Object.keys(context.concise).length, issues: conciseOverrideIssues.length },
     optionLength: {
@@ -124,13 +129,18 @@ if (deepDivesWithoutDistractors.length) {
     for (const q of deepDivesWithoutDistractors.slice(0, 5)) console.error("  " + q.slice(0, 70));
     process.exitCode = 1;
 }
+if (invalidDeepDives.length) {
+    console.error("Question-bank audit failed: " + invalidDeepDives.length + " deep dive(s) have missing or empty teaching fields:");
+    for (const q of invalidDeepDives.slice(0, 5)) console.error("  " + q.slice(0, 70));
+    process.exitCode = 1;
+}
 if (duplicateOverrideKeys.length) {
     console.error("Question-bank audit failed: " + duplicateOverrideKeys.length
         + " override key(s) are duplicated and therefore shadowed. Keep the last copy and delete the earlier ones:");
     for (const d of duplicateOverrideKeys) console.error("  " + d.object + " -> " + d.key.slice(0, 70));
     process.exitCode = 1;
 }
-if (invalid.length || duplicateQuestions.length || conciseOverrideIssues.length || baselineRegressed || (strict && strictLengthBias)) {
+if (invalid.length || duplicateQuestions.length || conciseOverrideIssues.length || invalidDeepDives.length || baselineRegressed || (strict && strictLengthBias)) {
     console.error("Question-bank audit failed: fix invalid data, duplicates, or a regression beyond the committed length-bias baseline.");
     process.exitCode = 1;
 }

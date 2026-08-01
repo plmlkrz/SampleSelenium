@@ -18,6 +18,7 @@ import vm from "node:vm";
 const outDir = process.argv[2];
 const batchCount = Number(process.argv[3] || 4);
 if (!outDir) { console.error("usage: node scripts/blind-pass-build.mjs <outputDir> [batches]"); process.exit(1); }
+if (!Number.isInteger(batchCount) || batchCount < 1) { console.error("batches must be a positive integer"); process.exit(1); }
 fs.mkdirSync(outDir, { recursive: true });
 
 const src = fs.readFileSync(new URL("../practice.js", import.meta.url), "utf8");
@@ -40,7 +41,9 @@ const SALT = [
     ["What is the difference between 301, 302, and 304", "301 is temporary, 302 permanent, and 304 signals a server error."]
 ];
 
-let seed = Number(process.env.BLIND_SEED || 20260801);
+const initialSeed = Number(process.env.BLIND_SEED || 20260801);
+if (!Number.isInteger(initialSeed) || initialSeed < 0) { console.error("BLIND_SEED must be a non-negative integer"); process.exit(1); }
+let seed = initialSeed;
 const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
 const shuffleIndices = (n) => {
     const idx = [...Array(n).keys()];
@@ -72,7 +75,11 @@ SALT.forEach(([prefix, falsified], n) => {
 if (missing.length) {
     console.error("Salt items no longer match any question — fix these before trusting a run:");
     for (const m of missing) console.error("  " + m);
-    process.exitCode = 1;
+    process.exit(1);
+}
+if (batchCount > SALT.length - missing.length) {
+    console.error("batches cannot exceed the number of valid salted control items (" + (SALT.length - missing.length) + ")");
+    process.exit(1);
 }
 
 // Interleave so salt is not clustered, then renumber. Renumbering matters: if salt kept a
@@ -90,11 +97,19 @@ shuffled.forEach((item, n) => {
 key.length = 0;
 key.push(...renumberedKey);
 
-const per = Math.ceil(shuffled.length / batchCount);
-for (let b = 0; b < batchCount; b++) {
-    const slice = shuffled.slice(b * per, (b + 1) * per);
-    if (slice.length) fs.writeFileSync(path.join(outDir, "blind" + (b + 1) + ".json"), JSON.stringify(slice, null, 1));
-}
+// Partition after the global shuffle, but seed every batch with a control. A global shuffle
+// alone can leave an entire solver batch unsalted, making that solver's agreement uninterpretable.
+const finalKeyById = new Map(key.map((k) => [k.id, k]));
+const batches = Array.from({ length: batchCount }, () => []);
+const saltItems = shuffled.filter((item) => finalKeyById.get(item.id)?.kind === "salt");
+const realItems = shuffled.filter((item) => finalKeyById.get(item.id)?.kind === "real");
+saltItems.forEach((item, i) => batches[i % batchCount].push(item));
+realItems.forEach((item, i) => batches[i % batchCount].push(item));
+batches.forEach((batch, b) => {
+    const order = shuffleIndices(batch.length);
+    const randomized = order.map((i) => batch[i]);
+    fs.writeFileSync(path.join(outDir, "blind" + (b + 1) + ".json"), JSON.stringify(randomized, null, 1));
+});
 fs.writeFileSync(path.join(outDir, "blind-key.json"), JSON.stringify(key, null, 1));
 
 // The batches must not leak the key. Only these three fields may appear on an item.
@@ -115,7 +130,8 @@ console.log(JSON.stringify({
     saltItems: SALT.length - missing.length,
     totalItems: shuffled.length,
     batches: batchCount,
+    saltPerBatch: batches.map((batch) => batch.filter((item) => finalKeyById.get(item.id)?.kind === "salt").length),
     keyWrittenTo: path.join(outDir, "blind-key.json"),
     leakCheck: leaked ? "FAILED" : "clean",
-    seed
+    seed: initialSeed
 }, null, 2));
