@@ -26,6 +26,12 @@ the correct answer as its longest option. Use the mechanical form instead:
 - **At least one distractor must be strictly longer than the correct option.** Aim for the
   correct option to be second or third longest of the four.
 - Keep `max(len) - min(len)` under 55 characters.
+- **Match the clause count.** Length is only a symptom; the underlying tell is that correct
+  answers enumerate ("do A, then B, and check C") while distractors state one idea. Across
+  this bank the correct answer averages 2.55 clauses against 1.16 for distractors, which is
+  why "pick the option with the most commas" outscores "pick the longest". A distractor must
+  argue at the same shape and depth as the correct answer — same number of clauses, same
+  enumerative form — or the bias just moves from length into structure.
 - Trim the correct option to its essential claim *and* fill the distractors out to full,
   genuinely tempting wrong answers. Doing only one of the two leaves the ranking unchanged —
   shaving the correct answer alone just shrinks every option together.

@@ -84,6 +84,28 @@ This runs in CI as the `question-bank-audit` job. It needs no JDK, browser, or n
 is the one job that stays trustworthy when the Selenium suites go red because Sauce Demo or
 the-internet.herokuapp.com is unreachable.
 
+```powershell
+node scripts/audit-guessability.mjs
+```
+
+Scores the bank as a test-taker who knows nothing about the subject would: always pick the
+wordiest option, the longest, the one that avoids "never" and "always". Anything well above
+the 25% random baseline means the bank is partly measuring writing style instead of
+knowledge. Answer position is not tested, because the page shuffles it on every render.
+
+Both scripts ratchet: they fail on a regression past the committed baseline **and** on an
+improvement that was not written back, so a gain cannot quietly erode.
+
+### What these prove, and what they do not
+
+Guessability is fully decidable — it is a property of the data, so the number above is
+measured, not estimated. **Answer correctness is not.** No script knows whether the marked
+answer is true. That gap is covered, in descending order of independence, by: executing the
+claim as a drill under `src/test/java/com/sampleselenium/drills/` where it is executable at
+all; citing primary documentation; a review by a different model family than the one that
+wrote the question; and last and weakest, a same-family review, which shares the blind spots
+of whatever produced the content.
+
 ## Test Site
 
 Tests run against [Sauce Demo](https://www.saucedemo.com) — a purpose-built Selenium practice application.
