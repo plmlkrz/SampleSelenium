@@ -667,18 +667,29 @@ const deepDiveByQuestion = {
 };
 const balancedOptionOverrides = {
     "What is the safest first move when asked to reverse a string while preserving whitespace positions?": { options: ["Reverse the entire text first, then move each space back to its original index", "Reverse only non-whitespace characters while preserving every whitespace position", "Remove whitespace before reversing, then append the original spaces at the end", "Sort the visible characters, retain their indexes, and rebuild around the spaces"], answer: 1 },
-    "What is the practical difference between Assert and Verify?": { options: ["Hard assertions stop that flow; collected soft assertions report together at assertAll", "Assertions apply only to API checks, while verification applies only to browser checks", "Verification always stops immediately, while an assertion records the failure and continues", "The terms are interchangeable, require no final reporting call, and behave identically"], answer: 0 },
+    "What is the practical difference between Assert and Verify?": {
+        options: ["Hard assertions stop that flow; collected soft assertions report together at assertAll", "Assertions run against API checks, while verification runs against UI checks", "Verification stops the flow immediately, while an assertion records the failure and continues", "The terms are interchangeable, require no final reporting call, and behave identically"],
+        answer: 0
+    },
     "When you forget the exact Java method name during a live coding prompt": { options: ["Stop explaining the approach, search silently from memory, and resume only with exact syntax", "State the intended operation, flag the uncertain API name, and continue the solution", "Invent a likely method name, present it confidently, and avoid discussing the uncertainty", "Replace the problem with a familiar example, skip its edge cases, and wait for guidance"], answer: 1 },
     "What is the difference between HTTP 401 and 403?": { options: ["Both mean authentication succeeded, but the requested resource was not found", "401 challenges missing or invalid authentication; 403 refuses the authenticated principal", "401 means the server failed, while 403 means the client sent malformed JSON", "403 means the token expired, while 401 means the endpoint permanently moved"], answer: 1 },
     "In REST Assured, which chain correctly asserts a status code and a JSON field?": { options: ["driver.get(url).assertStatus(200).assertJsonField(\"instrument\", \"AAPL\")", "given().when().get(url).then().statusCode(200).body(\"instrument\", equalTo(\"AAPL\"))", "restAssured.fetch(url).expectStatus(200).expectField(\"instrument\", \"AAPL\")", "new Response(url).jsonPath().status(200).field(\"instrument\").equals(\"AAPL\")"], answer: 1 },
     "What does @WebMvcTest with MockMvc give you": { options: ["A full application context, real HTTP port, production database, and every service bean", "A web-layer slice exercised without opening a server socket, with collaborators mocked", "A browser session, rendered templates, JavaScript execution, and WebDriver-managed cookies", "A repository slice, real database transaction, migration runner, and no controller beans"], answer: 1 },
     "Which locator is generally fastest, and why?": { options: ["XPath, because browser engines optimize every expression and guarantee unique results", "A stable unique ID, because it supports a direct and narrowly scoped browser lookup", "Link text, because visible strings remain stable across localization and content changes", "A class name, because CSS classes are required to identify exactly one DOM element"], answer: 1 },
-    "How do you interact with an element inside an iframe?": { options: ["Locate through the top document, because frame boundaries are transparent to WebDriver", "Switch into the frame, locate and interact there, then return to the parent context", "Use JavaScript for every frame interaction, bypassing WebDriver's browsing contexts", "Open the frame source in another tab, test it separately, and never restore context"], answer: 1 },
+    "How do you interact with an element inside an iframe?": {
+        options: ["Locate through the top document, because frame boundaries are transparent to WebDriver", "Switch into the frame, locate and interact there, then return to the parent context", "Use JavaScript for frame interactions, bypassing WebDriver's browsing contexts", "Open the frame source in another tab, test it separately, and skip restoring context"],
+        answer: 1
+    },
     "A click opens a new window. How do you continue the test there?": { options: ["Assume Selenium follows automatically, interact immediately, and close the original handle", "Compare window handles, switch to the new handle, and restore the original when done", "Send an operating-system Alt+Tab action, wait for focus, and continue without handles", "Restart WebDriver on every new window, reload the application, and recreate test data"], answer: 1 },
-    "XPath vs CSS selector — which trade-off is real?": { options: ["CSS can move to parent nodes and match visible text, while XPath can only descend", "XPath supports axes and text matching; CSS is usually simpler for descendant selection", "XPath works only in Firefox and XML documents, while CSS works only in Chromium", "They have identical syntax and capabilities, so selector choice has no maintenance effect"], answer: 1 },
-    "How do you select an option from a standard <select> dropdown?": { options: ["Click the element, type visible text, press Enter, and assume every browser matches it", "Wrap the element in Select and choose by visible text, value, or index", "Use JavaScript for all native selects, bypassing WebDriver's standard control API", "Send keys to any dropdown implementation, including custom div-based component menus"], answer: 1 },
+    "XPath vs CSS selector — which trade-off is real?": {
+        options: ["CSS can move to parent nodes and match visible text, while XPath mainly descends", "XPath supports axes and text matching; CSS is usually simpler for descendant selection", "XPath works best in Firefox and XML documents, while CSS works best in Chromium", "They have identical syntax and capabilities, so selector choice has no maintenance effect"],
+        answer: 1
+    },
+    "How do you select an option from a standard <select> dropdown?": {
+        options: ["Click the element, type the visible text, then press Enter to confirm the choice", "Wrap the element in Select and choose by visible text, value, or index", "Use JavaScript to set the value directly, which fires the change event for you", "Send keys directly to the dropdown, treating it like a plain text input field"],
+        answer: 1
+    },
     "In what order do TestNG's Before annotations fire?": { options: ["Method, class, test, then suite; After annotations execute in the same order", "Suite, XML test, class, then method; After annotations unwind in reverse", "Class, suite, method, then XML test; After annotations run alphabetically", "The order changes on every execution unless all configuration methods have priorities"], answer: 1 },
-    "What are the standard ways to locate elements on the DOM in Selenium?": { options: ["Only ID and XPath, because WebDriver converts every other locator into those two", "ID, name, class, tag, link text, partial link text, CSS selector, and XPath", "Screen coordinates, image templates, OCR text, and operating-system accessibility IDs", "CSS selector and XPath only, with link text available exclusively through JavaScript"], answer: 1 },
     "In a large Agile or SAFe implementation, a workstream is behind planned test execution": { options: ["Wait until the exit gate, record the final variance, and avoid changing the current plan", "Report only completion percentage, omit dependencies, and let program leadership diagnose it", "Quantify the variance and causes, propose recovery choices, and escalate impact early", "Add testers immediately, extend every shift, and defer environment or data analysis"], answer: 2 },
     "How are FluentWait and WebDriverWait related in Selenium Java?": {
         options: ["WebDriverWait is unrelated to FluentWait; it has separate timeout, polling, and exception APIs", "WebDriverWait specializes FluentWait for WebDriver and ignores NotFoundException by default", "FluentWait is the global implicit wait; it configures every lookup made by the current driver", "FluentWait has no timeout; it keeps polling even after the browser session has ended"],
@@ -697,7 +708,7 @@ const balancedOptionOverrides = {
         answer: 0
     },
     "How does a HashMap resolve keys, collisions, and growth?": {
-        options: ["It sorts every key, binary-searches one array, and preserves its original capacity", "It selects a bucket by hash, uses equals for collisions, and resizes after its threshold", "It assigns every key a permanent unique slot, avoiding collisions and later redistribution", "It compares keys only by reference, appends to one list, and never changes capacity"],
+        options: ["It sorts the keys once, then binary-searches a single backing array for lookups", "It selects a bucket by hash, uses equals for collisions, and resizes after its threshold", "It assigns each key a fixed slot up front, based on insertion order alone", "It compares keys strictly by reference, appends new entries to a single linked list, and rarely changes capacity"],
         answer: 1
     },
     "What do the five HTTP status-code families communicate?": {
@@ -713,15 +724,15 @@ const balancedOptionOverrides = {
         answer: 1
     },
     "New response fields trigger UnrecognizedPropertyException. What design is usually appropriate?": {
-        options: ["Freeze every response permanently, reject optional additions, and version for any new field", "Allow unknown fields when the contract permits them; test compatibility separately", "Catch each mapping failure, skip body assertions, and continue using the partial response", "Convert responses to raw strings, avoid typed contracts, and compare only the status code"],
+        options: ["Freeze the response schema permanently, reject optional additions, and version for new fields", "Allow unknown fields when the contract permits them; test compatibility separately", "Catch each mapping failure, skip body assertions, and continue using the partial response", "Convert responses to raw strings, avoid typed contracts, and compare just the status code"],
         answer: 1
     },
     "Where should a large calculation matrix live when Cucumber covers the feature?": {
-        options: ["Create one Gherkin scenario per row, duplicate setup in each, and keep every vector visible", "Keep a few examples in Gherkin; run the large matrix as parameterized lower-layer tests", "Load every row inside one step, aggregate all failures, and report one Cucumber scenario", "Paste the spreadsheet into Examples, make Gherkin the data store, and remove lower-layer tests"],
+        options: ["Create a Gherkin scenario per row, duplicating setup, so each vector stays visible", "Keep a few examples in Gherkin; run the large matrix as parameterized lower-layer tests", "Load each row inside one step, aggregate failures, and report a single scenario", "Paste the spreadsheet into Examples, make Gherkin the data store, and remove lower-layer tests"],
         answer: 1
     },
     "When should a JMeter workload use unique calculation inputs?": {
-        options: ["Always, because repeated data stops threads, corrupts samples, and prevents percentile reports", "For uncached computation tests; model production cache-hit behavior in another workload", "Only for JDBC samplers, because HTTP requests cannot safely reuse request bodies or identifiers", "Never, because changing inputs invalidates comparisons, thresholds, and all repeatable analysis"],
+        options: ["Repeated data keeps thread timing steady, which makes percentile reporting more accurate", "For uncached computation tests; model production cache-hit behavior in another workload", "Mainly for JDBC samplers, since HTTP requests often reuse request bodies or identifiers less cleanly", "Rarely, since most workloads run faster when each thread reuses identical input values"],
         answer: 1
     },
     "What architectural distinction matters most between Cypress and Selenium?": {
@@ -1169,7 +1180,7 @@ const balancedOptionOverrides = {
         answer: 1
     },
     "The JD lists JMeter and k6 for performance/load testing. What is the practical difference in choosing between them?": {
-        options: ["k6 is simply a modern rewrite of JMeter that keeps the same GUI-based workflow", "JMeter is GUI-authored with broad protocols; k6 is scripted and CI-native", "k6 has no built-in way to express ramp-up periods or think time at all", "JMeter can only run through its GUI and never executes headless in CI"],
+        options: ["k6 is simply a modern rewrite of JMeter that keeps the same GUI-based workflow", "Choose JMeter for protocol breadth or k6 for code-first CI workflows.", "Assume k6 has a limited way to express ramp-up periods or think time", "Assume JMeter runs mainly through its GUI and rarely executes headless in CI"],
         answer: 1
     },
     "The JD names Functional Decomposition, Data Flow Diagrams, and Activity Diagrams. What is each actually best used for when you're designing test coverage?": {
@@ -1177,7 +1188,7 @@ const balancedOptionOverrides = {
         answer: 1
     },
     "You are testing a .NET REST API and your automation stack is Java/REST Assured or JS/Postman. What is the correct framing in an interview?": {
-        options: ["You would need to rewrite the entire automation suite in C# before testing it at all", "The contract is the interface; knowing .NET conventions like casing still helps", "Only unit tests written natively in C# can ever actually validate a .NET API", "Postman and REST Assured cannot send requests to a .NET endpoint at all"],
+        options: ["You would need to rewrite the entire automation suite in C# before testing it", "Test the HTTP contract independently of the service implementation language.", "Unit tests written natively in C# are generally the most reliable way to validate a .NET API", "Postman and REST Assured need a C# proxy layer to send requests to a .NET endpoint"],
         answer: 1
     },
     "You're asked to review a developer's unit test plan before a change merges. What are you actually checking for?": {
@@ -1189,19 +1200,19 @@ const balancedOptionOverrides = {
         answer: 1
     },
     "You're asked to perform impact analysis on a proposed modification to an existing application before regression testing begins. What does that actually involve?": {
-        options: ["Trusting the developer's own stated scope and retesting only the changed screen", "Mapping dependencies to size blast radius and scope regression to actual risk", "Running the entire regression suite in full for every change, however small", "Skipping impact analysis whenever a change is simply labeled a bug fix"],
+        options: ["Trust the developer's stated scope and retest just the specific screen they call out", "Mapping dependencies to size blast radius and scope regression to actual risk", "Run the full regression suite for most changes, regardless of how small the diff is", "Skipping impact analysis whenever a change is simply labeled a bug fix"],
         answer: 1
     },
     "The JD asks for familiarity with AI-assisted QA tools. What is the most credible description of where AI actually helps a test automation program today?": {
-        options: ["AI can fully replace the automation framework and maintain the suite from plain English", "AI speeds up reviewable tasks like drafting cases, while a human owns the oracle", "AI has no legitimate place in QA work since its output can never be trusted", "AI is only genuinely useful for generating raw test data, nothing more"],
+        options: ["AI can fully replace the automation framework and maintain the suite from plain English", "AI speeds up reviewable tasks like drafting cases, while a human owns the oracle", "Assume AI has little legitimate place in QA work since its output is hard to trust", "Treat AI as useful mainly for generating raw test data, and little else"],
         answer: 1
     },
     "For an API-integration-heavy digital experience, which statement best describes how testing should fit across the SDLC?": {
-        options: ["Testing is a distinct phase that starts only once development finishes", "Testing spans the SDLC from design review through post-release monitoring", "SDLC only describes waterfall projects, so it doesn't apply to Agile teams", "QA's only real SDLC job is running the regression suite before sign-off"],
+        options: ["Testing is a distinct phase that starts once development work finishes", "Testing spans the SDLC from design review through post-release monitoring", "SDLC mainly describes waterfall projects, so it rarely maps onto Agile teams", "QA's main SDLC job is running the regression suite before sign-off"],
         answer: 1
     },
     "The JD lists Quality Center/ALM, TestComplete, and Zephyr alongside Selenium. What's the actual difference in role between a test management tool and your automation framework?": {
-        options: ["They are direct competitors doing the exact same job, so a team only ever needs to pick just one", "A management tool owns the portfolio and traceability; automation reports results back", "TestComplete alone is fully capable of replacing a management tool entirely", "Management tools serve manual testers only, with no automation integration"],
+        options: ["Treat them as direct competitors doing the same job, so a team just picks one over the other", "A management tool owns the portfolio and traceability; automation reports results back", "TestComplete alone is fully capable of replacing a management tool entirely", "Assume management tools mostly serve manual testers, with little automation integration"],
         answer: 1
     },
     "You must track and report quality metrics to improve release confidence. Which set is most defensible?": {
@@ -1217,7 +1228,7 @@ const balancedOptionOverrides = {
         answer: 1
     },
     "In a healthcare or other regulated-industry implementation, what does the Test Lead need to add on top of standard system testing?": {
-        options: ["Nothing changes at all, since regulated industries are tested exactly like any other industry", "Requirement-to-defect traceability, synthetic PHI/PII, and audit-ready evidence", "Only faster test cycles, since compliance doesn't really affect testing", "Dropping negative testing entirely to save time on a tight schedule"],
+        options: ["Treat regulated testing much like a typical project, changing little beyond the checklist", "Requirement-to-defect traceability, synthetic PHI/PII, and audit-ready evidence", "Assume faster test cycles are the main benefit here, since compliance barely affects testing", "Dropping negative testing entirely to save time on a tight schedule"],
         answer: 1
     },
     "Your workstream depends on an interface with an external integration partner, and their test data isn't ready for your scheduled cycle. As Test Lead, what's the right sequence of actions?": {
@@ -1229,11 +1240,11 @@ const balancedOptionOverrides = {
         answer: 1
     },
     "How would you validate eventual consistency in a distributed system?": {
-        options: ["Assert right after the write completes; treat any failure as proof the system is broken", "Add a fixed thirty-second sleep before issuing every single read", "Poll the read side for convergence within the SLA, testing duplicate delivery", "Eventual consistency is inherently untestable, so don't bother trying"],
+        options: ["Assert right after the write completes, and flag a mismatch as a bug immediately", "Add a fixed thirty-second sleep before each read to let the write settle", "Poll the read side for convergence within the SLA, testing duplicate delivery", "Eventual consistency is inherently untestable, so don't bother trying"],
         answer: 2
     },
     "Why does idempotency matter when testing integrations, and how do you test it?": {
-        options: ["It does not really matter much at all as long as the happy path already works", "Replay the same request twice and assert exactly one business effect", "Idempotency is purely a developer concern that testers never verify", "Test it by sending two structurally different payloads back to back"],
+        options: ["Assume idempotency barely matters here as long as the happy path already works", "Replay the same request twice and assert exactly one business effect", "Treat idempotency as a developer concern that testers rarely need to verify", "Test it by sending two structurally different payloads back to back"],
         answer: 1
     },
     "A Program Test Manager asks for a test-effort estimate before requirements are fully finalized. What is the strongest approach?": {
@@ -1241,7 +1252,7 @@ const balancedOptionOverrides = {
         answer: 2
     },
     "A digital experience has API integrations plus a small number of critical browser journeys. How should Playwright, Selenium, and API tests be used together?": {
-        options: ["Put every single scenario into browser automation so it always mirrors the real user", "Use API tests for contracts, browser tools for journeys, without duplication", "Use Selenium exclusively, since API tests can't validate integrations", "Use Playwright to fully replace all service-layer and database checks"],
+        options: ["Push the vast majority of scenarios into browser automation since it mirrors what real users do", "Put most checks at API layers and keep browser tools for critical journeys.", "Use Selenium exclusively, since API tests can't validate integrations", "Use Playwright to replace service-layer and database checks wherever possible in the suite"],
         answer: 1
     },
     "A test must verify file-based ingestion: a partner drops a CSV into S3 and records should appear in the application. What is the sound approach?": {
@@ -1249,7 +1260,7 @@ const balancedOptionOverrides = {
         answer: 1
     },
     "You have a large Postman collection for exploratory API work. How should it relate to the automated suite?": {
-        options: ["Rely on the Postman collection alone for all coverage and never write any coded regression tests", "Keep Postman for exploration and demos, run key flows via Newman, move regression into code", "Delete the entire Postman collection once any coded automation exists in the repository", "Maintain Postman and code as two independent, fully duplicated suites of the same cases"],
+        options: ["Lean on the Postman collection for coverage and keep putting off writing coded regression tests", "Keep Postman for exploration and move durable regression to code with selected Newman flows.", "Drop the Postman collection once some coded automation shows up in the repository", "Maintain Postman and code as two independent, fully duplicated suites of the same cases"],
         answer: 1
     },
     "As the Test Lead defining automation strategy for a large regression suite across a program, what should drive the roadmap?": {
@@ -1257,19 +1268,11 @@ const balancedOptionOverrides = {
         answer: 1
     },
     "The team publishes a Swagger/OpenAPI spec. How do you use it beyond reading endpoint names?": {
-        options: ["Use the spec only to look up the service's base URL whenever someone writes a brand-new test case", "Generate the test baseline from it, schema-validate live responses, and diff versions for breaks", "Treat the published spec on its own as sufficient proof that the API behaves correctly", "Import it once into the tooling at project kickoff and never revisit it again"],
+        options: ["Check the spec for the service's base URL when someone happens to write a brand-new test case", "Use it to seed tests and validate live schemas while diffing versions for breaking changes.", "Treat the published spec on its own as sufficient proof that the API behaves correctly", "Import the spec once during project kickoff and rarely revisit it after that"],
         answer: 1
     },
     "What is the most accurate description of Playwright's auto-waiting compared to Selenium's waits?": {
-        options: ["Playwright removes the need to think about timing or waits from the test author entirely, in every scenario", "Playwright checks actionability before each action, cutting most waits, but state still needs assertions", "Playwright relies on one configurable global implicit wait, much like Selenium's default", "Selenium auto-waits on every action by default, and Playwright requires explicit waits"],
-        answer: 1
-    },
-    "An integration intermittently fails in an AWS environment. Which investigation gives the strongest root-cause evidence?": {
-        options: ["Keep re-running the suite locally over and over until the intermittent failure happens to go away", "Correlate logs across API Gateway, Lambda, and downstream by request ID, and line up metrics", "Ask the developer who owns the service to try reproducing it on their own machine", "Raise every test timeout in the suite until the flaky failures stop showing up"],
-        answer: 1
-    },
-    "Which Spring Boot test layer should you choose for a controller, repository, full service, and deployed API?": {
-        options: ["Use @SpringBootTest with a full application context for every one of these four testing needs", "@WebMvcTest for controllers, @DataJpaTest for repositories, RANDOM_PORT app, REST Assured deployed", "Drive all four of these different layers end to end through a real browser with Selenium WebDriver instead", "Use @DataJpaTest to test controllers and @WebMvcTest to test SQL queries directly"],
+        options: ["Assume timing rarely matters much here, since the test author barely thinks about waits during authoring", "Playwright waits for actionability automatically, but tests still need assertions for application state.", "Playwright relies on one configurable global implicit wait, much like Selenium's default", "Assume Selenium auto-waits on actions by default, unlike Playwright's explicit waits"],
         answer: 1
     },
     "How would you click an element that keeps becoming stale?": {
@@ -1278,10 +1281,6 @@ const balancedOptionOverrides = {
     },
     "You must prove data moved correctly from a source system through middleware into a target system. What is the strongest validation?": {
         options: ["Trust the integration job's own reported success status without inspecting the actual records it moved", "Reconcile record counts, then compare key fields on a sampled, boundary-heavy set plus rejects", "Open the target application and eyeball a single record that looks about right", "Compare only the aggregate row counts on each side and call it reconciled"],
-        answer: 1
-    },
-    "You must validate an event-driven flow: a service publishes to SNS, an SQS queue feeds a Lambda, and the Lambda writes to a data store. What proves the flow end to end?": {
-        options: ["Treat the publisher's 200 response by itself as proof that the whole downstream pipeline fully succeeded", "Trigger with a correlation ID, assert the persisted record, check Lambda logs, confirm the DLQ empty", "Wait a fixed thirty seconds after publishing and then glance at the UI", "Unit test the Lambda handler in isolation and skip the rest of the pipeline"],
         answer: 1
     },
     "An integration is eventually consistent — the target record appears anywhere from 1 to 20 seconds later. How should the automated check be written?": {
@@ -1293,15 +1292,11 @@ const balancedOptionOverrides = {
         answer: 1
     },
     "How can Playwright support API-focused testing, not just browser testing?": {
-        options: ["It has no HTTP client of its own at all, so you must pair it with a separate REST library", "Its APIRequestContext issues HTTP calls directly and can share auth state with a browser", "Every API call still ends up getting routed through the rendered browser UI underneath", "That capability only exists through a community plugin bolted on top of it"],
+        options: ["It ships without a built-in HTTP client, so teams often pair it with a separate REST library", "Its APIRequestContext issues HTTP calls directly and can share auth state with a browser", "API calls still end up getting routed through the rendered browser UI underneath", "That capability mainly comes from a community plugin bolted on top of it"],
         answer: 1
     },
     "How should Selenium scripts handle exceptions?": {
         options: ["Put one broad try/catch around the entire test run so that no failure ever really surfaces at all", "Catch only where it adds value — retry, screenshot, clearer message — otherwise fail loudly", "Call System.exit(1) from inside each catch block to halt the JVM process immediately", "Assume Selenium calls never throw, so no exception handling is really needed"],
-        answer: 1
-    },
-    "Calling an API through AWS API Gateway, you see a 403, then later a 502. What do these usually tell you?": {
-        options: ["Treat both status codes the exact same way, as a clear sign that the whole API is fully offline now", "403 usually means auth, signature, WAF, or a missing key; 502 means a bad integration response", "Read 403 as meaning record-not-found and 502 as the request having been throttled", "Log them as generic gateway noise that doesn't need further triage"],
         answer: 1
     },
     "Describe a standard Git workflow for automation code.": {
@@ -1310,10 +1305,6 @@ const balancedOptionOverrides = {
     },
     "How do you run cross-browser tests?": {
         options: ["Maintain a separate, hand-written copy of the whole test suite just for each target browser", "Parameterize the browser choice into a driver factory, then scale out via Grid or cloud", "Assume only Chrome is realistically automatable with Selenium WebDriver at all", "Hard-code a different WebDriver subclass inside each individual test class"],
-        answer: 1
-    },
-    "Two weeks before a planned go-live, your workstream has a cluster of interface defects with the same root cause, and the fix depends on an external integration partner. What is the right escalation move?": {
-        options: ["Keep quietly working the defects and only cover it at the next scheduled status meeting time slot", "Escalate immediately to Program Test Management with the risk, impact, dependency, and options", "Mark the whole cluster of defects as won't-fix so the metrics stay clean going into go-live", "Hold off and wait for the integration partner to raise the issue first"],
         answer: 1
     },
     "You have very limited time before a release. How do you prioritize testing?": {
@@ -1328,16 +1319,12 @@ const balancedOptionOverrides = {
         options: ["Sleep a fixed 60 seconds, then check the result exactly once", "Poll the status endpoint with a bounded timeout", "Assume the 202 response body already contains the final result", "Keep retrying the original POST request until it returns 200"],
         answer: 1
     },
-    "A Playwright test fails only in CI. Which built-in artifact gives the fastest root cause?": {
-        options: ["Re-run the same test locally over and over until it happens to fail", "The trace viewer, showing DOM snapshots, network log, and console", "Read only the raw stack trace printed in the CI job console", "Increase the test timeout value and move on to other work"],
-        answer: 1
-    },
     "What is a hybrid framework?": {
         options: ["A framework that automates both mobile and web applications", "One combining multiple styles, like Page Object plus data-driven", "A test suite that runs half manual and half automated cases", "A framework whose scripts are written in two programming languages"],
         answer: 1
     },
     "Your microservice under test calls three downstream microservices. How do you test it in isolation?": {
-        options: ["Always run tests against the full integrated environment instead", "Stub the downstream calls with WireMock and add contract tests", "Mock out the entire service under test rather than dependencies", "Skip the code paths that touch those downstream services"],
+        options: ["Run tests against the full integrated environment as the usual default", "Stub the downstream calls with WireMock and add contract tests", "Mock out the entire service under test rather than dependencies", "Skip the code paths that touch those downstream services"],
         answer: 1
     },
     "Name the four OOP pillars and the one-line meaning of each.": {
@@ -1345,27 +1332,23 @@ const balancedOptionOverrides = {
         answer: 1
     },
     "You need to confirm a specific service is running and check its recent errors on a Linux test environment before kicking off a regression cycle. Which commands do that?": {
-        options: ["Run the Windows commands dir and type against the remote host", "ps -ef or systemctl status the service, then grep the log", "Only cd and ls around the filesystem to look for obvious clues", "None; a GUI is always required, there is no command-line option"],
+        options: ["Run the Windows commands dir and type against the remote host", "ps -ef or systemctl status the service, then grep the log", "Poke around the filesystem with cd and ls, hoping something looks off", "Assume a GUI is needed here, since the command line seems impractical"],
         answer: 1
     },
     "How do you validate a large JSON response of financial calculations beyond spot-checking one field?": {
-        options: ["Assert only that the response body is not null or empty", "Diff the raw response string against a previously saved copy", "Recompute the row math and compare to the totals", "Check only that the HTTP status code came back as a 200"],
+        options: ["Spot-check that the response body is not null or empty", "Diff the raw response string against a previously saved copy", "Recompute the row math and compare to the totals", "Check that the HTTP status code came back as a 200"],
         answer: 2
     },
     "Which design patterns show up in a typical Java automation framework, and where?": {
-        options: ["Only the Page Object pattern; no other pattern really applies", "Page Object, Factory for drivers, Singleton/ThreadLocal, Builder", "The MVC pattern applied broadly across the whole framework code", "The Observer pattern used to watch for locator changes at runtime"],
+        options: ["Mostly the Page Object pattern; other patterns rarely apply", "Use Page Objects with factories builders and scoped drivers.", "The MVC pattern applied broadly across the whole framework code", "The Observer pattern used to watch for locator changes at runtime"],
         answer: 1
     },
     "How do you reconcile API results against database values?": {
-        options: ["Trust the API response; treat the database as an implementation detail", "Query the source tables in SQL and assert the API matches them", "Compare only the row counts returned by each side", "Take screenshots of both and compare them visually"],
-        answer: 1
-    },
-    "What is the strongest response when asked to explain your SampleSelenium framework?": {
-        options: ["It has many tests in it and it runs fine in Chrome", "Maven, Java 17, Selenium 4 with POM, waits, and ThreadLocal", "It is really just a big pile of manual test cases on paper", "It is a loose collection of scripts copied from random forum posts"],
+        options: ["Trust the API response; treat the database as an implementation detail", "Query the source tables in SQL and assert the API matches them", "Compare the row counts returned by each side and stop there", "Take screenshots of both and compare them visually"],
         answer: 1
     },
     "Absolute vs relative XPath — why does everyone use relative?": {
-        options: ["Absolute XPath is not considered valid syntax in modern browsers anymore", "Absolute breaks on any DOM change; relative anchors on an attribute", "Relative XPath is the only form that browser dev tools can generate", "Absolute XPath cannot locate elements that are nested deeply in the DOM tree"],
+        options: ["Absolute XPath is not considered valid syntax in modern browsers anymore", "Relative paths use stable context while absolute paths bind to the root.", "Relative XPath is the form that browser dev tools tend to generate", "Absolute XPath struggles to locate elements that are nested deeply in the DOM tree"],
         answer: 1
     },
     "What is the correct syntax contrast between absolute and relative XPath?": {
@@ -1377,11 +1360,11 @@ const balancedOptionOverrides = {
         answer: 1
     },
     "What is the difference between retesting and regression testing?": {
-        options: ["They describe the same testing activity under two different names", "Retesting checks the fixed defect; regression checks nearby behavior", "Regression testing only ever happens right before the release day", "Retesting is always automated while regression is always run manually"],
+        options: ["They describe the same testing activity under two different names", "Retesting confirms the fix while regression checks related behavior.", "Regression testing tends to happen mostly right before the release day arrives", "Retesting tends to be automated while regression runs manually"],
         answer: 1
     },
     "What do Cucumber tags and data tables give you?": {
-        options: ["Tags just rename scenarios; data tables only format the report", "Tags select which scenarios run; data tables pass multi-row input", "Both tags and data tables are deprecated Gherkin features now", "Tags are a feature that only ever works when running through Jenkins"],
+        options: ["Tags just rename scenarios; data tables mainly format the report", "Tags select which scenarios run; data tables pass multi-row input", "Both tags and data tables are deprecated Gherkin features now", "Tags are a feature that mainly works when running through Jenkins"],
         answer: 1
     },
     "final vs finally vs finalize?": {
@@ -1389,11 +1372,11 @@ const balancedOptionOverrides = {
         answer: 1
     },
     "In Cucumber, what is the relationship between a feature file, step definitions, and hooks?": {
-        options: ["Feature files contain Java code that the test runner executes directly", "Gherkin steps map to Java methods by expression; hooks wrap scenarios", "Hooks exist purely to replace the need for step definitions entirely", "Step definition code must always live physically inside the feature file"],
+        options: ["Feature files contain Java code that the test runner executes directly", "Feature steps map to methods while hooks wrap each scenario.", "Hooks exist purely to replace the need for step definitions entirely", "Step definition code typically lives physically inside the feature file"],
         answer: 1
     },
     "How do you capture a screenshot in Selenium?": {
-        options: ["Call a built-in driver.snapshot() method on the WebDriver instance", "Cast to TakesScreenshot and call getScreenshotAs(OutputType.FILE)", "Use the OS-level print-screen key via a Robot instance only", "Screenshots are only ever possible when running through Selenium Grid"],
+        options: ["Call a built-in driver.snapshot() method on the WebDriver instance", "Cast to TakesScreenshot and call getScreenshotAs(OutputType.FILE)", "Use the OS-level print-screen key via a Robot instance", "Screenshots are best captured when running through Selenium Grid"],
         answer: 1
     },
     "Which Playwright locator approach best survives a UI refactor, and what does strict mode do?": {
@@ -1401,7 +1384,7 @@ const balancedOptionOverrides = {
         answer: 1
     },
     "A developer disagrees that a bug should be fixed. What is the most senior first response?": {
-        options: ["Escalate the disagreement immediately without any further discussion", "Reproduce it, align on expected behavior, then document and route", "Close the bug quietly to keep the team's velocity looking good", "Keep arguing the point until the developer eventually agrees"],
+        options: ["Escalate the disagreement right away to a manager, skipping further one-on-one discussion", "Reproduce and align on expected behavior before documenting risk.", "Close the bug quietly to keep the team's velocity looking good", "Keep arguing the point until the developer eventually agrees"],
         answer: 1
     },
     "How would you test a database migration without data loss?": {
@@ -1429,7 +1412,7 @@ const balancedOptionOverrides = {
         answer: 1
     },
     "Regression execution time has become too long. How do you optimize it?": {
-        options: ["Remove older tests in bulk, retain only the newest scenarios, and use the lower case count as the primary speed target", "Upgrade runner hardware and increase timeouts, preserve every existing end-to-end path, and avoid changing suite composition", "Parallelize safe tests and move checks lower, remove overlap, select by change and risk, and fix expensive setup", "Run the full regression only at release time, keep pull requests on smoke coverage, and accept late feedback for integrated defects"],
+        options: ["Remove older tests in bulk, retain mostly the newest scenarios, and use the lower case count as the primary speed target", "Upgrade runner hardware and increase timeouts, preserve the existing end-to-end paths, and avoid changing suite composition", "Parallelize safe tests and move checks lower, remove overlap, select by change and risk, and fix expensive setup", "Run the full regression mainly at release time, keep pull requests on smoke coverage, and accept late feedback for integrated defects"],
         answer: 2
     },
     "What validates a .NET API beyond a successful HTTP status?": {
@@ -1457,7 +1440,7 @@ const balancedOptionOverrides = {
         answer: 1
     },
     "What makes an API test plan useful to both engineering and business stakeholders?": {
-        options: ["List every endpoint and supported verb, attach the current automation report, and leave risk and ownership decisions to each delivery team", "Connect scope and scenarios to business risks, define environments and data, assign ownership, and state entry and exit criteria", "Export all existing API cases, group them by service name, and use the number of automated assertions as the readiness measure", "Document a happy path for every service, record expected status codes, and defer negative cases and dependencies until execution begins"],
+        options: ["List each endpoint and supported verb, attach the current automation report, and leave risk and ownership decisions to each delivery team", "Connect scope and scenarios to business risks, define environments and data, assign ownership, and state entry and exit criteria", "Export the existing API cases, group them by service name, and use the number of automated assertions as the readiness measure", "Document a happy path for each service, record expected status codes, and defer negative cases and dependencies until execution begins"],
         answer: 1
     },
     "Beyond the HTTP status code, what do you validate in an API response?": {
@@ -1493,7 +1476,7 @@ const balancedOptionOverrides = {
         answer: 1
     },
     "How should pipeline stages separate fast PR checks from heavy regression?": {
-        options: ["Run every browser and integration test before merge, increase parallel capacity as the suite grows, and accept a longer review cycle", "Gate pull requests with fast deterministic checks, then schedule or trigger full UI, cross-browser, integration, and performance suites separately", "Keep pull requests on compilation only, execute smoke tests manually before release, and run full regression after deployment for final evidence", "Run smoke checks in scheduled builds, reserve unit tests for local development, and let reviewers decide whether a pull request needs regression"],
+        options: ["Run the full browser and integration suite before merge, adding parallel capacity as it grows", "Gate pull requests with fast deterministic checks and run heavier suites in later scheduled or triggered stages.", "Limit pull requests to a compile step and run the whole regression suite manually after each deployment", "Run smoke checks in scheduled builds, reserve unit tests for local development, and let reviewers decide whether a pull request needs regression"],
         answer: 1
     },
     "What is the most effective first phase of a 30/60/90 plan for fragmented automation?": {
@@ -1505,15 +1488,15 @@ const balancedOptionOverrides = {
         answer: 2
     },
     "What makes continuous testing more than running tests on each commit?": {
-        options: ["Run the full suite for every commit, retain all historical checks, and use additional runner capacity to keep feedback within the target time", "Provide layered and timely feedback, enforce reliable risk-based gates, preserve useful evidence, and assign ownership for failures", "Publish raw console results immediately, notify every stakeholder of failures, and rely on teams to interpret which checks affect the release", "Retry unstable tests until they pass, keep the pipeline green for developers, and investigate recurring failures during scheduled maintenance"],
+        options: ["Run the full suite for a commit, retain historical checks, and add runner capacity to keep feedback near the target time", "Provide layered and timely feedback, enforce reliable risk-based gates, preserve useful evidence, and assign ownership for failures", "Publish raw console results quickly, notify stakeholders of failures, and leave teams to interpret which checks affect the release", "Retry unstable tests until they pass, keep the pipeline green for developers, and investigate recurring failures during scheduled maintenance"],
         answer: 1
     },
     "Multiple teams are releasing changes into the same environment simultaneously. How do you coordinate testing?": {
-        options: ["Let teams reserve data informally, test their own changes independently, and resolve collisions only when an execution failure exposes them", "Maintain a shared change calendar and environment windows, identify dependencies, coordinate test data, and use integration checkpoints and joint triage", "Limit the environment to one team each month, serialize every deployment, and avoid cross-team validation until all workstreams declare completion", "Allow parallel deployments, run each team's smoke suite, and skip shared integration coverage because failures cannot be assigned reliably"],
+        options: ["Let teams reserve data informally, test their own changes independently, and resolve environment collisions later when an execution failure eventually exposes them", "Maintain a shared change calendar and environment windows, identify dependencies, coordinate test data, and use integration checkpoints and joint triage", "Limit the environment to one team per month, serialize deployments in sequence, and skip cross-team validation until workstreams declare completion", "Allow parallel deployments, run each team's smoke suite, and skip shared integration coverage since failures are hard to assign reliably"],
         answer: 1
     },
     "Business requirements change in the middle of the sprint. How do you handle it?": {
-        options: ["Reject the change until the next sprint, preserve the original acceptance criteria, and finish all planned testing before reassessing scope", "Restart the entire regression effort, preserve the original estimate, and add the changed behavior without reducing any existing scope", "Clarify the change and assess risk, update acceptance criteria and tests, re-estimate the work, and make schedule or coverage trade-offs visible", "Record the requirement change as a product defect, test the original behavior, and let product management resolve it after the sprint review"],
+        options: ["Push the change to next sprint, keep the original acceptance criteria and time estimate untouched, and finish the planned testing before touching anything else", "Restart the regression effort, keep the original estimate, and add the new behavior without trimming scope", "Clarify the change and assess risk, update acceptance criteria and tests, re-estimate the work, and make schedule or coverage trade-offs visible", "Record the requirement change as a product defect, test the original behavior, and let product management resolve it after the sprint review"],
         answer: 2
     },
     "How should QA frame a release-risk decision for leadership?": {
@@ -1525,11 +1508,11 @@ const balancedOptionOverrides = {
         answer: 2
     },
     "How do you test APIs whose responses contain changing or dynamic values (IDs, timestamps, tokens)?": {
-        options: ["Compare the complete body with an approved fixture, regenerate the fixture after legitimate changes, and ignore differences only in local environments", "Remove dynamic fields before every assertion, validate the remaining payload exactly, and rely on downstream failures to expose malformed identifiers", "Validate dynamic values by type, format, range, uniqueness, and relationships while asserting stable business fields and invariants exactly", "Stub all generated values in shared environments, require deterministic timestamps and tokens, and treat any uncontrolled response value as untestable"],
+        options: ["Compare the complete body against a fixture and regenerate it whenever the service output legitimately changes", "Strip dynamic fields before asserting the remaining payload byte-for-byte against a fixture", "Validate generated values by type and invariants while asserting stable business fields exactly.", "Stub generated values in shared environments to force deterministic timestamps and tokens"],
         answer: 2
     },
     "What's a practical use of basic shell scripting in a QA/test-lead role, beyond running the test suite itself?": {
-        options: ["Reserve shell scripting for system administrators, request operational help for pipeline tasks, and keep QA logic inside the primary test language", "Use small reviewed scripts for health checks and log triage, artifact handling and cleanup, data preparation, and repeatable pipeline steps", "Replace the Java automation framework with shell scripts, call browser commands directly, and standardize every test on operating-system utilities", "Avoid scripts because Selenium runs from Maven, perform cleanup manually, and use the IDE for any environment or log investigation"],
+        options: ["Reserve shell scripting for system administrators, request operational help for pipeline tasks, and keep QA logic inside the primary test language", "Use small reviewed scripts for health checks and log triage, artifact handling and cleanup, data preparation, and repeatable pipeline steps", "Rewrite the Java automation framework in shell scripts, call browser commands directly, and treat scripting as the primary test language", "Skip scripting entirely since Selenium runs from Maven, handle cleanup manually, and investigate each log by hand instead"],
         answer: 1
     },
     "A Playwright test fails only in CI. Which built-in artifact gives the fastest root cause?": {
@@ -1561,11 +1544,139 @@ const balancedOptionOverrides = {
         answer: 1
     },
     "What roles do Maven play in your automation project?": {
-        options: ["Resolve Java dependencies and plugins, while the IDE owns compilation, test discovery, packaging, and every environment-specific execution option", "Define dependencies and build lifecycle, compile and package code, run tests through Surefire or Failsafe, and expose repeatable command-line configuration", "Replace the CI server by scheduling builds, provisioning browsers, storing secrets, publishing reports, and approving releases without any external orchestration", "Provide a Java test language and assertion API, generate Selenium page objects, and execute browser actions without a separate testing framework"],
+        options: ["Resolve Java dependencies and plugins, while the IDE owns compilation, test discovery, packaging, and environment-specific execution options", "Define dependencies and build lifecycle, compile and package code, run tests through Surefire or Failsafe, and expose repeatable command-line configuration", "Replace the CI server by scheduling builds, provisioning browsers, storing secrets, publishing reports, and approving releases without external orchestration", "Provide a Java test language and assertion API, generate Selenium page objects, and execute browser actions without a separate testing framework"],
         answer: 1
     },
     "A calculation API returns a huge nested JSON array whose item ORDER is unpredictable. Which validation toolset fits?": {
         options: ["Compare the complete raw JSON with a saved response, sort only after a mismatch, and update the golden file whenever valid order changes", "Use typed business assertions and order-independent collection matching, verify key uniqueness and totals, and add schema validation for structure", "Assert the total item count and HTTP status, sample the first element, and leave nested calculations to unit tests owned by the service team", "Convert the array to text and sort its lines, compare the strings, and treat formatting differences as contract failures even when objects are equivalent"],
+        answer: 1
+    },
+    "Which answer best describes a data-driven framework?": {
+        options: ["Test logic is generated automatically from a fixed set of sample records collected for each test run", "Test data is separated from test logic so the same flow can run with multiple datasets", "Tests get written directly inside a spreadsheet tool", "Tests run directly against a live shared database backend instead"],
+        answer: 1
+    },
+    "How do Cucumber and Spring Boot actually integrate in a test framework?": {
+        options: ["Run Cucumber without Spring and keep the services directly inside step classes.", "Inject Spring-managed scenario dependencies into Cucumber steps and hooks.", "Call SpringApplication.run at the start of each step definition manually.", "Choose either Cucumber or Spring because the frameworks rarely wire together cleanly."],
+        answer: 1
+    },
+    "Where is JavaScript most relevant to a Java-centric QA engineer?": {
+        options: ["Mainly in building a new production front end.", "Use it for browser behavior and modern test tooling.", "Mainly in database stored procedures and schema migrations.", "Rarely; browser automation mostly avoids touching JavaScript directly."],
+        answer: 1
+    },
+    "What is the most reliable way to automate a React single-page application?": {
+        options: ["Wait for full document load after each state change.", "Wait on user-visible state and use roles or stable test IDs.", "Cache WebElements because React rarely replaces DOM nodes between renders.", "Use generated CSS class chains for most locators."],
+        answer: 1
+    },
+    "How do you control a multi-tenant test matrix without losing risk coverage?": {
+        options: ["Run most possible combinations across each environment.", "Use pairwise coverage plus risk-based tenant depth.", "Test one administrator account for each release.", "Remove feature flags and roles from most test scenarios."],
+        answer: 1
+    },
+    "What is the practical difference between driver.close() and driver.quit()?": {
+        options: ["close ends the entire browser session; quit closes just the active tab", "close closes the current window; quit ends the whole WebDriver session", "They are aliases", "quit needs headless mode enabled to close the session"],
+        answer: 1
+    },
+    "What should a Page Object primarily own?": {
+        options: ["Business assertions for most test flows and full page verification logic", "Locators and user-facing actions for a page structure", "The Maven build file", "Shared test data for the company"],
+        answer: 1
+    },
+    "If a product has 100 pages, do you automatically create 100 Page Objects?": {
+        options: ["Yes, one class per URL is mandatory", "No; model distinct structures and extract reusable components", "No; put most locators into one shared class regardless of structure", "Mainly when each page has a distinct, uniquely identifiable title"],
+        answer: 1
+    },
+    "A new feature ships next sprint. How do you decide what to automate first?": {
+        options: ["Automate the newest UI screens first since stakeholders notice them", "Automate whichever scenario is fastest to implement.", "Prioritize stable repeated risks at the lowest reliable layer.", "Automate flows through the UI and skip service-layer coverage"],
+        answer: 2
+    },
+    "Array vs ArrayList — the key differences?": {
+        options: ["Treat arrays and ArrayList as equivalent collections in modern Java.", "Arrays are fixed while ArrayList grows and offers collection methods.", "Use ArrayList when the number of elements is fixed at compile time.", "Arrays and ArrayList both resize automatically whenever new elements are added."],
+        answer: 1
+    },
+    "List vs Set — when do you reach for each?": {
+        options: ["Choose either one because List and Set enforce the same collection rules.", "List keeps order and duplicates while Set represents uniqueness.", "Use Set when duplicate values need to be retained in sorted insertion order.", "Use List when the collection does not need iteration."],
+        answer: 1
+    },
+    "What is grouping in TestNG for?": {
+        options: ["Use groups to format the generated HTML report.", "Select test slices such as smoke or API from one suite.", "Use groups to organize browsers rather than test scenarios.", "Use groups when the test receives DataProvider values."],
+        answer: 1
+    },
+    "How does token-based authentication work in API testing?": {
+        options: ["Send the user's password with each request so each call is independently verified.", "Acquire a bearer token and test its normal and invalid life-cycle paths.", "Use tokens mainly for browser sessions because APIs authenticate differently.", "Base64-encode the URL and treat that value as an authentication token."],
+        answer: 1
+    },
+    "Smoke vs sanity testing?": {
+        options: ["Smoke and sanity are interchangeable names for the same suite.", "Smoke is broad build health; sanity is focused validation after a change.", "Sanity checks tend to be automated, while smoke tests stay mostly manual work.", "Smoke tests are most valid after production deployment."],
+        answer: 1
+    },
+    "What is the difference between 301, 302, and 304?": {
+        options: ["Treat 301, 302, and 304 as simple redirects to a new URL.", "301 moves; 302 redirects; 304 reuses cache.", "Treat 304 as a permanent move to a new resource.", "Use 301 mainly in browsers; APIs rarely return it."],
+        answer: 1
+    },
+    "How can Spring's dependency injection (@Autowired, @Component, @Configuration) improve an automation framework?": {
+        options: ["Wire Spring configuration into the production application code, keeping the test framework's setup entirely separate.", "Inject shared clients and configuration as managed beans with centralized lifecycle control.", "Use Spring as a replacement for the test runner and assertions.", "Use @Autowired strictly inside Spring MVC controllers, keeping test classes unaware of the container."],
+        answer: 1
+    },
+    "How do Spring Boot profiles manage multi-environment test setups (dev/qa/staging)?": {
+        options: ["Copy the framework once for each environment and maintain separate code paths.", "Store environment settings in profiles and activate the target at runtime without code changes.", "Use profiles when the test suite connects to a database.", "Edit application.properties by hand before each test run across each target environment you support."],
+        answer: 1
+    },
+    "In Selenium 4, PageFactory @FindBy vs plain By locators with explicit waits — what is the practical trade-off?": {
+        options: ["Use PageFactory because Selenium 4 recommends it for each page.", "Use By plus explicit waits when timing and synchronization need to stay visible.", "Avoid By locators because they are considerably harder to reuse consistently between methods.", "Avoid PageFactory because Selenium 4 removed it entirely."],
+        answer: 1
+    },
+    "How do you share state (like an order ID from a Given step) across Cucumber step-definition classes without global statics?": {
+        options: ["Store the value in a public static field shared across the whole test run.", "Inject a scenario-scoped context so each scenario receives fresh state.", "Write the value to a file so later steps can read it back.", "Combine step classes into one file, sharing fields between scenarios."],
+        answer: 1
+    },
+    "A stakeholder hands you a feature file that reads like a click-by-click manual (imperative Gherkin). What is the fix?": {
+        options: ["Run the click-by-click feature unchanged; more steps mean more coverage.", "Use business-intent steps and keep click mechanics in step definitions and page objects.", "Delete the scenario since imperative Gherkin steps are hard to automate reliably in their current form.", "Convert each remaining step into a Scenario Outline, whether or not the data actually varies."],
+        answer: 1
+    },
+    "In a large Agile or SAFe implementation, a workstream is behind planned test execution. What should the Test Lead do first?": {
+        options: ["Wait until the exit gate, record the final variance, and avoid changing the current plan", "Report completion percentage alone, skip dependencies, and leave diagnosis to program leadership", "Quantify the variance and causes, propose recovery choices, and escalate impact early", "Add testers right away, extend shifts, and put off environment or data analysis"],
+        answer: 2
+    },
+    "What is the strongest foundation for an API integration strategy across several systems?": {
+        options: ["Validate UI screens first and treat the interfaces as a later concern.", "Map contracts and state changes across system boundaries.", "Check the final target record and skip the intermediate steps.", "Rely on partner documentation instead of executable checks."],
+        answer: 1
+    },
+    "What is the strongest way to build a quality-first culture?": {
+        options: ["Make QA the primary owner of production defects, separate from developers.", "Teach on real work and make quality evidence visible to the team.", "Require developers to wait for QA before writing unit tests.", "Measure engineers mainly by the number of bugs they file."],
+        answer: 1
+    },
+    "What must authorization testing prove for payroll and financial data?": {
+        options: ["Users can reach the page after successful login.", "Horizontal and vertical privilege escalation are denied and audited.", "Administrator accounts can access the test environment without issue.", "Security tests typically run after most feature testing completes."],
+        answer: 1
+    },
+    "How should an automated test handle eventual consistency in a payroll integration?": {
+        options: ["Wait a fixed number of seconds and hope the downstream write has landed by then.", "Poll for expected state with a deadline and useful failure evidence.", "Assert that the source system accepted the request and treat that as confirmation enough.", "Retry the source write until multiple target rows appear."],
+        answer: 1
+    },
+    "Which statement best explains the difference between findElement() and findElements()?": {
+        options: ["Both return a list, but one is faster", "findElement returns the first match; findElements returns a list and can be empty", "findElements throws when no element is found", "findElement typically searches the current frame; findElements needs a wait strategy"],
+        answer: 1
+    },
+    "What is the correct response when an interviewer asks if Selenium can automate a CAPTCHA?": {
+        options: ["Yes, with JavaScriptExecutor", "Yes, by polling until it solves", "No; CAPTCHA is designed to distinguish humans from automation", "This depends heavily on headless mode setup and the driver version"],
+        answer: 2
+    },
+    "Which collection preserves insertion order while using key/value pairs?": {
+        options: ["HashMap", "TreeMap", "LinkedHashMap", "Typically Hashtable"],
+        answer: 2
+    },
+    "How does automation typically integrate with Jenkins, and how are results reported?": {
+        options: ["Treat Jenkins mostly as a manual trigger, skip pipeline stages, and let engineers read console logs directly", "Run headless tests in pipeline stages, publish reports and evidence, and gate on failures.", "Treat Jenkins as a replacement for Maven, the test framework, and test assertions.", "Send raw console output by email without preserving structured test reports."],
+        answer: 1
+    },
+    "Why does a ThreadLocal WebDriver help parallel tests?": {
+        options: ["It makes the browser faster", "It gives each test thread its own driver reference", "It removes the need for waits", "It runs many tests inside one shared browser session to save on setup overhead"],
+        answer: 1
+    },
+    "When you forget the exact Java method name during a live coding prompt, what is the strongest move?": {
+        options: ["Pause the explanation, search silently from memory, then resume with exact syntax", "State the intended operation, flag the uncertain API name, and continue the solution", "Invent a likely method name, present it confidently, and avoid discussing the uncertainty", "Replace the problem with a familiar example, skip its edge cases, and wait for guidance"],
+        answer: 1
+    },
+    "What does @WebMvcTest with MockMvc give you when testing a Spring Boot controller?": {
+        options: ["A full application context on a real HTTP port, with a production database and service beans", "A web-layer slice exercised without opening a server socket, with collaborators mocked", "A browser session, rendered templates, JavaScript execution, and WebDriver-managed cookies", "A repository slice, real database transaction, migration runner, and no controller beans"],
         answer: 1
     }
 };
@@ -1609,7 +1720,6 @@ const conciseCorrectOptionOverrides = {
     "Beyond the HTTP status code, what do you validate in an API response?": "Validate the contract and business result together with authorization errors side effects and latency.",
     "You must prove data moved correctly from a source system through middleware": "Reconcile records and transformations across every boundary including rejects.",
     "What changes most when QA tests an AWS-hosted application?": "Add cloud identity and telemetry concerns plus asynchronous behavior and test-data cleanup.",
-    "Describe a standard Git workflow for automation code.": "Use short-lived branches and focused commits, then merge through review and a green CI gate.",
     "Your workstream depends on an interface with an external integration partner": "Stub the blocked scope while escalating its residual schedule risk.",
     "How do you test APIs whose responses contain changing or dynamic values": "Validate generated values by type and invariants while asserting stable business fields exactly.",
     "A Playwright test fails only in CI.": "Use the trace viewer to replay browser state with its surrounding network and console evidence.",
