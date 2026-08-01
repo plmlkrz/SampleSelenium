@@ -115,8 +115,10 @@ server (`py -m http.server 8080`, then <http://localhost:8080/practice.html>).
 - Coding drills (reverse-preserving-whitespace, palindrome, second-highest salary,
   Labcorp-style name letters, settled-trade aggregation, and REST Assured POST/POJO
   deserialization) sit below the question panel with hint/solution reveals.
-- **Framework blueprints** below the coding drill: three collapsible architecture
-  diagrams (Spring Boot API framework, Selenium UI framework, Selenium BDD framework)
+- **Framework blueprints** below the coding drill: five collapsible architecture
+  diagrams (Spring Boot API framework, Selenium UI framework, Selenium BDD framework,
+  API integration and reconciliation for Builders Mutual, and multi-tenant SaaS continuous
+  testing for Inn-Flow)
   with talk-track notes — practice sketching each while narrating top to bottom.
 - Streak, best score, and session count persist in browser localStorage. Best score
   resets when it first sees a 20-question session (old /10 bests don't compare).
