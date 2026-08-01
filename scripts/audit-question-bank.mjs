@@ -5,13 +5,15 @@ const source = fs.readFileSync(new URL("../practice.js", import.meta.url), "utf8
 const cutoff = source.indexOf("const state =");
 const context = {};
 vm.createContext(context);
-vm.runInContext(source.slice(0, cutoff) + ";applyOptionHardening();this.bank=questionBank;this.deep=deepDiveByQuestion;", context);
+vm.runInContext(source.slice(0, cutoff)
+    + ";applyOptionHardening();this.bank=questionBank;this.deep=deepDiveByQuestion;this.concise=conciseCorrectOptionOverrides;", context);
 
 const bank = context.bank;
 const mcqs = bank.filter((item) => item.type === "mcq");
 const written = bank.filter((item) => item.type === "written");
-const invalid = mcqs.filter((item) => item.options?.length !== 4 || !Number.isInteger(item.answer)
-    || item.answer < 0 || item.answer > 3 || !item.explanation || !item.anchor);
+const invalid = mcqs.filter((item) => item.options?.length !== 4 || new Set(item.options).size !== 4
+    || item.options.some((option) => typeof option !== "string" || !option.trim())
+    || !Number.isInteger(item.answer) || item.answer < 0 || item.answer > 3 || !item.explanation || !item.anchor);
 const duplicateQuestions = [...bank.reduce((counts, item) => counts.set(item.question, (counts.get(item.question) || 0) + 1), new Map())]
     .filter(([, count]) => count > 1).map(([question]) => question);
 const lengthStats = mcqs.map((item) => {
@@ -27,29 +29,44 @@ const pairedCoverage = (employer) => {
     const pairedCount = mcqs.filter((item) => item.anchor?.includes(`paired recall`) && item.anchor?.includes(employer)).length;
     return { writtenCount, pairedCount };
 };
+const conciseOverrideIssues = Object.entries(context.concise).flatMap(([prefix, expectedAnswer]) => {
+    const matches = mcqs.filter((item) => item.question.startsWith(prefix));
+    if (matches.length !== 1) return [{ prefix, matches: matches.length, reason: "prefix must identify exactly one MCQ" }];
+    return matches[0].options[matches[0].answer] === expectedAnswer
+        ? [] : [{ prefix, matches: 1, reason: "reviewed answer was not applied" }];
+});
 
 // A ratchet, not a threshold: going past the baseline fails, and so does improving on it
 // without writing the better numbers back here. Otherwise slack accumulates silently and the
 // gate stops meaning anything.
-const BASELINE = { uniqueLongest: 127, spreadAtLeast55: 15 };
+const BASELINE = { uniqueLongest: 52, spreadAtLeast55: 0 };
+// With four parallel choices the correct answer should be uniquely longest about 25% of
+// the time. Strict mode allows a small sampling margin instead of demanding zero and
+// accidentally teaching learners that the longest option is always wrong.
+const STRICT_MAX_UNIQUE_LONGEST = Math.ceil(mcqs.length * 0.30);
 
 console.log(JSON.stringify({
     total: bank.length, mcqs: mcqs.length, written: written.length,
     invalidMcqs: invalid.length, duplicateQuestions: duplicateQuestions.length,
     bespokeDeepDives: Object.keys(context.deep).length,
-    optionLength: { uniqueLongest, spreadAtLeast55: spread55, flaggedQuestions: lengthViolations.length, baseline: BASELINE },
+    conciseAnswerOverrides: { total: Object.keys(context.concise).length, issues: conciseOverrideIssues.length },
+    optionLength: {
+        uniqueLongest, spreadAtLeast55: spread55, flaggedQuestions: lengthViolations.length,
+        baseline: BASELINE, strictMaxUniqueLongest: STRICT_MAX_UNIQUE_LONGEST
+    },
     pairedCoverage: { buildersMutual: pairedCoverage("Builders Mutual"), innFlow: pairedCoverage("Inn-Flow") }
 }, null, 2));
 
 const strict = process.argv.includes("--strict");
 const baselineRegressed = uniqueLongest > BASELINE.uniqueLongest || spread55 > BASELINE.spreadAtLeast55;
 const baselineStale = uniqueLongest < BASELINE.uniqueLongest || spread55 < BASELINE.spreadAtLeast55;
+const strictLengthBias = uniqueLongest > STRICT_MAX_UNIQUE_LONGEST || spread55 > 0;
 if (baselineStale && !baselineRegressed) {
     console.error("Question-bank audit failed: the bank improved past the committed baseline. Lower BASELINE in this file to { uniqueLongest: "
         + uniqueLongest + ", spreadAtLeast55: " + spread55 + " } so the gain cannot be given back.");
     process.exitCode = 1;
 }
-if (invalid.length || duplicateQuestions.length || baselineRegressed || (strict && lengthViolations.length)) {
+if (invalid.length || duplicateQuestions.length || conciseOverrideIssues.length || baselineRegressed || (strict && strictLengthBias)) {
     console.error("Question-bank audit failed: fix invalid data, duplicates, or a regression beyond the committed length-bias baseline.");
     process.exitCode = 1;
 }
