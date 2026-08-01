@@ -189,3 +189,7 @@ class MyTest extends BaseTest {
 - **Headless mode:** Controlled by `-Dheadless=true` system property at test runtime, not hard-coded.
 - **Test naming:** Follow `Test` suffix convention; Maven Surefire runs `**/*Tests.java` and `**/*Test.java` by default.
 
+## AI Specialist Skills
+
+Canonical project skills live in `.agents/skills/`; Claude and Codex wrappers point there so their instructions cannot drift. Use `coordinate` for multi-surface work. It routes Java/Selenium changes to `automation-framework-reviewer`, practice-question changes to `question-bank-quality` plus `learning-explanation-author` when post-answer teaching content changes, Maven/CI changes to `ci-reliability-auditor`, and practice-site UI changes to `practice-site-visual-verification`.
+

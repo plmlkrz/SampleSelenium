@@ -70,3 +70,7 @@ The project has both JUnit 5 and TestNG on the classpath. `LoginTestsTestNg` use
 
 **Facts about Peter live in one place, and it is not this repo.** Background, work history, stories, metrics, compensation, and honesty boundaries come from `C:\Users\peter\IdeaProjects\JobSearch\PROJECT_CONTEXT.md`, read fresh. The interview-prep workflow that drives this gym is specified in that repo at `job_search_team\04_interview_prep.md`, under `## Coding drill gyms`; its sibling gym is `C:\Users\peter\IdeaProjects\PythonData`. Never restate a fact about Peter in this repo's docs or drill comments. Cue the story and let the interview packet supply the detail. Every copy of those facts has drifted out of date.
 
+## Project AI Specialists
+
+The canonical instructions are in `.agents/skills/`; `.claude/skills`, `.claude/agents`, and `.codex/agents` are thin wrappers. Use `coordinate` for work spanning multiple surfaces. It routes framework code to `automation-framework-reviewer`, `practice.js` content to `question-bank-quality` plus `learning-explanation-author` for deep-dive learning content, CI files to `ci-reliability-auditor`, and practice-site UI changes to `practice-site-visual-verification`.
+

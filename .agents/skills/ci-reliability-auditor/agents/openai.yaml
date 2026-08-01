@@ -1,0 +1,3 @@
+interface:
+  display_name: "CI Reliability Auditor"
+  short_description: "Help with CI Reliability Auditor tasks"
