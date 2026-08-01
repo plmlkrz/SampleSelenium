@@ -1239,11 +1239,11 @@ const balancedOptionOverrides = {
         answer: 1
     },
     "Describe a standard Git workflow for automation code.": {
-        options: ["Have every engineer commit their work straight onto the shared main branch each single day", "Feature branches off main, small commits, PR with review and CI green as the merge gate", "Circulate zipped copies of the whole framework by email whenever something changes", "Give each engineer one long-lived personal branch merged back once a year"],
+        options: ["Push straight to the shared main branch and rely on the nightly regression run to catch breakage", "Feature branches off main, small commits, PR with review and CI green as the merge gate", "Circulate zipped copies of the whole framework by email whenever something changes", "Give each engineer one long-lived personal branch merged back once a year"],
         answer: 1
     },
     "How do you run cross-browser tests?": {
-        options: ["Maintain a separate, hand-written copy of the whole test suite just for each target browser", "Parameterize the browser choice into a driver factory, then scale out via Grid or cloud", "Assume only Chrome is realistically automatable with Selenium WebDriver at all", "Install every browser locally and run the whole suite against each one in turn"],
+        options: ["Maintain a separate, hand-written copy of the whole test suite just for each target browser", "Parameterize the browser choice into a driver factory, then scale out via Grid or cloud", "Assume only Chrome is realistically automatable with Selenium WebDriver at all", "Hard-code a different WebDriver subclass inside each individual test class"],
         answer: 1
     },
     "Two weeks before a planned go-live, your workstream has a cluster of interface defects with the same root cause, and the fix depends on an external integration partner. What is the right escalation move?": {
@@ -1299,7 +1299,7 @@ const balancedOptionOverrides = {
         answer: 1
     },
     "Absolute vs relative XPath — why does everyone use relative?": {
-        options: ["Absolute XPath is not considered valid syntax in modern browsers anymore", "Absolute breaks on any DOM change; relative anchors on an attribute", "Relative XPath is simply faster for a person to type out by hand", "Absolute XPath cannot locate elements that are nested deeply in the DOM tree"],
+        options: ["Absolute XPath is not considered valid syntax in modern browsers anymore", "Absolute breaks on any DOM change; relative anchors on an attribute", "Relative XPath is the only form that browser dev tools can generate", "Absolute XPath cannot locate elements that are nested deeply in the DOM tree"],
         answer: 1
     },
     "What is the correct syntax contrast between absolute and relative XPath?": {
