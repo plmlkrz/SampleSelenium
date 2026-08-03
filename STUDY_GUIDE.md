@@ -47,7 +47,8 @@ runs with: `$env:MAVEN_OPTS='-Djavax.net.ssl.trustStoreType=Windows-ROOT'; mvn t
 | 10 | **Playwright**: auto-waiting/actionability, getByRole/getByLabel/getByTestId, strict mode, context isolation, dialogs, `page.request()` API calls, network stubbing, tracing — vs the Selenium equivalents we hand-built | `drills/d10_playwright/SourceD10PlaywrightDrills.java` | `mvn test -Dtest=SourceD10PlaywrightDrills` |
 | 11 | **Resilience**: timeout/retry/circuit-breaker against a WireMock-stubbed downstream | `drills/d11_resilience/SourceD11ResilienceDrills.java` | `mvn test -Dtest=SourceD11ResilienceDrills` |
 | 12 | **Promoting Postman to coded suites**: read an exported collection with JsonPath, port its happy-path requests into REST Assured, then add the negative/boundary cases exploratory clicking skipped | `drills/d12_postman_promotion/SourceD12PostmanPromotionDrills.java` | `mvn test -Dtest=SourceD12PostmanPromotionDrills` |
-| 13 | CI/CD: GitHub Actions + Jenkins | `.github/workflows/selenium-tests.yml`, `Jenkinsfile` | read + narrate; runs on push to GitHub |
+| 13 | **AWS for real**: deploy your own Lambda + S3 behind a Function URL, then test the live endpoint — 201/Location, 401, 400, 404, S3 round trip, cold-start-aware SLA, CloudWatch triage | `aws/RUNBOOK.md` then `drills/d13_aws/SourceD13AwsDrills.java` | `mvn test -Dtest=SourceD13AwsDrills` (skips until `AWS_FN_URL` is set) |
+| 14 | CI/CD: GitHub Actions + Jenkins | `.github/workflows/selenium-tests.yml`, `Jenkinsfile` | read + narrate; runs on push to GitHub |
 
 Modules 6, 7, 8b, 9, 11 and 12 need **no browser and no network** — they run in about a second.
 Perfect for high-repetition days and for warming up the morning of the interview.
@@ -58,6 +59,22 @@ Demo or the-internet.herokuapp.com is slow or down — a failure there is usuall
 internet, not your code.
 
 Run one single test method: `mvn test -Dtest="SourceD05BrowserMechanicsDrills#alertAcceptAndReadResult" -Dheadless=true`
+
+**Module 13 is the odd one out** — it is the only module that talks to infrastructure you
+deployed yourself, so it needs an AWS account and the internet. Follow [aws/RUNBOOK.md](aws/RUNBOOK.md)
+once (~45 min of console clicking, inside the free tier), then:
+
+```powershell
+$env:AWS_FN_URL='https://xxxx.lambda-url.us-east-1.on.aws'   # no trailing slash
+$env:AWS_API_KEY='...'
+mvn test -Dtest=SourceD13AwsDrills
+```
+
+Until those two variables are set the module **skips** rather than fails, so `mvn test` stays
+green on a clean checkout. The endpoint is a ~90-line Python Lambda that writes JSON notes to a
+private S3 bucket; the Java side is REST Assured against the deployed URL. The runbook ends with
+the teardown steps and — importantly — a list of what this does and does not entitle you to
+claim in an interview. Read that section before you talk about it.
 
 **Module 10 one-time setup:** the first `mvn test -Dtest=SourceD10PlaywrightDrills` downloads
 Chromium (~1 minute, needs internet once). After that the drills are fully offline — like d09
