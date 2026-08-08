@@ -1,4 +1,5 @@
 ---
+# Last audited: 2026-08-07
 name: coordinate
 description: Coordinate a SampleSelenium change or review that spans framework code, the interview question bank, CI, or the practice-site UI. Use when a task needs two or more specialist perspectives or the user asks for a unified review.
 ---

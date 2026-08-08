@@ -1,4 +1,5 @@
 ---
+# Last audited: 2026-08-07
 name: subagent-orchestration
 description: Decide whether to delegate SampleSelenium work to subagents, how to shard it, and which model tier to use. Use when asked to parallelize, swarm, or spawn agents, when coordinate selects multiple specialists, or when a large batch of question-bank or drill work might be cheaper handled inline.
 ---

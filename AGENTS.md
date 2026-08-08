@@ -1,5 +1,7 @@
 # AGENTS.md
 
+<!-- Last audited: 2026-08-07 -->
+
 Guidance for AI coding agents working in this Selenium test automation codebase.
 
 ## Architecture Overview
