@@ -89,7 +89,7 @@ The recall side of the gym: the drills build muscle memory for WRITING the code;
 field test checks you can PRODUCE the answers cold. Open `practice.html` via a local
 server (`py -m http.server 8080`, then <http://localhost:8080/practice.html>).
 
-- **280 questions** (203 multiple-choice + 77 written prompts) covering the full Infosys
+- **306 questions** (219 multiple-choice + 87 written prompts) covering the full Infosys
   top-100 bank, the Deloitte rounds, the Luxoft high-probability 15 (Spring Boot,
   REST Assured, financial JSON validation, JMeter, release-risk communication), the
   Barclays QA automation rounds (exception handling, cross-browser, test data
@@ -114,6 +114,10 @@ server (`py -m http.server 8080`, then <http://localhost:8080/practice.html>).
   non-.NET stack, Azure environments and Azure DevOps pipeline stages, JMeter vs k6,
   shift-left defect prevention, mentoring and quality culture, defensible quality
   metrics, and continuous testing in CI/CD),
+  plus Relias Software Developer in Test topics (Cypress reliability and Selenium trade-offs,
+  .NET/xUnit service testing, microservices integration, SpecFlow/Reqnroll/Cucumber BDD,
+  Azure DevOps/Jenkins continuous testing, JMeter performance analysis, healthcare workflow
+  quality, initiative, mentorship, and release-risk communication),
   plus a 50-question scenario bank (test strategy and prioritization, release
   readiness and quality metrics, scenario-design prompts for login/payment/search/
   cart/file upload, distributed-system testing — pagination, eventual consistency,
@@ -123,7 +127,7 @@ server (`py -m http.server 8080`, then <http://localhost:8080/practice.html>).
 - **Tracks 01–06** slice by topic (Selenium, Java, Framework, TestNG+SQL, Interview
   voice, API + Spring Boot); **Mixed Signal** pulls from everything.
 - **Employer filter** narrows the session to ALL, Infosys, Deloitte, Barclays, Luxoft,
-  Maximus, Builders Mutual, Inn-Flow, or general cross-company questions. It can be combined with a topic track;
+  Maximus, Builders Mutual, Inn-Flow, Relias, or general cross-company questions. It can be combined with a topic track;
   Maximus currently emphasizes the Lead Software QA JD plus the Selenium/Java,
   framework, SQL, API, CI/CD, and leadership questions most likely to come up.
 - **Track 07 "Written answers"** holds all typed prompts separately — say the answer
