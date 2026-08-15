@@ -1,5 +1,5 @@
 ---
-# Last audited: 2026-08-07
+# Last audited: 2026-08-15
 name: coordinate
 description: Coordinate a SampleSelenium change or review that spans framework code, the interview question bank, CI, or the practice-site UI. Use when a task needs two or more specialist perspectives or the user asks for a unified review.
 ---
@@ -23,7 +23,17 @@ Consult `qa-engineer` early, not as a final rubber stamp. Its risk tier decides 
 verification the change warrants, and its pre-flight checks exist because the expensive failures
 here were cheap to detect beforehand and costly to discover afterwards.
 
-Use specialists inline for a narrow task. Delegate independent reviews only when the task warrants it and the user has authorized parallel work. Do not ask several specialists to repeat the same general review.
+## Delegation boundary
+
+Invoking `/coordinate` authorizes up to two read-only specialist agents for
+genuinely independent reviews. Use the cheapest available interactive model,
+compact prompts, and compact outputs. Do not permit nested spawning, edits,
+commits, deployment, external actions, or data mutation from these reviewers.
+
+Stay inline for small, sequential, or tightly coupled work. Any editing agent,
+schema or data change, deployment, or larger swarm requires explicit user
+confirmation before dispatch. Do not ask several specialists to repeat the same
+general review.
 
 Most of this project's content lives in one file, `practice.js`, so parallel specialists
 cannot each edit their own slice of it. When fanning out work that lands in a shared file,
