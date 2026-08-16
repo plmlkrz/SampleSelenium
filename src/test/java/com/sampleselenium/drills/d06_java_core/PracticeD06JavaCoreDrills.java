@@ -22,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
  *   3. Palindrome: two-pointer, case-insensitive
  *   4. Find duplicates in a list: HashSet.add returns false trick
  *   5. Count char occurrences: HashMap + merge
+ *  5b. Anagram (sorting AND counting) + first non-repeating char (LinkedHashMap —
+ *      why does iterating a plain HashMap give the wrong answer?). Handle "aabb".
  *   6. String immutable vs StringBuilder mutable (assert both)
  *   7. LinkedHashMap insertion order vs TreeMap sorted order
  *   8. List vs Set duplicate behavior
@@ -65,6 +67,13 @@ class PracticeD06JavaCoreDrills {
     @Test
     void countCharacterOccurrencesWithAMap() {
         // TODO
+    }
+
+    @Disabled("TODO: re-type from memory, then delete this line")
+    @Test
+    void anagramCheckAndFirstNonRepeatingCharacter() {
+        // TODO — write isAnagram() and firstNonRepeating() helpers from scratch.
+        //        "listen"/"silent" true, "listen"/"listed" false, "swiss" -> 'w', "aabb" -> null
     }
 
     @Disabled("TODO: re-type from memory, then delete this line")

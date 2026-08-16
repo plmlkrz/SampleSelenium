@@ -188,6 +188,33 @@ bank it came from — miss a question, run that module.
 | R2 Q17: when fluent waits | Module 2 (`fluentWaitForElementAddedToDom`) |
 | R2 Q18: open a new tab | Module 5 (`openNewTabWithSelenium4`) |
 
+### Relias / backend-heavy SDET → module
+
+Added 2026-08-15 for the Relias LLC (via TEKsystems) SDET round. That role is roughly
+**98% backend**, integration testing is stated as **preferred over end-to-end UI testing**,
+and Cypress is explicitly **not** a must — so the weighting here is close to the inverse of
+the two lists above. The recruiter did not think there would be a live coding test, so treat
+this as insurance against a short embedded question rather than prep for a graded assessment.
+
+Full analysis lives in the job-search repo at
+`artifacts/relias_sdet_interview_prep_2026-08.md`, section 12.
+
+| Topic | Where |
+|---|---|
+| SQL — second-highest, duplicates, joins, WHERE vs HAVING | Module 7 |
+| SQL — **anti-join**, orphans and no-match rows | Module 7 (`antiJoinFindsRowsWithNoMatchOnTheOtherSide`) — the query behind most data-integrity checks |
+| SQL — delete all but one duplicate | Module 7 (`deleteDuplicatesKeepingTheLowestId`) — the standard follow-up to "find the duplicates" |
+| API assertions, status codes, negative cases | **Module 9**, then Module 12 for the boundary/negative promotion |
+| "Describe debugging a failing integration test" | Module 11 — establish dependency-down vs code-broke FIRST; open with the First Citizens ESB health check |
+| Anagram, first non-repeating character | Module 6 (`anagramCheckAndFirstNonRepeatingCharacter`) |
+| Frequency map, reverse, palindrome, find duplicates | Module 6 |
+| BDD — Gherkin, Scenario Outline, Background, tags | **Module 8b** (browser-free, fastest way to warm this up) |
+| OOP short answers, Comparable vs Comparator | Module 6 |
+
+**Order if time is short: 7 → 9 → 6 → 8b.** All four are offline and run in about a second,
+so go for reps rather than coverage. If a coding question does appear and a language choice
+is offered, **pick Java** — the depth is here, not in C#.
+
 ## "Explain Your Framework" — the 90-second answer, using THIS repo
 
 > "It's a Maven project, Java 17, Selenium 4. Page Object Model: every page is a class

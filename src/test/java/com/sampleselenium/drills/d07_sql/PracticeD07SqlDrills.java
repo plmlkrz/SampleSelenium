@@ -17,9 +17,13 @@ import org.junit.jupiter.api.Test;
  *   2. Second-highest salary — SELECT DISTINCT ... ORDER BY DESC LIMIT 1 OFFSET 1
  *      (why does forgetting DISTINCT break it when the top salary is tied?)
  *   3. Duplicates — GROUP BY name HAVING COUNT(*) > 1
- *   4. INNER vs LEFT JOIN row counts (who disappears and why?)
- *   5. Departments with zero employees — LEFT JOIN + COUNT(e.emp_id), not COUNT(*)
- *   6. WHERE (rows, before grouping) vs HAVING (groups, after aggregation)
+ *   4. Delete all but one — DELETE ... WHERE id NOT IN (SELECT MIN(id) ... GROUP BY name),
+ *      then re-run query 3 as the assertion. executeUpdate, not executeQuery.
+ *   5. INNER vs LEFT JOIN row counts (who disappears and why?)
+ *   6. Departments with zero employees — LEFT JOIN + COUNT(e.emp_id), not COUNT(*)
+ *   7. ANTI-JOIN — LEFT JOIN + WHERE right_key IS NULL, in BOTH directions
+ *      (orphaned employee, then empty department). Why is NOT IN a trap here?
+ *   8. WHERE (rows, before grouping) vs HAVING (groups, after aggregation)
  */
 class PracticeD07SqlDrills {
 
@@ -47,6 +51,12 @@ class PracticeD07SqlDrills {
 
     @Disabled("TODO: re-type from memory, then delete this line")
     @Test
+    void deleteDuplicatesKeepingTheLowestId() {
+        // TODO — SELECT the doomed rows first, then DELETE, then assert no duplicates remain
+    }
+
+    @Disabled("TODO: re-type from memory, then delete this line")
+    @Test
     void innerJoinVsLeftJoin() {
         // TODO
     }
@@ -55,6 +65,12 @@ class PracticeD07SqlDrills {
     @Test
     void leftJoinRevealsDepartmentWithNoEmployees() {
         // TODO
+    }
+
+    @Disabled("TODO: re-type from memory, then delete this line")
+    @Test
+    void antiJoinFindsRowsWithNoMatchOnTheOtherSide() {
+        // TODO — both directions: orphaned employee (dana), then empty department (HR)
     }
 
     @Disabled("TODO: re-type from memory, then delete this line")

@@ -23,8 +23,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * Covers:
  *  - Deloitte R1 Q3: second-largest salary  (BOTH classic solutions below)
  *  - Deloitte R1 Q4 / Infosys SQL Q4-5: joins and their types
- *  - Infosys SQL Q8: find duplicate records
+ *  - Infosys SQL Q8: find duplicate records, and the "now delete them" follow-up
  *  - Infosys SQL Q6/Q7: WHERE vs HAVING, GROUP BY
+ *  - The ANTI-JOIN (LEFT JOIN + WHERE right IS NULL) — orphans and no-match rows
  *
  * One-line definitions to say while these run:
  *  - PRIMARY KEY: uniquely identifies a row; no nulls, no duplicates.
@@ -128,6 +129,40 @@ class SourceD07SqlDrills {
     }
 
     /**
+     * THE FOLLOW-UP TO THE DUPLICATE QUESTION — "now delete all but one of each."
+     * Keep the row with the lowest key per group; delete the rest.
+     * NOT IN (SELECT MIN(id) ... GROUP BY dupe_column) is the idiom to have ready.
+     *
+     * Say the QE caveat out loud, because it is the senior half of the answer: on a real
+     * table this runs inside a transaction, after a SELECT of the same rows has been eyeballed,
+     * and MIN() is only "the right one to keep" if the rows are genuinely identical — if they
+     * differ in a column nobody checked, you are picking a winner arbitrarily.
+     */
+    @Test
+    void deleteDuplicatesKeepingTheLowestId() throws SQLException {
+        String preview = """
+                SELECT emp_id, name
+                FROM employees
+                WHERE emp_id NOT IN (SELECT MIN(emp_id) FROM employees GROUP BY name)""";
+        assertEquals(1, rowCount(preview), "Exactly one row (the second 'sam') should be doomed");
+
+        String delete = """
+                DELETE FROM employees
+                WHERE emp_id NOT IN (SELECT MIN(emp_id) FROM employees GROUP BY name)""";
+
+        int deleted;
+        try (Statement statement = connection.createStatement()) {
+            deleted = statement.executeUpdate(delete);   // executeUpdate, not executeQuery
+        }
+
+        assertEquals(1, deleted, "sam emp_id=5 removed; emp_id=4 survives");
+        assertEquals(5, rowCount("SELECT * FROM employees"));
+        assertEquals(0, rowCount("""
+                SELECT name FROM employees GROUP BY name HAVING COUNT(*) > 1"""),
+                "No duplicates left — always re-run the detection query as the assertion");
+    }
+
+    /**
      * JOINS — the four types in one breath:
      *   INNER: only rows with a match on both sides.
      *   LEFT:  every row from the left table; NULLs where the right side has no match.
@@ -171,6 +206,54 @@ class SourceD07SqlDrills {
 
         assertEquals(List.of("Dev=2", "HR=0", "QA=3"), rows,
                 "COUNT(e.emp_id) counts 0 for HR — COUNT(*) would have counted the NULL row as 1");
+    }
+
+    /**
+     * THE ANTI-JOIN — "find the rows on this side that have NO match on that side."
+     * LEFT JOIN + WHERE right_key IS NULL. Learn this shape cold: it is the query behind
+     * most data-integrity checks, and it is asked constantly.
+     *
+     * Note the difference from the COUNT(...)=0 drill above. Both find no-match rows, but
+     * this one filters instead of aggregating, so it hands you the actual offending ROWS —
+     * which is what you want when you are chasing orphans rather than reporting headcount.
+     *
+     * The QE translation, and this is the sentence to say in an interview: orphaned records,
+     * users with no orders, an order whose customer was deleted, a payment with no matching
+     * settlement. Every one of those is this query. The Credit Suisse reconciliation work is
+     * exactly this shape — prove nothing fell through the gap between two systems.
+     */
+    @Test
+    void antiJoinFindsRowsWithNoMatchOnTheOtherSide() throws SQLException {
+        // Direction 1: employees with no valid department (dana, dept_id IS NULL).
+        String orphanedEmployees = """
+                SELECT e.name
+                FROM employees e
+                LEFT JOIN departments d ON e.dept_id = d.dept_id
+                WHERE d.dept_id IS NULL""";
+
+        try (Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery(orphanedEmployees)) {
+            assertTrue(rs.next(), "dana has a NULL dept_id, so she has no matching department");
+            assertEquals("dana", rs.getString("name"));
+            assertFalse(rs.next(), "dana should be the only orphan");
+        }
+
+        // Direction 2: flip the tables — departments nobody belongs to (HR).
+        String emptyDepartments = """
+                SELECT d.dept_name
+                FROM departments d
+                LEFT JOIN employees e ON e.dept_id = d.dept_id
+                WHERE e.emp_id IS NULL""";
+
+        try (Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery(emptyDepartments)) {
+            assertTrue(rs.next());
+            assertEquals("HR", rs.getString("dept_name"));
+            assertFalse(rs.next());
+        }
+        // NOT EXISTS is the other way to write this and is often the better plan on big
+        // tables. NOT IN is the trap: if the subquery returns even one NULL, NOT IN
+        // returns no rows at all. Know that gotcha — it gets asked.
     }
 
     /**

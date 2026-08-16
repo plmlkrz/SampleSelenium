@@ -3,6 +3,7 @@ package com.sampleselenium.drills.d06_java_core;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Covers the notepad-coding questions from the banks:
  *  - Deloitte R1 Q2: reverse a string PRESERVING WHITESPACE positions
  *  - Infosys Java Q15/16/17: reverse, palindrome, find duplicates
+ *  - Anagram + first non-repeating character — the two frequency-map classics
  *  - Deloitte R1 Q5: LinkedHashMap; R2 Q11: Comparable vs Comparator
  *  - Infosys Java Q7/8/12/19/20: Array vs ArrayList, List vs Set, String vs StringBuilder,
  *    HashMap ordering
@@ -144,6 +146,73 @@ class SourceD06JavaCoreDrills {
         assertEquals(4, counts.get('i'));
         assertEquals(2, counts.get('p'));
         assertEquals(1, counts.get('m'));
+    }
+
+    /**
+     * TWO CLASSICS BUILT ON THE FREQUENCY MAP ABOVE — anagram, and first non-repeating char.
+     * If the counting drill is muscle memory, each of these is a few lines, which is exactly
+     * why they get asked: they test whether you reach for a Map without having to think.
+     *
+     * ANAGRAM: same letters, same counts, order irrelevant. Sorting both strings is the
+     * one-liner; counting is the version that scales (O(n) vs O(n log n)) and that shows
+     * the Map instinct. Check lengths first — different lengths can never be anagrams.
+     *
+     * FIRST NON-REPEATING: count in one pass, then scan IN ORIGINAL ORDER. Iterating a
+     * plain HashMap is the classic wrong answer because it has no order — either keep the
+     * string and re-scan it, or count into a LinkedHashMap as below.
+     * Always say what happens when there is no answer ("aabb"); an interviewer is watching
+     * for whether you volunteer the empty case or wait to be caught by it.
+     */
+    @Test
+    void anagramCheckAndFirstNonRepeatingCharacter() {
+        // ---- anagram, the sorting one-liner ----
+        char[] left = "listen".toCharArray();
+        char[] right = "silent".toCharArray();
+        Arrays.sort(left);
+        Arrays.sort(right);
+        assertArrayEquals(left, right, "listen/silent are anagrams");
+
+        // ---- anagram, the counting version ----
+        assertTrue(isAnagram("listen", "silent"));
+        assertFalse(isAnagram("listen", "listed"));
+        assertFalse(isAnagram("abc", "abcd"), "Length check short-circuits before any counting");
+
+        // ---- first non-repeating character ----
+        assertEquals('c', firstNonRepeating("aabbcdd"));
+        assertEquals('w', firstNonRepeating("swiss"));
+        assertNull(firstNonRepeating("aabb"), "Every character repeats — return null, do not throw");
+    }
+
+    private static boolean isAnagram(String a, String b) {
+        if (a.length() != b.length()) {
+            return false;
+        }
+        Map<Character, Integer> counts = new HashMap<>();
+        for (char c : a.toCharArray()) {
+            counts.merge(c, 1, Integer::sum);
+        }
+        for (char c : b.toCharArray()) {
+            Integer remaining = counts.get(c);
+            if (remaining == null || remaining == 0) {
+                return false;                       // absent, or already used up
+            }
+            counts.put(c, remaining - 1);
+        }
+        return true;                                // equal lengths + nothing left over
+    }
+
+    /** Returns null when every character repeats — the case worth naming out loud. */
+    private static Character firstNonRepeating(String input) {
+        Map<Character, Integer> counts = new LinkedHashMap<>();   // insertion order == original order
+        for (char c : input.toCharArray()) {
+            counts.merge(c, 1, Integer::sum);
+        }
+        for (Map.Entry<Character, Integer> entry : counts.entrySet()) {
+            if (entry.getValue() == 1) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 
     /** String immutability vs StringBuilder — the assertion shows WHY the builder exists. */
