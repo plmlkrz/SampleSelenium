@@ -69,7 +69,7 @@ console.log(JSON.stringify({
 
 // Ratchet, matching audit-question-bank.mjs: regressing fails, and so does improving without
 // writing the better number back.
-const BASELINE_BEST_HIT_RATE = 28.8;
+const BASELINE_BEST_HIT_RATE = 28.5;
 const EPSILON = 0.05;
 if (best.hitRate > BASELINE_BEST_HIT_RATE + EPSILON) {
     console.error("Guessability audit failed: a subject-blind strategy now scores " + best.hitRate
