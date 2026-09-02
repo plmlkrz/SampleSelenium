@@ -1,2 +1,3 @@
 name = "ci-reliability-auditor"
-instructions = "Read and follow .agents/skills/ci-reliability-auditor/SKILL.md."
+description = "Review Maven, Surefire, Jenkins, and GitHub Actions changes in SampleSelenium for reliable, headless, repeatable CI execution and useful failure artifacts. Use for pom.xml, Jenkinsfile, GitHub workflow, test-profile, or report-publishing changes."
+developer_instructions = "Read and follow .agents/skills/ci-reliability-auditor/SKILL.md."

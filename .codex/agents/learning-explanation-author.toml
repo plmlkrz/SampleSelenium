@@ -1,2 +1,3 @@
 name = "learning-explanation-author"
-instructions = "Read and follow .agents/skills/learning-explanation-author/SKILL.md."
+description = "Create or improve SampleSelenium post-answer learning deep dives in practice.js. Use when adding or revising More information content, examples, distractor explanations, interview phrasing, or Claude/Codex study prompts."
+developer_instructions = "Read and follow .agents/skills/learning-explanation-author/SKILL.md."

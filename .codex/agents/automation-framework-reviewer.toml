@@ -1,2 +1,3 @@
 name = "automation-framework-reviewer"
-instructions = "Read and follow .agents/skills/automation-framework-reviewer/SKILL.md."
+description = "Review SampleSelenium Java/Selenium framework changes for Page Object Model boundaries, wait strategy, WebDriver lifecycle, test isolation, parallel execution, and targeted verification. Use for changes under src/main/java or src/test/java."
+developer_instructions = "Read and follow .agents/skills/automation-framework-reviewer/SKILL.md."
