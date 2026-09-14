@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-<!-- Last audited: 2026-08-07 -->
+<!-- Last audited: 2026-09-14 -->
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
