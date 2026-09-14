@@ -1,6 +1,6 @@
 # AGENTS.md
 
-<!-- Last audited: 2026-08-07 -->
+<!-- Last audited: 2026-09-14 -->
 
 Guidance for AI coding agents working in this Selenium test automation codebase.
 
