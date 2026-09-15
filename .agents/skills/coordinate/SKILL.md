@@ -8,6 +8,29 @@ description: Coordinate a SampleSelenium change or review that spans framework c
 
 Read `AGENTS.md` and inspect the user-requested scope plus `git status --short` and `git diff --name-only`.
 
+## Step 0 - Multi-device sync preflight
+
+Work on this repository moves between a desktop, a laptop, and phone sessions into the desktop,
+in both Claude Code and Codex. Git is the only channel between them, so check it before routing:
+
+```powershell
+python scripts/sync_preflight.py --start --fix
+```
+
+- `STOP` (exit 2): do not route or edit. Report the line to the user and resolve it with them
+  first; another device worked on this branch, or a binary file would be clobbered.
+- `ACTION` / `WARN` (exit 1): report the lines and apply the safe fix they name if the user agrees.
+- `--fix` only fast-forwards when lossless. Never rebase, reset, stash, or force-push to clear a
+  finding without the user's explicit approval.
+
+The SessionStart hook in `.claude/settings.json` and `.codex/hooks.json` runs the same check
+automatically; rerun it here because a session may have been open for hours while the other
+device pushed.
+
+**One branch, one device at a time.** Before switching devices, commit (a WIP commit is
+acceptable) and push, then confirm with `python scripts/sync_preflight.py --end`. Binary files
+cannot merge: commit a changed binary only from the device that made the change.
+
 Route work as follows:
 
 | Scope | Specialists |

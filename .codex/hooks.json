@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python scripts/sync_preflight.py --hook",
+            "timeout": 60
+          }
+        ]
+      }
+    ]
+  }
+}
