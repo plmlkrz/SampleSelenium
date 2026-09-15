@@ -204,3 +204,12 @@ The single rule behind both: **green does not mean applied.** A passing `node --
 successful-looking applier, and a subagent reporting success have each accompanied an edit that
 never reached its target here. Assert the post-condition against freshly re-read state.
 
+## Multi-device work
+
+Work moves between desktop, laptop, and phone sessions in both Claude Code and Codex. A SessionStart
+hook runs `python scripts/sync_preflight.py --hook`; surface any STOP/ACTION/WARN line before
+editing. Work one branch on one device at a time: commit and push before switching devices, and
+confirm with `python scripts/sync_preflight.py --end`. Binary files cannot merge, so commit a changed
+binary only from the device that made the change. `scripts/sync_preflight.py` is shared verbatim
+across Peter's repositories (tests live in FootballPredictor `tests/test_sync_preflight.py`); change
+every copy together. Details: `/coordinate`.
